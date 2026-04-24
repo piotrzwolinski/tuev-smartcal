@@ -1,0 +1,23 @@
+app = "tuev-smartcal-db"
+primary_region = "fra"
+
+[build]
+  image = "falkordb/falkordb:latest"
+
+[env]
+  REDIS_ARGS = "--appendonly yes --dir /data"
+
+[mounts]
+  source = "tuev_smartcal_db_data"
+  destination = "/data"
+
+[[services]]
+  internal_port = 6379
+  protocol = "tcp"
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"

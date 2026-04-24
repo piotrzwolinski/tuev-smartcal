@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MING Labs — SmartCal@EG Angebot Phase 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ming-red: #ee0000;
+    --ming-dark: #100a12;
+    --tuev-blue: #0046ad;
+    --bg: #f8f9fc;
+    --card: #ffffff;
+    --text: #1a1f36;
+    --text-secondary: #5a6178;
+    --border: #e2e6ef;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --green: #166534;
+    --green-bg: #dcfce7;
+    --yellow: #92400e;
+    --yellow-bg: #fef3c7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  /* HERO */
+  .hero {
+    background: url('ming_background.png') center/cover no-repeat, linear-gradient(135deg, #100a12 0%, #2a0a0a 100%);
+    color: white;
+    padding: 40px 48px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); }
+
+  /* CONTENT */
+  .content { max-width: 900px; margin: 0 auto; padding: 48px; }
+
+  /* SECTIONS */
+  .section { margin-bottom: 48px; }
+  .section-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 20px;
+  }
+  .section-intro {
+    font-size: 15px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.7;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 24px; margin-bottom: 12px;
+  }
+  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .card-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+  }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; }
+  thead th {
+    background: #f1f4f9; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+    font-weight: 600; color: var(--text-secondary); padding: 14px 20px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 14px 20px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #f8fafd; }
+
+  .badge {
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 100px; display: inline-block;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-blue { background: #e8f0fe; color: var(--tuev-blue); }
+
+  /* PRICE */
+  .price-box {
+    background: var(--card); border: 2px solid var(--tuev-blue); border-radius: 14px;
+    padding: 32px; text-align: center;
+  }
+  .price-amount {
+    font-family: var(--font-mono); font-size: 42px; font-weight: 700;
+    color: var(--tuev-blue); letter-spacing: -2px;
+  }
+  .price-label { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+  .price-detail {
+    font-size: 13px; color: var(--text-secondary); margin-top: 16px;
+    padding-top: 16px; border-top: 1px solid var(--border); text-align: left;
+  }
+  .price-detail li { padding: 4px 0; list-style: none; padding-left: 18px; position: relative; }
+  .price-detail li::before { content: ''; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; border-radius: 50%; background: var(--tuev-blue); opacity: 0.4; }
+
+  /* TIMELINE MINI */
+  .timeline-bar {
+    display: flex; gap: 4px; margin-bottom: 24px;
+  }
+  .timeline-week {
+    flex: 1; background: var(--tuev-blue); border-radius: 8px; padding: 12px 16px; color: white;
+  }
+  .timeline-week .kw {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600; opacity: 0.6;
+  }
+  .timeline-week .title { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .timeline-week:nth-child(2) { background: #0060d0; }
+  .timeline-week:nth-child(3) { background: #2e8b57; }
+
+  /* SCENARIOS */
+  .scenario {
+    display: flex; gap: 12px; align-items: flex-start; padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .scenario:last-child { border-bottom: none; }
+  .scenario-icon {
+    width: 28px; height: 28px; border-radius: 8px; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+    font-size: 13px; color: white; font-weight: 700;
+  }
+  .scenario-in .scenario-icon { background: var(--tuev-blue); }
+  .scenario-out .scenario-icon { background: var(--border); color: var(--text-secondary); }
+  .scenario-text { font-size: 13px; }
+  .scenario-text strong { font-weight: 600; }
+  .scenario-text span { color: var(--text-secondary); }
+
+  /* CALLOUT */
+  .callout {
+    padding: 16px 20px; border-radius: 12px; font-size: 13px;
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-blue { background: #e8f0fe; border: 1px solid #c4d7f5; }
+  .callout-yellow { background: #fef3c7; border: 1px solid #fde68a; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center; padding: 48px; border-top: 1px solid var(--border); margin-top: 24px;
+  }
+  .footer-partners { display: flex; align-items: center; justify-content: center; gap: 32px; margin-bottom: 12px; }
+  .footer-partner { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+  .footer-sub { font-size: 11px; color: var(--text-secondary); opacity: 0.5; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 40px 0; }
+
+  /* PRINT */
+  @media print {
+    .hero { padding: 32px; }
+    .content { padding: 24px; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+  @media (max-width: 768px) {
+    .hero { padding: 32px 24px; }
+    .content { padding: 24px; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:40px;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <svg width="28" height="27" viewBox="0 0 36 35" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.3583 34.848L34.6346 21.6606C34.9554 21.3837 35.1394 20.9842 35.1394 20.5642V0.608917C35.1394 0.0865137 34.5141 -0.192483 34.115 0.151966L18.8387 13.3357C18.5178 13.6126 18.3337 14.0122 18.3337 14.4322V34.3912C18.3337 34.9136 18.9592 35.1924 19.3583 34.848ZM35.1389 34.3798V24.968C35.1389 24.4359 34.5412 24.1518 34.16 24.5025L29.3493 28.93C28.9205 29.3243 28.9205 30.0247 29.3493 30.4191L34.16 34.8453C34.5414 35.196 35.1389 34.9119 35.1389 34.3798ZM0 34.0296V0.667318C0 0.145957 0.620761 -0.13231 1.01675 0.211279L16.1512 13.3451C16.4694 13.6215 16.6522 14.0203 16.6522 14.4395V34.0296C16.6522 34.5655 16.2131 35 15.6717 35H0.980509C0.439049 35 0 34.5655 0 34.0296Z" fill="white"/></svg>
+    </div>
+    <div style="opacity:0.7; font-size:11px; font-weight:500; letter-spacing:0.5px;">
+      <span>Powered by</span> <span style="font-weight:700;">Synapse OS</span>
+    </div>
+  </div>
+  <div>
+    <div style="font-size:12px; text-transform:uppercase; letter-spacing:1.5px; opacity:0.5; font-weight:500; margin-bottom:12px;">Angebot</div>
+    <h1 style="font-size:36px; font-weight:700; letter-spacing:-1.5px; line-height:1.1; margin-bottom:8px;">SmartCal@EG <span style="font-weight:300; opacity:0.7;">Phase 1</span></h1>
+    <p style="font-size:15px; opacity:0.6;">AI-gestützte Kalkulationsplattform f&uuml;r T&Uuml;V S&uuml;d &middot; Gesch&auml;ftsbereich Elektro- & Geb&auml;udetechnik</p>
+  </div>
+</header>
+
+<div class="content">
+
+  <!-- EXECUTIVE SUMMARY -->
+  <section class="section">
+    <div class="section-label">Zusammenfassung</div>
+    <div class="section-title">Proof of Value in 3 Wochen</div>
+    <div class="section-intro">
+      In Phase 1 konfigurieren wir die Synapse OS Plattform mit <strong>3 echten TÜV-Produkten</strong> und liefern einen funktionsfähigen Kalkulator, der aus natürlichsprachigen Objektbeschreibungen automatisch Prüfkosten berechnet. Parallel entsteht ein Design-Prototyp für das Zielbild der Anwendung.
+    </div>
+
+    <div class="grid-3">
+      <div class="card" style="text-align:center;">
+        <div style="font-family:var(--font-mono); font-size:28px; font-weight:700; color:var(--tuev-blue);">3</div>
+        <div class="card-text">Produkte mit echten Preisdaten</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family:var(--font-mono); font-size:28px; font-weight:700; color:var(--tuev-blue);">3</div>
+        <div class="card-text">Wochen bis zur Live-Demo</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-family:var(--font-mono); font-size:28px; font-weight:700; color:var(--tuev-blue);">1</div>
+        <div class="card-text">Design-Prototyp für Zielbild</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SCOPE -->
+  <section class="section">
+    <div class="section-label">Leistungsumfang</div>
+    <div class="section-title">Was wir liefern</div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Beschreibung</th>
+            <th>Datenquelle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Chat-basierte Kalkulation</strong></td>
+            <td>Objektbeschreibung in natürlicher Sprache &rarr; automatische Preiskalkulation</td>
+            <td><span class="badge badge-green">Vorhanden</span></td>
+          </tr>
+          <tr>
+            <td><strong>3 Prüfdienstleistungen</strong></td>
+            <td>Vollständiger Produktkatalog mit echten Preisen für 3 ausgewählte Produkte</td>
+            <td><span class="badge badge-yellow">LPV / Preisliste</span></td>
+          </tr>
+          <tr>
+            <td><strong>Preispositionen & Staffeln</strong></td>
+            <td>Grundpauschalen, Stückpreise, mengenabhängige Rabatte</td>
+            <td><span class="badge badge-yellow">LPV / Angebote</span></td>
+          </tr>
+          <tr>
+            <td><strong>Intelligente Rückfragen</strong></td>
+            <td>System erfragt fehlende Informationen strukturiert</td>
+            <td><span class="badge badge-green">Automatisch</span></td>
+          </tr>
+          <tr>
+            <td><strong>Gebäudetyp-Erkennung</strong></td>
+            <td>3-5 relevante Gebäudetypen mit zugehörigen Pflichtprüfungen</td>
+            <td><span class="badge badge-blue">Sachverständiger</span></td>
+          </tr>
+          <tr>
+            <td><strong>Pflichtprüfungen</strong></td>
+            <td>Automatische Erkennung welche Prüfungen pro Gebäudetyp erforderlich sind</td>
+            <td><span class="badge badge-blue">Sachverständiger</span></td>
+          </tr>
+          <tr>
+            <td><strong>Schätzformeln</strong></td>
+            <td>Faustregeln für fehlende Merkmale (z.B. BGF &rarr; Anzahl Melder)</td>
+            <td><span class="badge badge-blue">Sachverständiger</span></td>
+          </tr>
+          <tr>
+            <td><strong>Demo & User-Test</strong></td>
+            <td>Live-Kalkulation aller 3 Produkte mit TÜV-Team</td>
+            <td><span class="badge badge-green">Inkludiert</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SZENARIEN -->
+  <section class="section">
+    <div class="section-label">Beispielszenarien</div>
+    <div class="section-title">Was der Kalkulator kann — und was nicht</div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="color:var(--tuev-blue);">MVP kann</div>
+        <div class="scenario scenario-in">
+          <div class="scenario-icon">1</div>
+          <div class="scenario-text"><strong>&bdquo;Blitzschutzprüfung, 25 Ableitungen, Schutzklasse III&ldquo;</strong><br><span>Direkte Kalkulation mit konkreten Merkmalen</span></div>
+        </div>
+        <div class="scenario scenario-in">
+          <div class="scenario-icon">2</div>
+          <div class="scenario-text"><strong>&bdquo;2.500 ortsveränderliche Geräte, DGUV V3&ldquo;</strong><br><span>Mengenstaffel greift automatisch</span></div>
+        </div>
+        <div class="scenario scenario-in">
+          <div class="scenario-icon">3</div>
+          <div class="scenario-text"><strong>&bdquo;BMA-Prüfung bei 120 Meldern&ldquo;</strong><br><span>Pauschale + Stückpreis berechnet</span></div>
+        </div>
+        <div class="scenario scenario-in">
+          <div class="scenario-icon">4</div>
+          <div class="scenario-text"><strong>&bdquo;Krankenhaus, 8.000m²&ldquo;</strong><br><span>Pflichtprüfungen erkannt, Merkmale abgefragt</span></div>
+        </div>
+        <div class="scenario scenario-in">
+          <div class="scenario-icon">5</div>
+          <div class="scenario-text"><strong>&bdquo;BMA und Blitzschutz zusammen&ldquo;</strong><br><span>Bündelrabatt bei gleicher Begehung</span></div>
+        </div>
+        <div class="scenario scenario-in">
+          <div class="scenario-icon">6</div>
+          <div class="scenario-text"><strong>&bdquo;Korrektur: 200 statt 50 Melder&ldquo;</strong><br><span>Neuberechnung mit korrigierten Werten</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="color:var(--text-secondary);">Nicht im MVP (Phase 2+)</div>
+        <div class="scenario scenario-out">
+          <div class="scenario-icon">&times;</div>
+          <div class="scenario-text"><strong>&bdquo;Tiefgarage mit Wallboxen in ATEX-Zone&ldquo;</strong><br><span>Gefahrenzonen-Logik</span></div>
+        </div>
+        <div class="scenario scenario-out">
+          <div class="scenario-icon">&times;</div>
+          <div class="scenario-text"><strong>&bdquo;Prüfung am Wochenende / Express&ldquo;</strong><br><span>Spezial-Zuschläge</span></div>
+        </div>
+        <div class="scenario scenario-out">
+          <div class="scenario-icon">&times;</div>
+          <div class="scenario-text"><strong>&bdquo;5 Standorte in verschiedenen Bundesländern&ldquo;</strong><br><span>Regionale Preisfaktoren</span></div>
+        </div>
+        <div class="scenario scenario-out">
+          <div class="scenario-icon">&times;</div>
+          <div class="scenario-text"><strong>&bdquo;Erstelle mir ein PDF-Angebot&ldquo;</strong><br><span>PDF-Export & Textbausteine</span></div>
+        </div>
+        <div class="scenario scenario-out">
+          <div class="scenario-icon">&times;</div>
+          <div class="scenario-text"><strong>&bdquo;Prüfung einer Lüftungsanlage&ldquo;</strong><br><span>Weitere Produkte</span></div>
+        </div>
+        <div class="scenario scenario-out">
+          <div class="scenario-icon">&times;</div>
+          <div class="scenario-text"><strong>&bdquo;Übernimm die Kalkulation in SAP&ldquo;</strong><br><span>SAP-Schnittstelle</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- TIMELINE -->
+  <section class="section">
+    <div class="section-label">Zeitplan</div>
+    <div class="section-title">3 Wochen bis zur Demo</div>
+
+    <div class="timeline-bar">
+      <div class="timeline-week">
+        <div class="kw">KW14–15</div>
+        <div class="title">Core Setup & Datenintegration</div>
+      </div>
+      <div class="timeline-week">
+        <div class="kw">KW16</div>
+        <div class="title">Produkte 2 & 3 + Demo</div>
+      </div>
+      <div class="timeline-week" style="background:#d4740e;">
+        <div class="kw">Parallel</div>
+        <div class="title">Design-Prototyp</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">KW14–15: Core Setup</div>
+        <ul class="card-text" style="list-style:none; padding:0;">
+          <li style="padding:3px 0;">Kick-off Workshop mit TÜV</li>
+          <li style="padding:3px 0;">Dokumentenübergabe & Datenanalyse</li>
+          <li style="padding:3px 0;">Knowledge Graph mit echten Preisen befüllen (Produkt 1)</li>
+          <li style="padding:3px 0;">Delta-Review: Validierung mit TÜV</li>
+          <li style="padding:3px 0;">Infrastruktur-Entscheidung</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">KW16: Produkte 2 & 3 + Demo</div>
+        <ul class="card-text" style="list-style:none; padding:0;">
+          <li style="padding:3px 0;">Weitere Produkte in Plattform einpflegen</li>
+          <li style="padding:3px 0;">Automatisierte Preistests</li>
+          <li style="padding:3px 0;"><strong style="color:var(--text);">Demo & User-Test mit TÜV</strong></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- VORAUSSETZUNGEN -->
+  <section class="section">
+    <div class="section-label">Voraussetzungen</div>
+    <div class="section-title">Was wir von TÜV benötigen</div>
+
+    <div class="callout callout-yellow">
+      <div class="callout-icon">&#9888;</div>
+      <div>Ohne Preisdaten kann keine Kalkulation erstellt werden. Die nachfolgenden Dokumente sind <strong>Voraussetzung für den Projektstart</strong> und müssen in KW14 vorliegen.</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Was</th>
+            <th>Wann</th>
+            <th>Warum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>LPV / Preisliste</strong> für 3 ausgewählte Produkte</td>
+            <td><span class="badge badge-yellow">KW14</span></td>
+            <td>Preispositionen, Staffeln, Grundpauschalen</td>
+          </tr>
+          <tr>
+            <td><strong>3-5 Beispielangebote</strong> pro Produkt</td>
+            <td><span class="badge badge-yellow">KW14</span></td>
+            <td>Cross-Check der Kalkulationslogik</td>
+          </tr>
+          <tr>
+            <td><strong>Kalkulationsexcel</strong> (falls vorhanden)</td>
+            <td><span class="badge badge-yellow">KW14</span></td>
+            <td>Bestehende Zuschläge, Staffeln, Sonderregeln</td>
+          </tr>
+          <tr>
+            <td><strong>1-2h mit Sachverständigem</strong></td>
+            <td><span class="badge badge-blue">KW14–15</span></td>
+            <td>Validierung: Pflichtprüfungen, Schätzregeln, Empfehlungen</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PREIS -->
+  <section class="section">
+    <div class="section-label">Investition</div>
+    <div class="section-title">Phase 1 — Proof of Value</div>
+
+    <div class="grid-2">
+      <div class="price-box">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-secondary); font-weight:600; margin-bottom:8px;">Development</div>
+        <div class="price-amount">18.000 &euro;</div>
+        <div class="price-label">einmalig, netto</div>
+        <ul class="price-detail">
+          <li>3 Produkte mit echten Preisdaten</li>
+          <li>Knowledge Graph konfiguriert & validiert</li>
+          <li>Chat-basierter Kalkulator funktionsfähig</li>
+          <li>Pflichtprüfungen, Empfehlungen, Schätzformeln</li>
+          <li>Demo & User-Test mit TÜV</li>
+        </ul>
+      </div>
+      <div class="price-box" style="border-color: var(--ming-red);">
+        <div style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-secondary); font-weight:600; margin-bottom:8px;">Design</div>
+        <div class="price-amount" style="color:var(--ming-red);">14.000 &euro;</div>
+        <div class="price-label">einmalig, netto</div>
+        <ul class="price-detail">
+          <li>Design-Prototyp für Zielanwendung</li>
+          <li>UX-Konzept & Interaktionsdesign</li>
+          <li>Clickable Prototype (Figma)</li>
+          <li>TÜV Branding & Komponenten</li>
+          <li>Grundlage für Phase 2 Entwicklung</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:24px;">
+      <div style="font-family:var(--font-mono); font-size:14px; color:var(--text-secondary);">
+        Gesamtinvestition Phase 1: <strong style="color:var(--text);">32.000 &euro;</strong> netto
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- AUSBLICK -->
+  <section class="section">
+    <div class="section-label">Ausblick</div>
+    <div class="section-title">Nach Phase 1</div>
+
+    <div class="card" style="border-left: 4px solid var(--tuev-blue);">
+      <div class="card-title">Phase 2–4: MVP bis Abteilungsleitertagung (KW27)</div>
+      <div class="card-text" style="margin-bottom:12px;">
+        Aufbauend auf Phase 1 wird das Tool in 9 Wochen zum vollständigen MVP ausgebaut: TÜV Branding, weitere Features, UAT mit Sachverständigen & Vertrieb, Go-Live.
+      </div>
+      <div style="font-family:var(--font-mono); font-size:13px; color:var(--text-secondary);">
+        Scope und Budget werden basierend auf den Ergebnissen von Phase 1 definiert.
+      </div>
+    </div>
+
+    <div class="card" style="border-left: 4px solid var(--ming-red); margin-top:12px;">
+      <div class="card-title">Laufende Lizenz ab Produktivbetrieb</div>
+      <div class="card-text">
+        Nach Go-Live und einer Pilotphase startet die monatliche Plattform-Lizenz. Diese umfasst Support, Updates und alle konfigurierten Produkte. Hosting auf TÜV-Infrastruktur. Konditionen werden im Rahmen von Phase 2 vereinbart.
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-partners">
+    <div class="footer-partner">
+      <svg width="18" height="17" viewBox="0 0 36 35" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.3583 34.848L34.6346 21.6606C34.9554 21.3837 35.1394 20.9842 35.1394 20.5642V0.608917C35.1394 0.0865137 34.5141 -0.192483 34.115 0.151966L18.8387 13.3357C18.5178 13.6126 18.3337 14.0122 18.3337 14.4322V34.3912C18.3337 34.9136 18.9592 35.1924 19.3583 34.848ZM35.1389 34.3798V24.968C35.1389 24.4359 34.5412 24.1518 34.16 24.5025L29.3493 28.93C28.9205 29.3243 28.9205 30.0247 29.3493 30.4191L34.16 34.8453C34.5414 35.196 35.1389 34.9119 35.1389 34.3798ZM0 34.0296V0.667318C0 0.145957 0.620761 -0.13231 1.01675 0.211279L16.1512 13.3451C16.4694 13.6215 16.6522 14.0203 16.6522 14.4395V34.0296C16.6522 34.5655 16.2131 35 15.6717 35H0.980509C0.439049 35 0 34.5655 0 34.0296Z" fill="#ee0000"/></svg>
+      <span><strong style="color:var(--ming-dark);">MING Labs</strong></span>
+    </div>
+    <span style="color:var(--border);">&middot;</span>
+    <div class="footer-partner">
+      <span style="color:var(--text-secondary); opacity:0.45;">Powered by <strong>Synapse OS</strong></span>
+    </div>
+  </div>
+  <div class="footer-sub">Angebot erstellt M&auml;rz 2026 &middot; Vertraulich</div>
+</footer>
+
+</body>
+</html>

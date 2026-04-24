@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+backend/venv/
+
+# Build artifacts
+frontend/.next/
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.env.local
+backend/.env
+
+# OS
+.DS_Store
+
+# Confidential TÜV data (pricing, reports, customer lists)
+input-files/
+
+# Playwright
+.playwright-mcp/
+
+# Archives
+*.zip
+
+# Claude internal
+.claude/

@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MING Labs — SmartCal@EG Project Timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --tuev-blue: #0046ad;
+    --tuev-dark: #003080;
+    --tuev-light: #e8f0fe;
+    --ming-red: #ee0000;
+    --ming-dark: #100a12;
+    --phase1: #0046ad;
+    --phase2: #0072c6;
+    --phase3: #2e8b57;
+    --phase4: #d4740e;
+    --buffer: #94a3b8;
+    --demo: #c41e3a;
+    --bg: #f8f9fc;
+    --card: #ffffff;
+    --text: #1a1f36;
+    --text-secondary: #5a6178;
+    --border: #e2e6ef;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    background: url('ming_background.png') center/cover no-repeat, linear-gradient(135deg, #100a12 0%, #2a0a0a 100%);
+    color: white;
+    padding: 40px 48px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeSlideUp 0.6s ease forwards 0.1s;
+  }
+
+  .hero-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    animation: pulse-dot 2s ease infinite;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeSlideUp 0.6s ease forwards 0.2s;
+  }
+
+  .hero h1 span {
+    font-weight: 300;
+    opacity: 0.7;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    opacity: 0.6;
+    font-weight: 400;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeSlideUp 0.6s ease forwards 0.3s;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeSlideUp 0.6s ease forwards 0.4s;
+  }
+
+  .hero-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .hero-meta-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.4;
+    font-weight: 500;
+  }
+
+  .hero-meta-value {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* ─── GANTT BAR ─── */
+  .gantt-wrapper {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 48px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  }
+
+  .gantt-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .gantt {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 3px;
+    align-items: end;
+  }
+
+  .gantt-week {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: default;
+    transition: transform 0.2s ease;
+  }
+
+  .gantt-week:hover { transform: translateY(-2px); }
+
+  .gantt-bar {
+    width: 100%;
+    height: 32px;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .gantt-week:hover .gantt-bar {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .gantt-kw {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+  }
+
+  .gantt-milestone {
+    position: absolute;
+    top: -8px;
+    right: -4px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border: 2.5px solid currentColor;
+    border-radius: 50%;
+    z-index: 2;
+  }
+
+  .gantt-phase-labels {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 3px;
+    margin-top: 8px;
+  }
+
+  .gantt-phase-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    text-align: center;
+    padding: 4px 0;
+    border-radius: 3px;
+    color: white;
+    opacity: 0.85;
+  }
+
+  /* ─── MAIN CONTENT ─── */
+  .content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px;
+  }
+
+  /* ─── PHASE SECTION ─── */
+  .phase {
+    margin-bottom: 56px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: all 0.5s ease;
+  }
+
+  .phase.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .phase-number {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .phase-title-group {
+    flex: 1;
+  }
+
+  .phase-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .phase-period {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .phase-milestone {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 0.3px;
+  }
+
+  .phase-milestone .check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+
+  /* ─── WEEK CARDS ─── */
+  .weeks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .week-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease;
+  }
+
+  .week-card:hover {
+    border-color: transparent;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+
+  .week-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 4px 0 0 4px;
+  }
+
+  .week-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .week-kw {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    color: white;
+  }
+
+  .week-title {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+  }
+
+  .week-tasks {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .week-tasks li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .week-tasks li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    opacity: 0.4;
+  }
+
+  /* Phase colors */
+  .p1 .week-card::before, .p1 .week-tasks li::before { background: var(--phase1); }
+  .p2 .week-card::before, .p2 .week-tasks li::before { background: var(--phase2); }
+  .p3 .week-card::before, .p3 .week-tasks li::before { background: var(--phase3); }
+  .p4 .week-card::before, .p4 .week-tasks li::before { background: var(--phase4); }
+
+  .p1 .week-kw, .p1 .phase-number, .p1 .phase-milestone { background: var(--phase1); }
+  .p2 .week-kw, .p2 .phase-number, .p2 .phase-milestone { background: var(--phase2); }
+  .p3 .week-kw, .p3 .phase-number, .p3 .phase-milestone { background: var(--phase3); }
+  .p4 .week-kw, .p4 .phase-number, .p4 .phase-milestone { background: var(--phase4); }
+
+  /* ─── DEPENDENCIES TABLE ─── */
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-title .icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .deps-section, .risks-section {
+    margin-bottom: 56px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: all 0.5s ease;
+  }
+
+  .deps-section.visible, .risks-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .deps-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .deps-table thead th {
+    background: #f1f4f9;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 14px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .deps-table tbody td {
+    padding: 14px 20px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .deps-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .deps-table tbody tr {
+    transition: background 0.15s ease;
+  }
+
+  .deps-table tbody tr:hover {
+    background: #f8fafd;
+  }
+
+  .dep-kw {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: var(--tuev-light);
+    color: var(--tuev-blue);
+    display: inline-block;
+  }
+
+  .dep-owner {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 100px;
+    background: #f1f4f9;
+    color: var(--text-secondary);
+    display: inline-block;
+  }
+
+  /* ─── RISKS ─── */
+  .risks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 12px;
+  }
+
+  .risk-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    transition: all 0.25s ease;
+  }
+
+  .risk-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+  }
+
+  .risk-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #fef3c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .risk-content { flex: 1; }
+
+  .risk-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .risk-mitigation {
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .risk-mitigation .arrow {
+    color: #22c55e;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    text-align: center;
+    padding: 48px;
+    border-top: 1px solid var(--border);
+    margin-top: 24px;
+  }
+
+  .footer-brand {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+  }
+
+  .footer-brand strong {
+    color: var(--tuev-blue);
+    font-weight: 700;
+  }
+
+  .footer-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    opacity: 0.5;
+    margin-top: 4px;
+  }
+
+  /* ─── PARTNER BADGES ─── */
+  .hero-partners {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 32px;
+    opacity: 0;
+    animation: fadeSlideUp 0.6s ease forwards 0.5s;
+  }
+
+  .partner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 10px 18px;
+    transition: all 0.25s ease;
+  }
+
+  .partner-badge:hover {
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .partner-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .partner-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .partner-name {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  .partner-role {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    opacity: 0.5;
+    font-weight: 500;
+  }
+
+  .partner-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(255,255,255,0.15);
+  }
+
+  .footer-partners {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 16px;
+  }
+
+  .footer-partner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .footer-partner svg {
+    opacity: 1;
+  }
+
+  .footer-x {
+    font-size: 16px;
+    color: var(--border);
+    font-weight: 300;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* ─── PRINT ─── */
+  @media print {
+    .gantt-wrapper { position: static; box-shadow: none; }
+    .hero { padding: 32px; }
+    .hero h1 { font-size: 28px; }
+    .content { padding: 24px; }
+    .phase, .deps-section, .risks-section { opacity: 1 !important; transform: none !important; }
+    .week-card:hover, .risk-card:hover { transform: none; box-shadow: none; }
+    .gantt-week:hover { transform: none; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 768px) {
+    .hero { padding: 32px 24px; }
+    .hero h1 { font-size: 28px; }
+    .hero-meta { gap: 20px; }
+    .gantt-wrapper { padding: 20px 24px; overflow-x: auto; }
+    .gantt { min-width: 700px; }
+    .gantt-phase-labels { min-width: 700px; }
+    .content { padding: 24px; }
+    .weeks-grid { grid-template-columns: 1fr; }
+    .risks-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:40px; opacity:0; animation: fadeSlideUp 0.6s ease forwards 0.05s;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <svg width="28" height="27" viewBox="0 0 36 35" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.3583 34.848L34.6346 21.6606C34.9554 21.3837 35.1394 20.9842 35.1394 20.5642V0.608917C35.1394 0.0865137 34.5141 -0.192483 34.115 0.151966L18.8387 13.3357C18.5178 13.6126 18.3337 14.0122 18.3337 14.4322V34.3912C18.3337 34.9136 18.9592 35.1924 19.3583 34.848ZM35.1389 34.3798V24.968C35.1389 24.4359 34.5412 24.1518 34.16 24.5025L29.3493 28.93C28.9205 29.3243 28.9205 30.0247 29.3493 30.4191L34.16 34.8453C34.5414 35.196 35.1389 34.9119 35.1389 34.3798ZM0 34.0296V0.667318C0 0.145957 0.620761 -0.13231 1.01675 0.211279L16.1512 13.3451C16.4694 13.6215 16.6522 14.0203 16.6522 14.4395V34.0296C16.6522 34.5655 16.2131 35 15.6717 35H0.980509C0.439049 35 0 34.5655 0 34.0296Z" fill="white"/></svg>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px; opacity:0.7; font-size:11px; font-weight:500; letter-spacing:0.5px;">
+      <span>Powered by</span>
+      <span style="font-weight:700;">Synapse OS</span>
+    </div>
+  </div>
+  <div style="opacity:0; animation: fadeSlideUp 0.6s ease forwards 0.15s;">
+    <h1>SmartCal@EG <span>for TÜV Süd</span></h1>
+    <p class="hero-sub">AI-gestützte Kalkulationsplattform &middot; 12-Wochen Projektplan &middot; KW14–KW25</p>
+  </div>
+</header>
+
+<!-- GANTT -->
+<div class="gantt-wrapper">
+  <div class="gantt-label">Timeline Overview</div>
+  <div class="gantt">
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase1);"></div><span class="gantt-kw">14</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase1);"></div><span class="gantt-kw">15</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase1);"><div class="gantt-milestone" style="color:var(--phase1);"></div></div><span class="gantt-kw">16</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase2);"></div><span class="gantt-kw">17</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase2);"></div><span class="gantt-kw">18</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase2);"></div><span class="gantt-kw">19</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase2);"><div class="gantt-milestone" style="color:var(--phase2);"></div></div><span class="gantt-kw">20</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase3);"></div><span class="gantt-kw">21</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase3);"></div><span class="gantt-kw">22</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase3);"><div class="gantt-milestone" style="color:var(--phase3);"></div></div><span class="gantt-kw">23</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase4);"></div><span class="gantt-kw">24</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--phase4);"><div class="gantt-milestone" style="color:var(--phase4);"></div></div><span class="gantt-kw">25</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--buffer); opacity:0.5;"></div><span class="gantt-kw">26</span></div>
+    <div class="gantt-week"><div class="gantt-bar" style="background:var(--demo);"><div class="gantt-milestone" style="color:var(--demo);"></div></div><span class="gantt-kw">27</span></div>
+  </div>
+  <div class="gantt-phase-labels">
+    <div class="gantt-phase-label" style="background:var(--phase1); grid-column: 1 / 4;">Setup</div>
+    <div class="gantt-phase-label" style="background:var(--phase2); grid-column: 4 / 8;">Anpassung</div>
+    <div class="gantt-phase-label" style="background:var(--phase3); grid-column: 8 / 11;">Validierung</div>
+    <div class="gantt-phase-label" style="background:var(--phase4); grid-column: 11 / 13;">Go-Live</div>
+    <div class="gantt-phase-label" style="background:var(--buffer); grid-column: 13 / 14; opacity:0.6;">Buf.</div>
+    <div class="gantt-phase-label" style="background:var(--demo); grid-column: 14 / 15;">Demo</div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- PHASE 1 -->
+  <section class="phase p1">
+    <div class="phase-header">
+      <div class="phase-number">01</div>
+      <div class="phase-title-group">
+        <div class="phase-title">Plattform-Setup & Datenintegration</div>
+        <div class="phase-period">KW14 – KW16 &middot; 3 Wochen</div>
+      </div>
+      <div class="phase-milestone"><span class="check">&check;</span> M1 &mdash; Korrekte Kalkulation der Startprodukte</div>
+    </div>
+    <div style="margin-bottom: 20px; padding: 16px 20px; background: #f1f4f9; border-radius: 12px; border-left: 3px solid var(--phase1);">
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px;">Minimum 3 Startprodukte <span style="font-weight:400; text-transform:none; letter-spacing:0;">(weitere bei Datenverfügbarkeit)</span></div>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <span style="font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 100px; background: white; color: var(--text); border: 1px solid var(--border);">Elektrische Anlagen</span>
+        <span style="font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 100px; background: white; color: var(--text); border: 1px solid var(--border);">Entrauchungsanlagen</span>
+        <span style="font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 100px; background: white; color: var(--text); border: 1px solid var(--border);">Brandschutz</span>
+        <span style="font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 100px; background: white; color: var(--text); border: 1px solid var(--border);">Brandmeldeanlagen</span>
+        <span style="font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 100px; background: white; color: var(--text); border: 1px solid var(--border);">Lüftungsanlagen</span>
+        <span style="font-size: 12px; font-weight: 500; padding: 5px 14px; border-radius: 100px; background: white; color: var(--text); border: 1px solid var(--border);">Wallboxen / Ladesäulen</span>
+      </div>
+    </div>
+    <div class="weeks-grid">
+      <div class="week-card" style="grid-column: span 2;">
+        <div class="week-card-header">
+          <span class="week-kw">KW14–15</span>
+          <span class="week-title">Core Setup & Datenintegration</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Kick-off Workshop mit TÜV</li>
+          <li>Dokumentenübergabe: Inspektionsberichte, Anfragen, Angebote</li>
+          <li>AI-Extraktion: Dokumente automatisch in Regelwerk überführen</li>
+          <li>Knowledge Graph mit extrahierten Preisen & Merkmalen befüllen</li>
+          <li>Delta-Review mit TÜV: &bdquo;Wir haben X extrahiert — stimmt das?&ldquo;</li>
+          <li>Automatisierte Tests für Preisberechnung</li>
+        </ul>
+      </div>
+      <div class="week-card">
+        <div class="week-card-header">
+          <span class="week-kw">KW16</span>
+          <span class="week-title">Produkte 2 & 3 einrichten</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Weitere Produkte in Plattform einpflegen</li>
+          <li>Reisekosten-Modul konfigurieren (Region, Entfernung, Pauschalen)</li>
+        </ul>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:12px; padding:10px 14px; background:var(--tuev-light); border-radius:10px;">
+          <div style="width:24px; height:24px; border-radius:50%; background:var(--phase1); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; color:white;">&#9733;</div>
+          <span style="font-size:13px; font-weight:600; color:var(--text);">Demo & User-Test: Live-Kalkulation aller 3 Produkte mit TÜV</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px; padding:14px 20px; background:var(--card); border:1px solid var(--border); border-left:4px solid var(--phase1); border-radius:14px; display:flex; align-items:center; gap:12px;">
+      <div style="font-size:10px; text-transform:uppercase; letter-spacing:1px; font-weight:600; color:var(--phase1); white-space:nowrap;">KW14–16 Parallel</div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="font-size:13px; font-weight:600; color:var(--text);">Feature-Discovery, Design-Prototyp & Scope-Definition mit TÜV</div>
+    </div>
+    <div style="margin-top:8px; padding:14px 20px; background:var(--card); border:1px solid var(--border); border-left:4px solid var(--phase4); border-radius:14px; display:flex; align-items:center; gap:12px;">
+      <div style="font-size:10px; text-transform:uppercase; letter-spacing:1px; font-weight:600; color:var(--phase4); white-space:nowrap;">KW14–16 Parallel</div>
+      <div style="width:1px; height:20px; background:var(--border);"></div>
+      <div style="font-size:13px; font-weight:600; color:var(--text);">Infrastruktur-Setup: Cloud-Zugang, AI-Services & Deployment-Prozesse mit TÜV IT abstimmen</div>
+    </div>
+  </section>
+
+  <!-- PHASE 2 -->
+  <section class="phase p2">
+    <div class="phase-header">
+      <div class="phase-number">02</div>
+      <div class="phase-title-group">
+        <div class="phase-title">TÜV-spezifische Anpassungen & Erweiterungen</div>
+        <div class="phase-period">KW17 – KW20 &middot; 4 Wochen</div>
+      </div>
+      <div class="phase-milestone"><span class="check">&check;</span> M2 &mdash; Feature-Complete MVP</div>
+    </div>
+    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; padding: 12px 16px; background: #f1f4f9; border-radius: 10px; border-left: 3px solid var(--phase2);">Modul-Auswahl wird in Phase 1 gemeinsam mit TÜV definiert. Nachfolgende Aufteilung ist vorläufig.</p>
+    <div class="weeks-grid">
+      <div class="week-card">
+        <div class="week-card-header">
+          <span class="week-kw">KW17</span>
+          <span class="week-title">TÜV Branding & Rollen</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Plattform-Theming: TÜV Farben, Fonts, Logo anpassen</li>
+          <li>Rollen & Berechtigungen konfigurieren (Admin, Vertrieb)</li>
+        </ul>
+      </div>
+      <div class="week-card">
+        <div class="week-card-header">
+          <span class="week-kw">KW18</span>
+          <span class="week-title">Kalkulationsmodi aktivieren</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Grob / Mittel / Fein Stufen konfigurieren</li>
+          <li>Rückfragen-Modul anpassen</li>
+          <li>Session-Management & Angebotshistorie aktivieren</li>
+        </ul>
+      </div>
+      <div class="week-card">
+        <div class="week-card-header">
+          <span class="week-kw">KW19</span>
+          <span class="week-title">Cross-Selling & Zuschläge</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Empfehlungs-Modul aktivieren (aus Graph-Relationen)</li>
+          <li>Zuschlagsregeln konfigurieren (z.B. Krankenhaus +25%)</li>
+          <li>Bündelrabatte bei Gleiche-Begehung einrichten</li>
+        </ul>
+      </div>
+      <div class="week-card">
+        <div class="week-card-header">
+          <span class="week-kw">KW20</span>
+          <span class="week-title">Export & Integration</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Textbaustein-Generator konfigurieren</li>
+          <li>PDF-Export aktivieren</li>
+          <li>SAP-Schnittstelle vorbereiten (Copy-to-Clipboard)</li>
+          <li>Staging-Deployment für TÜV-Review</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASE 3 -->
+  <section class="phase p3">
+    <div class="phase-header">
+      <div class="phase-number">03</div>
+      <div class="phase-title-group">
+        <div class="phase-title">Validierung & Feintuning</div>
+        <div class="phase-period">KW21 – KW23 &middot; 3 Wochen</div>
+      </div>
+      <div class="phase-milestone"><span class="check">&check;</span> M3 &mdash; MVP Staging-Ready</div>
+    </div>
+    <div class="weeks-grid">
+      <div class="week-card">
+        <div class="week-card-header">
+          <span class="week-kw">KW21</span>
+          <span class="week-title">UAT mit Sachverständigen & Vertrieb</span>
+        </div>
+        <ul class="week-tasks">
+          <li>10+ reale Kalkulationsfälle durchspielen</li>
+          <li>Abgleich mit manuellen Excel-Kalkulationen</li>
+          <li>Regelwerk-Korrekturen im Knowledge Graph</li>
+        </ul>
+      </div>
+      <div class="week-card">
+        <div class="week-card-header">
+          <span class="week-kw">KW22</span>
+          <span class="week-title">Betrieb & Infrastruktur</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Performance-Optimierung (&lt;3s Kalkulation)</li>
+          <li>Monitoring & Logging aktivieren</li>
+          <li>Ggf. Migration auf TÜV-Infrastruktur</li>
+        </ul>
+      </div>
+      <div class="week-card">
+        <div class="week-card-header">
+          <span class="week-kw">KW23</span>
+          <span class="week-title">Feinschliff</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Admin-Oberfläche: Preise & Regeln pflegen</li>
+          <li>Onboarding-Flow konfigurieren</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASE 4 -->
+  <section class="phase p4">
+    <div class="phase-header">
+      <div class="phase-number">04</div>
+      <div class="phase-title-group">
+        <div class="phase-title">Go-Live</div>
+        <div class="phase-period">KW24 – KW25 &middot; 2 Wochen &nbsp;+ Buffer KW26 &nbsp;+ Demo KW27</div>
+      </div>
+      <div class="phase-milestone" style="background:var(--demo);"><span class="check">&#9733;</span> M4 &mdash; MVP Live &middot; Abteilungsleitertagung</div>
+    </div>
+    <div class="weeks-grid">
+      <div class="week-card">
+        <div class="week-card-header">
+          <span class="week-kw">KW24</span>
+          <span class="week-title">Abnahme & Demo-Prep</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Finale Abnahme mit TÜV Projektleitung</li>
+          <li>Demo-Szenario vorbereiten</li>
+          <li>Repräsentative Demo-Daten einpflegen</li>
+        </ul>
+      </div>
+      <div class="week-card">
+        <div class="week-card-header">
+          <span class="week-kw">KW25</span>
+          <span class="week-title">Produktion & Rehearsal</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Produktions-Deployment der finalen Version</li>
+          <li>Demo-Rehearsal mit TÜV-Team</li>
+          <li>Übergabe & Schulung</li>
+        </ul>
+      </div>
+      <div class="week-card" style="opacity: 0.6;">
+        <div class="week-card-header">
+          <span class="week-kw" style="background: var(--buffer);">KW26</span>
+          <span class="week-title">Buffer</span>
+        </div>
+        <ul class="week-tasks">
+          <li>Letzte Korrekturen & Stabilisierung</li>
+          <li>Fallback-Szenarien testen</li>
+        </ul>
+      </div>
+      <div class="week-card" style="border-color: var(--demo); border-width: 2px;">
+        <div class="week-card-header">
+          <span class="week-kw" style="background: var(--demo);">KW27</span>
+          <span class="week-title">Abteilungsleitertagung</span>
+        </div>
+        <ul class="week-tasks">
+          <li style="font-weight: 600; color: var(--text);">Live-Demo vor Abteilungsleitern</li>
+          <li>06. Juli 2026</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEPENDENCIES -->
+  <section class="deps-section">
+    <div class="section-title">
+      <div class="icon" style="background: var(--tuev-light); color: var(--tuev-blue);">&#8644;</div>
+      Abhängigkeiten von TÜV
+    </div>
+    <table class="deps-table">
+      <thead>
+        <tr>
+          <th>Benötigt</th>
+          <th>Wann</th>
+          <th>Von wem</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Dokumente: Inspektionsberichte, Anfragen, Angebote, LPV</td>
+          <td><span class="dep-kw">KW14</span></td>
+          <td><span class="dep-owner">TÜV Projektteam</span></td>
+        </tr>
+        <tr>
+          <td>Fachlicher Ansprechpartner für Validierung</td>
+          <td><span class="dep-kw">KW15–16</span></td>
+          <td><span class="dep-owner">TÜV Projektteam</span></td>
+        </tr>
+        <tr>
+          <td>Styleguide / Brand Assets</td>
+          <td><span class="dep-kw">KW17</span></td>
+          <td><span class="dep-owner">TÜV Digital Team</span></td>
+        </tr>
+        <tr>
+          <td>Benutzerrollen-Definition</td>
+          <td><span class="dep-kw">KW17</span></td>
+          <td><span class="dep-owner">TÜV Projektleitung</span></td>
+        </tr>
+        <tr>
+          <td>2–3 Tester (Sachverständige / Vertriebsmitarbeiter)</td>
+          <td><span class="dep-kw">KW21</span></td>
+          <td><span class="dep-owner">TÜV Projektteam</span></td>
+        </tr>
+        <tr>
+          <td>Infrastruktur-Entscheidung (TÜV-Cloud oder MING Labs)</td>
+          <td><span class="dep-kw">KW14</span></td>
+          <td><span class="dep-owner">TÜV IT</span></td>
+        </tr>
+        <tr>
+          <td>Demo-Abnahme & Skript-Review</td>
+          <td><span class="dep-kw">KW24</span></td>
+          <td><span class="dep-owner">TÜV Projektleitung</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- DATENANFORDERUNGEN -->
+  <section class="deps-section">
+    <div class="section-title">
+      <div class="icon" style="background: var(--tuev-light); color: var(--tuev-blue);">&#128269;</div>
+      Datenanforderungen für Kalkulation
+    </div>
+    <table class="deps-table">
+      <thead>
+        <tr>
+          <th>Systemkomponente</th>
+          <th>Benötigte Daten</th>
+          <th>Wahrscheinliche Quelle</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fafafa;">
+          <td colspan="4" style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--phase1); padding:10px 20px;">Preislogik</td>
+        </tr>
+        <tr>
+          <td><strong>Prüfdienstleistungen</strong></td>
+          <td>Katalog aller Prüfungen, Kategorien, typischer Aufwand</td>
+          <td>LPV, Sachverständige</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr>
+          <td><strong>Preispositionen</strong></td>
+          <td>Grundpauschalen, Stückpreise, Bezugsmerkmale (€/Gerät, €/Melder, ...)</td>
+          <td>LPV, Angebote</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr>
+          <td><strong>Mengenstaffeln</strong></td>
+          <td>Mengenrabatte (z.B. ab 500 Geräte → 3,80€ statt 4,50€)</td>
+          <td>LPV, Angebote</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr>
+          <td><strong>Zuschläge</strong></td>
+          <td>Express (+25%), Nacht (+30%), Altanlage (+20%), ATEX (+35%), Medizin (+25%)</td>
+          <td>Angebote, Kalkulationsexcel</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr>
+          <td><strong>Regionen & Reisekosten</strong></td>
+          <td>Regionale Preisfaktoren, Entfernungspauschalen</td>
+          <td>Interne Regelung, Angebote</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr style="background:#fafafa;">
+          <td colspan="4" style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--phase2); padding:10px 20px;">Gebäude & Anlagen</td>
+        </tr>
+        <tr>
+          <td><strong>Gebäudetypen</strong></td>
+          <td>Büro, Industrie, Krankenhaus, Hochhaus, etc. — mit Zuordnung zu Pflichtprüfungen</td>
+          <td>Normen (LBO), Sachverständige</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr>
+          <td><strong>Gebäude- & Anlagenmerkmale</strong></td>
+          <td>BGF, Etagen, Anzahl Geräte, Melder, Ableitungen, Schutzklasse, ...</td>
+          <td>Prüfberichte, Angebotsanfragen</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#dcfce7; color:#166534;">Teilweise vorhanden</span></td>
+        </tr>
+        <tr>
+          <td><strong>Gefahrenzonen</strong></td>
+          <td>ATEX, Medizin, Hochvolt, Nassbereich — Auslöser & Zuschläge</td>
+          <td>Normen (ATEX, LBO), Sachverständige</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr>
+          <td><strong>Nutzungsarten</strong></td>
+          <td>Büro, Industrie, Öffentlich, Wohnen — bestimmt Prüfintervalle</td>
+          <td>Normen, Sachverständige</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr style="background:#fafafa;">
+          <td colspan="4" style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--phase3); padding:10px 20px;">Regelwerk & Logik</td>
+        </tr>
+        <tr>
+          <td><strong>Pflichtprüfungen</strong></td>
+          <td>Welche Prüfungen sind pro Gebäudetyp gesetzlich vorgeschrieben</td>
+          <td>Normen (LBO, DGUV, DIN), Sachverständige</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr>
+          <td><strong>Normen & Vorschriften</strong></td>
+          <td>DGUV V3, BetrSichV, DIN EN 62305, LBO, ATEX, VdS CEA, ...</td>
+          <td>Prüfberichte, öffentlich zugänglich</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#dcfce7; color:#166534;">Teilweise vorhanden</span></td>
+        </tr>
+        <tr>
+          <td><strong>Prüfintervalle</strong></td>
+          <td>Halbjährlich bis 4 Jahre — abhängig von Nutzungsart & Dienstleistung</td>
+          <td>Prüfberichte, Normen</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#dcfce7; color:#166534;">Teilweise vorhanden</span></td>
+        </tr>
+        <tr>
+          <td><strong>Qualifikationsanforderungen</strong></td>
+          <td>EFK, PSV, ZÜS, Befähigte Person — pro Prüfung & Gefahrenzone</td>
+          <td>Normen, Sachverständige</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr>
+          <td><strong>Schätzformeln</strong></td>
+          <td>BGF → Anzahl Ableitungen, Melder, Geräte (reale Proportionen)</td>
+          <td>Prüfberichte, Sachverständige</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#dcfce7; color:#166534;">Kalibrierung möglich</span></td>
+        </tr>
+        <tr>
+          <td><strong>Kostentreiber & Effekte</strong></td>
+          <td>Warum kostet X mehr? (Sonderbau, Altanlage, Zeitdruck, ...)</td>
+          <td>Sachverständige, Angebote</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr style="background:#fafafa;">
+          <td colspan="4" style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--phase4); padding:10px 20px;">Cross-Selling & Bündelung</td>
+        </tr>
+        <tr>
+          <td><strong>Bündelrabatte</strong></td>
+          <td>Welche Prüfungen teilen Begehung → Rabatt (z.B. BMA + Sprinkler = 10%)</td>
+          <td>Angebote, Sachverständige</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+        <tr>
+          <td><strong>Empfehlungen</strong></td>
+          <td>Upsell-Logik: welche Prüfungen empfehlen sich zusätzlich</td>
+          <td>Sachverständige, Angebote</td>
+          <td><span style="font-size:11px; font-weight:600; padding:3px 10px; border-radius:100px; background:#fef3c7; color:#92400e;">Ausstehend</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 12px; padding: 0 4px;">Prüfberichte (Beispielberichte) liegen bereits vor. Für die Kalkulation fehlen vor allem <strong>Preisdaten</strong> (LPV, Angebote, Kalkulationsexcel) sowie <strong>Regelwerk-Validierung</strong> durch Sachverständige.</p>
+  </section>
+
+  <!-- AUSBLICK -->
+  <section class="deps-section">
+    <div style="padding:20px 28px; background:linear-gradient(135deg, var(--tuev-light) 0%, #f0f4ff 100%); border:1px solid var(--border); border-radius:14px; display:flex; align-items:center; gap:16px;">
+      <div style="width:40px; height:40px; border-radius:10px; background:var(--tuev-blue); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:18px; color:white;">&#8594;</div>
+      <div>
+        <div style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:2px;">Ausblick nach MVP</div>
+        <div style="font-size:13px; color:var(--text-secondary);">Die Plattform ist skalierbar auf weitere Produktkategorien und Geschäftsbereiche — jeweils als eigenständiges Erweiterungsprojekt</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-partners">
+    <div class="footer-partner">
+      <svg width="18" height="17" viewBox="0 0 36 35" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.3583 34.848L34.6346 21.6606C34.9554 21.3837 35.1394 20.9842 35.1394 20.5642V0.608917C35.1394 0.0865137 34.5141 -0.192483 34.115 0.151966L18.8387 13.3357C18.5178 13.6126 18.3337 14.0122 18.3337 14.4322V34.3912C18.3337 34.9136 18.9592 35.1924 19.3583 34.848ZM35.1389 34.3798V24.968C35.1389 24.4359 34.5412 24.1518 34.16 24.5025L29.3493 28.93C28.9205 29.3243 28.9205 30.0247 29.3493 30.4191L34.16 34.8453C34.5414 35.196 35.1389 34.9119 35.1389 34.3798ZM0 34.0296V0.667318C0 0.145957 0.620761 -0.13231 1.01675 0.211279L16.1512 13.3451C16.4694 13.6215 16.6522 14.0203 16.6522 14.4395V34.0296C16.6522 34.5655 16.2131 35 15.6717 35H0.980509C0.439049 35 0 34.5655 0 34.0296Z" fill="#ee0000"/></svg>
+      <span><strong style="color: var(--ming-dark);">MING Labs</strong></span>
+    </div>
+    <span class="footer-x">&middot;</span>
+    <div class="footer-partner">
+      <span style="color: var(--text-secondary); opacity: 0.45;">Powered by <strong>Synapse OS</strong></span>
+    </div>
+  </div>
+  <div class="footer-sub">Projektplan erstellt März 2026 &middot; Vertraulich</div>
+</footer>
+
+<script>
+  // Scroll-triggered animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.phase, .deps-section, .risks-section').forEach(el => {
+    observer.observe(el);
+  });
+
+  // Gantt click → scroll to phase
+  const phaseMap = {
+    0: 0, 1: 0, 2: 0,     // KW14-16 → Phase 1
+    3: 1, 4: 1, 5: 1, 6: 1, // KW17-20 → Phase 2
+    7: 2, 8: 2, 9: 2,     // KW21-23 → Phase 3
+    10: 3, 11: 3, 12: 3, 13: 3 // KW24-27 → Phase 4
+  };
+
+  document.querySelectorAll('.gantt-week').forEach((week, i) => {
+    week.addEventListener('click', () => {
+      const phases = document.querySelectorAll('.phase');
+      const idx = phaseMap[i];
+      if (idx !== undefined && phases[idx]) {
+        phases[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+    week.style.cursor = 'pointer';
+  });
+
+  // ─── Scroll sync: highlight active week in Gantt ───
+  const ganttWeeks = document.querySelectorAll('.gantt-week');
+  const weekCards = document.querySelectorAll('.week-card');
+
+  // Map each week-card to its gantt index(es) based on KW label
+  function getGanttIndicesForCard(card) {
+    const kwEl = card.querySelector('.week-kw');
+    if (!kwEl) return [];
+    const text = kwEl.textContent.trim();
+    // KW labels in gantt: 14,15,16,17,...,27 → indices 0,1,2,...,13
+    const kwToIndex = {14:0,15:1,16:2,17:3,18:4,19:5,20:6,21:7,22:8,23:9,24:10,25:11,26:12,27:13};
+    // Handle "KW14–15" style ranges
+    const match = text.match(/(\d+)/g);
+    if (!match) return [];
+    const indices = [];
+    if (match.length >= 2) {
+      for (let k = parseInt(match[0]); k <= parseInt(match[1]); k++) {
+        if (kwToIndex[k] !== undefined) indices.push(kwToIndex[k]);
+      }
+    } else {
+      const k = parseInt(match[0]);
+      if (kwToIndex[k] !== undefined) indices.push(kwToIndex[k]);
+    }
+    return indices;
+  }
+
+  let activeIndices = new Set();
+
+  function updateGanttHighlight() {
+    const newActive = new Set();
+    const ganttBottom = document.querySelector('.gantt-wrapper').getBoundingClientRect().bottom;
+
+    weekCards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight * 0.65 && rect.bottom > ganttBottom + 20;
+      if (inView) {
+        getGanttIndicesForCard(card).forEach(i => newActive.add(i));
+      }
+    });
+
+    if (setsEqual(activeIndices, newActive)) return;
+    activeIndices = newActive;
+
+    ganttWeeks.forEach((week, i) => {
+      const bar = week.querySelector('.gantt-bar');
+      const kw = week.querySelector('.gantt-kw');
+      if (newActive.has(i)) {
+        bar.style.opacity = '1';
+        bar.style.boxShadow = '0 3px 0 currentColor';
+        kw.style.fontWeight = '700';
+        kw.style.color = 'var(--text)';
+      } else {
+        bar.style.opacity = '0.4';
+        bar.style.boxShadow = 'none';
+        kw.style.fontWeight = '500';
+        kw.style.color = 'var(--text-secondary)';
+      }
+    });
+  }
+
+  function setsEqual(a, b) {
+    if (a.size !== b.size) return false;
+    for (const v of a) if (!b.has(v)) return false;
+    return true;
+  }
+
+  window.addEventListener('scroll', updateGanttHighlight, { passive: true });
+  updateGanttHighlight();
+</script>
+
+</body>
+</html>

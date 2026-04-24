@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[DEPRECATED] SmartCal@EG — Datenbasis &amp; Bedarf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --tuev-blue: #0046ad;
+    --tuev-dark: #003080;
+    --tuev-light: #e8f0fe;
+    --ming-red: #ee0000;
+    --ming-dark: #100a12;
+    --green: #166534;
+    --green-bg: #dcfce7;
+    --yellow: #92400e;
+    --yellow-bg: #fef3c7;
+    --red: #991b1b;
+    --red-bg: #fee2e2;
+    --bg: #f8f9fc;
+    --card: #ffffff;
+    --text: #1a1f36;
+    --text-secondary: #5a6178;
+    --border: #e2e6ef;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  /* HERO */
+  .hero {
+    background: url('ming_background.png') center/cover no-repeat, linear-gradient(135deg, #100a12 0%, #2a0a0a 100%);
+    color: white;
+    padding: 48px 48px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); }
+
+  .hero-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:40px; }
+  .hero-powered { opacity:0.6; font-size:11px; font-weight:500; letter-spacing:0.5px; }
+  .hero-powered strong { font-weight:700; opacity:1; }
+
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:100px; padding:6px 14px;
+    font-size:11px; font-weight:500; letter-spacing:0.5px; text-transform:uppercase;
+    margin-bottom:20px;
+  }
+  .hero-badge .dot { width:6px; height:6px; border-radius:50%; background:#4ade80; }
+
+  .hero h1 { font-size:40px; font-weight:700; letter-spacing:-1.5px; line-height:1.1; margin-bottom:10px; }
+  .hero h1 span { font-weight:300; opacity:0.7; }
+  .hero-sub { font-size:15px; opacity:0.65; margin-bottom:32px; max-width:680px; line-height:1.65; }
+
+  .hero-meta { display:flex; gap:32px; flex-wrap:wrap; }
+  .hero-meta-item { display:flex; flex-direction:column; gap:3px; }
+  .hero-meta-label { font-size:10px; text-transform:uppercase; letter-spacing:1px; opacity:0.4; font-weight:500; }
+  .hero-meta-value { font-family:var(--font-mono); font-size:14px; font-weight:500; }
+
+  /* CONTENT */
+  .content { max-width: 1100px; margin: 0 auto; padding: 56px 48px; }
+
+  /* SECTIONS */
+  .section { margin-bottom: 64px; }
+  .section-header { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .section-number {
+    font-family:var(--font-mono); font-size:13px; font-weight:600; color:white;
+    width:36px; height:36px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .section-number.n1 { background:var(--tuev-blue); }
+  .section-number.n2 { background:var(--yellow); }
+  .section-title { font-size:26px; font-weight:700; letter-spacing:-0.5px; }
+  .section-intro { font-size:15px; color:var(--text-secondary); margin-bottom:28px; line-height:1.7; max-width:860px; }
+
+  /* CARDS */
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 24px; margin-bottom: 14px;
+  }
+  .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:12px; }
+  .card-title { font-size: 16px; font-weight: 700; }
+  .card-text { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+  .card ul { list-style:none; padding:0; margin-top:10px; }
+  .card ul li { font-size:13px; color:var(--text-secondary); padding:5px 0 5px 18px; position:relative; line-height:1.55; }
+  .card ul li::before { content:''; position:absolute; left:0; top:13px; width:6px; height:6px; border-radius:50%; background:var(--tuev-blue); opacity:0.45; }
+  .card ul li.done::before { background:var(--green); opacity:0.85; }
+  .card ul li.missing::before { background:var(--yellow); }
+  .card ul li.blocker::before { background:var(--red); }
+  .card ul li strong { color:var(--text); font-weight:600; }
+
+  .card-green { border-left:4px solid var(--green); }
+  .card-yellow { border-left:4px solid var(--yellow); }
+  .card-blue { border-left:4px solid var(--tuev-blue); }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+
+  /* STAT TILES */
+  .stat {
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:22px; text-align:left;
+  }
+  .stat-value { font-family:var(--font-mono); font-size:32px; font-weight:700; color:var(--tuev-blue); letter-spacing:-1px; }
+  .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-secondary); font-weight:600; margin-top:6px; }
+  .stat-detail { font-size:12px; color:var(--text-secondary); margin-top:8px; line-height:1.5; }
+
+  /* BADGE */
+  .badge {
+    font-size:10px; font-weight:600; padding:4px 11px; border-radius:100px; display:inline-block;
+    letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap;
+  }
+  .badge-green { background:var(--green-bg); color:var(--green); }
+  .badge-yellow { background:var(--yellow-bg); color:var(--yellow); }
+
+  /* CALLOUT */
+  .callout {
+    padding:18px 22px; border-radius:12px; font-size:13px;
+    display:flex; align-items:flex-start; gap:14px; margin-bottom:22px; line-height:1.6;
+  }
+  .callout-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
+  .callout-yellow { background:var(--yellow-bg); border:1px solid #fde68a; color:#78350f; }
+
+  /* DIVIDER */
+  .divider { height:1px; background:var(--border); margin:40px 0; }
+
+  /* FOOTER */
+  .footer { text-align:center; padding:48px; border-top:1px solid var(--border); margin-top:24px; }
+  .footer-partners { display:flex; align-items:center; justify-content:center; gap:28px; margin-bottom:10px; }
+  .footer-partner { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--text-secondary); }
+  .footer-sub { font-size:11px; color:var(--text-secondary); opacity:0.5; }
+
+  @media (max-width: 860px) {
+    .hero { padding: 32px 24px; }
+    .content { padding: 40px 24px; }
+    .grid-2, .grid-4 { grid-template-columns: 1fr; }
+    .hero h1 { font-size:30px; }
+  }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .hero { padding: 32px; }
+    .content { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div style="background:#991b1b;color:#fff;text-align:center;padding:14px 20px;font-family:system-ui;font-size:15px;font-weight:600;letter-spacing:0.3px;">
+  DEPRECATED &mdash; Aktuelle Version: <a href="rules-blitzschutz.html" style="color:#fecaca;text-decoration:underline;">rules-blitzschutz.html</a> (Inventarisierung + Pricing Rules, Stand 23.04.2026)
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-top">
+    <div>
+      <svg width="28" height="27" viewBox="0 0 36 35" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.3583 34.848L34.6346 21.6606C34.9554 21.3837 35.1394 20.9842 35.1394 20.5642V0.608917C35.1394 0.0865137 34.5141 -0.192483 34.115 0.151966L18.8387 13.3357C18.5178 13.6126 18.3337 14.0122 18.3337 14.4322V34.3912C18.3337 34.9136 18.9592 35.1924 19.3583 34.848ZM35.1389 34.3798V24.968C35.1389 24.4359 34.5412 24.1518 34.16 24.5025L29.3493 28.93C28.9205 29.3243 28.9205 30.0247 29.3493 30.4191L34.16 34.8453C34.5414 35.196 35.1389 34.9119 35.1389 34.3798ZM0 34.0296V0.667318C0 0.145957 0.620761 -0.13231 1.01675 0.211279L16.1512 13.3451C16.4694 13.6215 16.6522 14.0203 16.6522 14.4395V34.0296C16.6522 34.5655 16.2131 35 15.6717 35H0.980509C0.439049 35 0 34.5655 0 34.0296Z" fill="white"/></svg>
+    </div>
+    <div class="hero-powered"><span>Powered by</span> <strong>Synapse OS</strong></div>
+  </div>
+
+  <div class="hero-badge"><span class="dot"></span>SmartCal@EG &middot; 10. April 2026</div>
+  <h1>Datenbasis <span>&amp; was noch fehlt</span></h1>
+  <p class="hero-sub">Kurzer Zwischenstand: Was wir aus den ersten echten TÜV-Prüfberichten in den Wissensgraph übernehmen können — und welche Unterlagen wir zum Projektstart noch benötigen.</p>
+</header>
+
+<div class="content">
+
+  <!-- SECTION 1: DATENBASIS -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-number n1">1</div>
+      <div class="section-title">Datenbasis Blitzschutz</div>
+    </div>
+    <div class="section-intro">
+      99 echte Prüfberichte mit strukturierten Feldern, Mängeln und Messpunkten — genug, um ab Tag 1 datengetrieben zu arbeiten.
+    </div>
+
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="stat">
+        <div class="stat-value">99</div>
+        <div class="stat-label">Prüfberichte</div>
+        <div class="stat-detail">TÜV SÜD IS Nürnberg · EG · Q1 2025</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">91</div>
+        <div class="stat-label">× Wiederkehrende Prüfung</div>
+        <div class="stat-detail">+ 7× nach Instandsetzung, + 1× nach Montage</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">7</div>
+        <div class="stat-label">Knoten-Typen</div>
+        <div class="stat-detail">Objekt, Anlage, Gebäudetyp, Norm, SV, Mangel, Messstelle</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">6</div>
+        <div class="stat-label">Merkmalsfelder</div>
+        <div class="stat-detail">Schutzklasse, Ableitungen, Material, Bauart, Dach, Nutzung</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-green">
+        <div class="card-header">
+          <div class="card-title">Was in den Berichten steht</div>
+          <span class="badge badge-green">vorhanden</span>
+        </div>
+        <div class="card-text">Strukturierte Felder, die direkt in den Graph fließen — ohne manuelle Aufbereitung.</div>
+        <ul>
+          <li class="done"><strong>Objekt-, Anlagen- &amp; Betreiberdaten</strong></li>
+          <li class="done"><strong>Technische Merkmale:</strong> Schutzklasse, Ableitungen, Material</li>
+          <li class="done"><strong>Messergebnisse</strong> pro Messstelle</li>
+          <li class="done"><strong>Mängel</strong> mit Einstufung 1–3 inkl. Fotos</li>
+          <li class="done"><strong>Prüfintervall</strong> (nächste Prüfung)</li>
+        </ul>
+      </div>
+
+      <div class="card card-blue">
+        <div class="card-header">
+          <div class="card-title">Was wir daraus für den Wissensgraph ziehen</div>
+          <span class="badge" style="background:var(--tuev-light); color:var(--tuev-blue);">Extraktion</span>
+        </div>
+        <div class="card-text">Aus den extrahierten Rohdaten entstehen sowohl die Bausteine des Wissensgraphen als auch die Kalkulations- und Schätzregeln, die in Phase 1 und Phase 2 den entscheidenden Mehrwert liefern.</div>
+        <ul>
+          <li class="done"><strong>Knoten des Wissensgraphen:</strong> Objekt (Liegenschaft), Anlage, Gebäudetyp, zugrundeliegende Norm, Sachverständiger, Mangel, Messstelle</li>
+          <li class="done"><strong>Merkmale pro Anlage:</strong> Schutzklasse, Anzahl Ableitungen, Material der Leitungen, Bauart des Gebäudes, Art der Dacheindeckung, Nutzungsart</li>
+          <li class="done"><strong>Prüftiefe:</strong> aus dem Material-Code ableitbar (Wiederkehrende Prüfung / Prüfung nach Instandsetzung / Prüfung nach Montage)</li>
+          <li class="done"><strong>Schätzformeln:</strong> aus Gebäudetyp und Bruttogrundfläche (BGF) lassen sich Anzahl Ableitungen und Prüfintervall ableiten</li>
+          <li class="done"><strong>Mängel-Muster:</strong> typische Defekte pro Gebäudetyp und Umgebung (z.B. Bewuchs bei historischen Anlagen, Korrosion in Küstennähe)</li>
+          <li class="missing"><strong>Preislogik:</strong> Grundpauschalen, Staffeln, Zuschläge und Bündelrabatte — ergänzen wir im nächsten Schritt aus LPV und Beispielangeboten</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 2: WAS WIR NOCH BRAUCHEN -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-number n2">2</div>
+      <div class="section-title">Was wir noch brauchen</div>
+    </div>
+    <div class="section-intro">
+      Die Prüfberichte decken die fachlich-technische Seite ab. Für eine funktionierende Kalkulation fehlt der kommerzielle Layer — insbesondere Preislogik und 1–2 Validierungsrunden mit einem Sachverständigen.
+    </div>
+
+    <div class="callout callout-yellow">
+      <div class="callout-icon">&#9888;</div>
+      <div><strong>Blocker für Projektstart:</strong> Ohne Preisdaten (LPV + Beispielangebote) kann das Phase-1-Deliverable nicht abgeschlossen werden. Diese Unterlagen sind für KW15 kritisch.</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-yellow">
+        <div class="card-header">
+          <div class="card-title">Von TÜV SÜD</div>
+          <span class="badge badge-yellow">offen</span>
+        </div>
+        <ul>
+          <li class="blocker"><strong>LPV / Preisliste</strong> für die 3 Startprodukte — KW15</li>
+          <li class="blocker"><strong>3–5 Beispielangebote</strong> pro Produkt — KW15</li>
+          <li class="missing"><strong>Kalkulationsexcel</strong> (falls vorhanden) — KW15</li>
+          <li class="missing"><strong>1–2h mit Sachverständigem</strong> für fachliche Validierung — KW15–16</li>
+          <li class="missing"><strong>Finalisierung der 3 Startprodukte</strong> — Vorschlag: Blitzschutz, BMA, DGUV V3</li>
+          <li class="missing"><strong>TÜV Styleguide / Brand Assets</strong> — ab KW17</li>
+          <li class="missing"><strong>Hosting-Entscheidung</strong> (MING Cloud vs. TÜV Cloud) — bis KW22</li>
+        </ul>
+      </div>
+
+      <div class="card card-yellow">
+        <div class="card-header">
+          <div class="card-title">Intern (MING Labs)</div>
+          <span class="badge badge-yellow">offen</span>
+        </div>
+        <ul>
+          <li class="missing"><strong>Extraktions-Pipeline</strong> für die 99 PDFs (LLM → strukturiertes JSON)</li>
+          <li class="missing"><strong>Graph-Schema v1 Blitzschutz</strong> auf Basis der echten Berichte</li>
+          <li class="missing"><strong>Kick-off Agenda &amp; Termin</strong> bestätigen</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-partners">
+    <div class="footer-partner">
+      <svg width="18" height="17" viewBox="0 0 36 35" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.3583 34.848L34.6346 21.6606C34.9554 21.3837 35.1394 20.9842 35.1394 20.5642V0.608917C35.1394 0.0865137 34.5141 -0.192483 34.115 0.151966L18.8387 13.3357C18.5178 13.6126 18.3337 14.0122 18.3337 14.4322V34.3912C18.3337 34.9136 18.9592 35.1924 19.3583 34.848ZM35.1389 34.3798V24.968C35.1389 24.4359 34.5412 24.1518 34.16 24.5025L29.3493 28.93C28.9205 29.3243 28.9205 30.0247 29.3493 30.4191L34.16 34.8453C34.5414 35.196 35.1389 34.9119 35.1389 34.3798ZM0 34.0296V0.667318C0 0.145957 0.620761 -0.13231 1.01675 0.211279L16.1512 13.3451C16.4694 13.6215 16.6522 14.0203 16.6522 14.4395V34.0296C16.6522 34.5655 16.2131 35 15.6717 35H0.980509C0.439049 35 0 34.5655 0 34.0296Z" fill="#ee0000"/></svg>
+      <span><strong style="color:var(--ming-dark);">MING Labs</strong></span>
+    </div>
+    <span style="color:var(--border);">&middot;</span>
+    <div class="footer-partner">
+      <span style="color:var(--text-secondary); opacity:0.6;">Powered by <strong>Synapse OS</strong></span>
+    </div>
+  </div>
+  <div class="footer-sub">SmartCal@EG &middot; Datenbasis &amp; Bedarf &middot; 10. April 2026 &middot; Vertraulich</div>
+</footer>
+
+</body>
+</html>

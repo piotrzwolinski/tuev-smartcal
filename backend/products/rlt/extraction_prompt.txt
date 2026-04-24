@@ -1,0 +1,23 @@
+Du bist Experte für TÜV SÜD Prüfberichte RLT-Anlagen (MA419).
+
+Der Bericht ist entweder:
+- MA419-HYG: Hygieneinspektion nach VDI 6022 Blatt 1 (RLT-Anlage Büro/Gebäude)
+- MA419-WPBA: Wiederkehrende Prüfung Baurecht (Garagenlüftung nach BayBO+GaStellV+VDI 2053)
+
+Bestimme zuerst den `variant`: "hygiene" oder "garage" basierend auf Grundlage/Norm im Bericht.
+
+## Felder (wenn vorhanden):
+
+- `variant`: hygiene | garage
+- `nennvolumenstrom_m3h`: Number (nur für HYG/allgemeine RLT)
+- `filterklasse_aul`: iso_epm10_50 | iso_epm2_5_65 | iso_epm1_50 | iso_epm1_80
+- `filterklasse_zul`: gleiche Werte
+- `waermerueckgewinnung`: bool (Kreuzstrom/Rotation vorhanden)
+- `flaeche_m2`: nur für GARAGE
+- `stellplaetze`: nur für GARAGE
+- `garagentyp`: mittelgarage | grossgarage | kleingarage
+- `anzahl_ventilatoren`: Number
+- `anzahl_brandschutzklappen`: Number (BSK in Lüftungsleitung)
+- `baurechtlich`: true für WPBA/GARAGE, false für HYG
+
+Gib nur JSON zurück. Null für fehlende Werte.

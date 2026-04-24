@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blitzschutz Pricing Rules — vollständige Regelextraktion aus TÜV-Dokumenten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --tuev-blue: #0046ad;
+    --tuev-blue-light: #e8eef8;
+    --tuev-blue-mid: #ccdaef;
+    --tuev-blue-dark: #003080;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --green-border: #22c55e;
+    --yellow: #ca8a04;
+    --yellow-bg: #fefce8;
+    --yellow-border: #eab308;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --red-border: #ef4444;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --radius: 8px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    color: var(--gray-800);
+    background: var(--gray-50);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  code, .mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--tuev-blue) 0%, var(--tuev-blue-dark) 100%);
+    color: #fff;
+    padding: 48px 0 40px;
+  }
+  .header .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .header p {
+    font-size: 15px;
+    opacity: 0.85;
+    max-width: 700px;
+  }
+  .header .badge-row {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .header .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* TOC */
+  .toc-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #fff;
+    border-bottom: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
+  }
+  .toc {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 10px 24px;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .toc::-webkit-scrollbar { display: none; }
+  .toc a {
+    white-space: nowrap;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-500);
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .toc a:hover {
+    color: var(--tuev-blue);
+    background: var(--tuev-blue-light);
+  }
+  .toc a.core {
+    color: var(--tuev-blue);
+    background: var(--tuev-blue-light);
+    font-weight: 600;
+  }
+
+  /* Main */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 40px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .section-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gray-900);
+    letter-spacing: -0.3px;
+  }
+  .section-header .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .status-ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .status-warn { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+  .status-no { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+  .section-source {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  /* Cards */
+  .card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--gray-300);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.15s;
+  }
+  .card:hover { box-shadow: var(--shadow); }
+  .card.ok { border-left-color: var(--green-border); }
+  .card.warn { border-left-color: var(--yellow-border); }
+  .card.no { border-left-color: var(--red-border); }
+
+  .card.highlight {
+    background: linear-gradient(to right, var(--tuev-blue-light) 0%, #fff 100%);
+    border-color: var(--tuev-blue);
+    border-left-color: var(--tuev-blue);
+    border-left-width: 5px;
+  }
+
+  .card ul {
+    list-style: none;
+    padding: 0;
+  }
+  .card ul li {
+    position: relative;
+    padding: 4px 0 4px 20px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .card ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gray-400);
+  }
+  .card.ok ul li::before { background: var(--green); }
+  .card.warn ul li::before { background: var(--yellow); }
+  .card.no ul li::before { background: var(--red); }
+
+  .card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--gray-700);
+  }
+
+  .card .note {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: var(--gray-50);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--gray-600);
+    border: 1px solid var(--gray-200);
+  }
+
+  /* Tables */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--gray-100);
+    font-weight: 600;
+    color: var(--gray-700);
+    border-bottom: 2px solid var(--gray-200);
+    white-space: nowrap;
+  }
+  td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: top;
+  }
+  tr:hover td { background: var(--gray-50); }
+
+  .mono-cell { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .price { font-weight: 600; color: var(--tuev-blue-dark); }
+  .heuristik {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--yellow);
+    background: var(--yellow-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  /* Standorte grid */
+  .standorte-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .standort-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 5px 8px;
+    font-size: 13px;
+    border-radius: 4px;
+    background: var(--gray-50);
+  }
+  .standort-item .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gray-400);
+    min-width: 18px;
+  }
+  .standort-item .city {
+    font-weight: 600;
+    color: var(--tuev-blue);
+    min-width: 90px;
+  }
+  .standort-item .addr {
+    color: var(--gray-500);
+    font-size: 12px;
+  }
+
+  /* Subsection */
+  .subsection {
+    margin-top: 16px;
+  }
+  .subsection h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--tuev-blue);
+    margin-bottom: 8px;
+  }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid var(--gray-200);
+    padding: 32px 0;
+    background: #fff;
+  }
+  .footer .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .footer h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--gray-700);
+  }
+  .footer ul {
+    list-style: none;
+    padding: 0;
+  }
+  .footer ul li {
+    font-size: 13px;
+    color: var(--gray-500);
+    padding: 3px 0;
+  }
+  .footer .stand {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-100);
+    font-size: 12px;
+    color: var(--gray-400);
+  }
+
+  /* Print */
+  @media print {
+    .toc-wrapper { position: static; }
+    .card { break-inside: avoid; }
+    body { font-size: 12px; }
+    .header { padding: 24px 0; }
+  }
+
+  @media (max-width: 640px) {
+    .header h1 { font-size: 22px; }
+    .section-header h2 { font-size: 17px; }
+    .standorte-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="container">
+    <h1>Blitzschutz Pricing Rules</h1>
+    <p>Vollständige Regelextraktion aus TÜV-Dokumenten für SmartCal Pricing Engine. 14 Regelgruppen aus LPV 2025/2026, TÜV-Korrespondenz, 30 Sample-PDFs und 316 Validierungsanlagen.</p>
+    <div class="badge-row">
+      <span class="badge">LPV Teil A + B04</span>
+      <span class="badge">TÜV-Korrespondenz 14.08.2025</span>
+      <span class="badge">30 Sample-PDFs</span>
+      <span class="badge">316 Anlagen StV</span>
+      <span class="badge">24 Excel-Sheets</span>
+      <span class="badge">28.674 Versand-Berichte (neu 22.04)</span>
+      <span class="badge">Inspektionspflichten netinformRE</span>
+      <span class="badge">CRM PLZ → 24 NL</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc-wrapper">
+  <nav class="toc">
+    <a href="#s1">1 Reisekosten</a>
+    <a href="#s2">2 Grundkosten</a>
+    <a href="#s3">3 Stundensätze</a>
+    <a href="#s4" class="">4 Prüfkosten</a>
+    <a href="#s5">5 Bericht</a>
+    <a href="#s6" class="">6 Zuschläge</a>
+    <a href="#s7">7 Prüfungsarten</a>
+    <a href="#s8">8 ZUS/BetrSichV</a>
+    <a href="#s9">9 Merkmale</a>
+    <a href="#s10">10 Mangel</a>
+    <a href="#s12">12 Validierung</a>
+    <a href="#s13">13 Batch-Pipeline</a>
+    <a href="#sinv" class="core">Inventarisierung</a>
+    <a href="#s14">14 4 Varianten</a>
+  </nav>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ================================================================ -->
+  <!-- SECTION 1: Reisekosten -->
+  <!-- ================================================================ -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <h2>1. Reisekosten</h2>
+      <span class="status status-ok">Implementiert</span>
+    </div>
+    <div class="section-source">LPV Teil A &sect;4.3 + TÜV-Korrespondenz 14.08.2025</div>
+
+    <div class="card ok">
+      <h3>Berechnungsregeln</h3>
+      <ul>
+        <li>Tool muss anhand der Objektadresse den nächst möglichen TÜV SÜD Standort suchen</li>
+        <li>Kilometergeld PKW: <span class="mono price">1,10 &euro;/km</span> (hin + zuruck)</li>
+        <li>Kilometergeld LKW-Gerätewagen: <span class="mono price">1,20 &euro;/km</span></li>
+        <li>Reisezeit: Stundensatz <span class="mono price">180 &euro;/h</span> (einfache Sachverhalte)</li>
+        <li>&bdquo;Bei mehrtägigen Prüfungen ist von maximalen Anfahrten auszugehen&ldquo; &rarr; NUR 1 Hin-/Rückfahrt</li>
+        <li>Tagegeld: bei 6&ndash;8h = <span class="mono price">6 &euro;</span>, bei 8&ndash;14h = <span class="mono price">25 &euro;</span>, bei 14&ndash;24h = <span class="mono price">30 &euro;</span></li>
+        <li>Übernachtung: nach Aufwand</li>
+        <li>Bahnfahrt / Flug: nach Aufwand</li>
+      </ul>
+      <div class="note">Routing: OSRM (Fahrstrecke), nicht Luftlinie. Pre-select top 3 by Haversine, route via OSRM.</div>
+    </div>
+
+    <div class="card ok">
+      <h3>23 Standorte (TÜV-Korrespondenz exakte Adressen)</h3>
+      <div class="standorte-grid">
+        <div class="standort-item"><span class="num">01</span><span class="city">Augsburg</span><span class="addr">Oskar-von-Miller-Str. 17, 86199</span></div>
+        <div class="standort-item"><span class="num">02</span><span class="city">Berlin</span><span class="addr">Wittestr. 30 Haus LM, 13509</span></div>
+        <div class="standort-item"><span class="num">03</span><span class="city">Darmstadt</span><span class="addr">Rudesheimer Str. 119, 64285</span></div>
+        <div class="standort-item"><span class="num">04</span><span class="city">Dresden</span><span class="addr">Drescherhauser 5 D, 01159</span></div>
+        <div class="standort-item"><span class="num">05</span><span class="city">Essen</span><span class="addr">Kruppstr. 82-100, 45145</span></div>
+        <div class="standort-item"><span class="num">06</span><span class="city">Filderstadt</span><span class="addr">Gottlieb-Daimler-Str. 7, 70794</span></div>
+        <div class="standort-item"><span class="num">07</span><span class="city">Freiburg</span><span class="addr">Hermann-Mitsch-Str. 36 A, 79108</span></div>
+        <div class="standort-item"><span class="num">08</span><span class="city">Hamburg</span><span class="addr">Syltsterstr. 2, 22525</span></div>
+        <div class="standort-item"><span class="num">09</span><span class="city">Hannover</span><span class="addr">Gottinger Landstr. 10, 30419</span></div>
+        <div class="standort-item"><span class="num">10</span><span class="city">Heilbronn</span><span class="addr">Heiner-Daimler-Str. 9, 74076</span></div>
+        <div class="standort-item"><span class="num">11</span><span class="city">Hof</span><span class="addr">Erfreudenstr. 75, 95032</span></div>
+        <div class="standort-item"><span class="num">12</span><span class="city">Karlsruhe</span><span class="addr">Am Ruppurer Schloss 1, 76199</span></div>
+        <div class="standort-item"><span class="num">13</span><span class="city">Leipzig</span><span class="addr">Weserstr. 2, 04159</span></div>
+        <div class="standort-item"><span class="num">14</span><span class="city">Mannheim</span><span class="addr">Dudenstr. 28, 68167</span></div>
+        <div class="standort-item"><span class="num">15</span><span class="city">Munchen</span><span class="addr">Westendstr. 199, 80686</span></div>
+        <div class="standort-item"><span class="num">16</span><span class="city">Nurnberg</span><span class="addr">Edisonstr. 15, 90431</span></div>
+        <div class="standort-item"><span class="num">17</span><span class="city">Ravensburg</span><span class="addr">Rudolfstr. 15, 88214</span></div>
+        <div class="standort-item"><span class="num">18</span><span class="city">Regensburg</span><span class="addr">Friedenstr. 6, 93051</span></div>
+        <div class="standort-item"><span class="num">19</span><span class="city">Rostock</span><span class="addr">Krusensternweg 2, 18069</span></div>
+        <div class="standort-item"><span class="num">20</span><span class="city">St. Ingbert</span><span class="addr">Am Alten Forsthaus 1, 66386</span></div>
+        <div class="standort-item"><span class="num">21</span><span class="city">Trostberg</span><span class="addr">Gabelsbergerstr. 5, 83308</span></div>
+        <div class="standort-item"><span class="num">22</span><span class="city">Ulm</span><span class="addr">Berlinger Str. 17, 89079</span></div>
+        <div class="standort-item"><span class="num">23</span><span class="city">Wurzburg</span><span class="addr">Petrinstr. 33 A, 97080</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 2: Grundkosten -->
+  <!-- ================================================================ -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <h2>2. Grundkosten</h2>
+      <span class="status status-ok">Implementiert 1:1</span>
+    </div>
+    <div class="section-source">LPV Teil A &sect;4&ndash;5 + TÜV-Korrespondenz</div>
+
+    <div class="card ok">
+      <ul>
+        <li>TÜV SÜDale Auftragsanlage, Verwaltung, Angebotsgebüühr: <span class="mono price">256,00 &euro;</span></li>
+        <li>Ordnungsprüfung Dokumente: <span class="mono price">242,00 &euro;</span> &mdash; NUR bei baurechtlichen Prüfungen! TÜV SÜD EG: &bdquo;nicht im aktuellen Beispiel&ldquo;</li>
+        <li>Energie- und Prüfmittelpauschale: <span class="mono price">49,00 &euro;</span> je Prüftag, je Sachverständiger</li>
+        <li>Tagegeld: siehe Reisekosten oben</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 3: Stundensätze -->
+  <!-- ================================================================ -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <h2>3. Stundensätze</h2>
+      <span class="status status-ok">Implementiert</span>
+    </div>
+    <div class="section-source">LPV Teil A &sect;4.2</div>
+
+    <div class="card ok">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Stufe</th><th>Sachverhalt</th><th>Stundensatz</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Einfache Sachverhalte</td><td class="mono-cell price">180,00 &euro;</td></tr>
+            <tr><td>2</td><td>Schwierige Sachverhalte</td><td class="mono-cell price">208,00 &euro;</td></tr>
+            <tr><td>3</td><td>Komplexe Sachverhalte</td><td class="mono-cell price">239,00 &euro;</td></tr>
+            <tr><td>4</td><td>Besondere Sachverhalte</td><td class="mono-cell price">265,00 &euro;</td></tr>
+            <tr><td>5</td><td>Systemanalysen</td><td class="mono-cell price">320,00 &euro;</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul style="margin-top: 12px;">
+        <li>Zuschlag bis <strong>+30%</strong> bei: Beurteilungen nach Stand der Wissenschaft, Produktprüfungen, Tatigkeiten im Ausland, erschwerende Arbeitsbedingungen</li>
+        <li>Thermografische Untersuchungen: besondere Stunden- oder Tagessätze</li>
+        <li>Nicht-Vereinsmitglieder: bis <strong>+20%</strong> auf alle Leistungen</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 4: Prüfkosten Blitzschutz (CORE) -->
+  <!-- ================================================================ -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <h2>4. Prüfkosten Blitzschutz</h2>
+      <span class="status status-warn">Basis implementiert, Staffeln = Heuristik</span>
+    </div>
+    <div class="section-source">LPV Teil B04 &sect;8</div>
+
+    <div class="card highlight warn">
+      <h3>4.1 Ausserer Blitzschutz (&sect;8.1) &mdash; PHASE 1</h3>
+      <ul>
+        <li>Preis pro Messstelle (= Ableitung/Trennstelle): <span class="mono price">33,00 &euro;/Stuck</span></li>
+        <li>Bei &gt; 10 Messstellen: &bdquo;besondere Vereinbarung&ldquo; (LPV sagt NICHT welche Staffeln!)</li>
+        <li>Stundensatz bei Sonderfällen: <span class="mono price">180 &euro;/h</span> (einfach)</li>
+      </ul>
+    </div>
+
+    <div class="card highlight warn">
+      <h3>4.2 Innerer Blitzschutz / Überspannungsschutz (&sect;8.2) &mdash; PHASE 2</h3>
+      <ul>
+        <li>Verrechnung: nach Angebot / Stundensatz <span class="mono price">208 &euro;/h</span> (schwierig)</li>
+        <li>Kein Festpreis pro Einheit definiert</li>
+      </ul>
+    </div>
+
+    <div class="card warn">
+      <h3>Unsere Staffeln &gt;10 MS (HEURISTIK &mdash; nicht aus LPV!)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Messstellen</th><th>Preis/MS</th><th>Quelle</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1&ndash;10 MS</td><td class="mono-cell price">33,00 &euro;/MS</td><td>LPV-konform</td></tr>
+            <tr><td>11&ndash;20 MS</td><td class="mono-cell price">30,00 &euro;/MS</td><td><span class="heuristik">Heuristik</span></td></tr>
+            <tr><td>21&ndash;40 MS</td><td class="mono-cell price">28,00 &euro;/MS</td><td><span class="heuristik">Heuristik</span></td></tr>
+            <tr><td>41&ndash;100 MS</td><td class="mono-cell price">26,00 &euro;/MS</td><td><span class="heuristik">Heuristik</span></td></tr>
+            <tr><td>101+ MS</td><td class="mono-cell price">24,00 &euro;/MS</td><td><span class="heuristik">Heuristik</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note">
+        <strong>Validierung gegen 316 Anlagen Stadtwerke Augsburg StV:</strong><br>
+        &le;25 MS: Staffeln passen gut (&Delta; &lt;5%)<br>
+        &gt;25 MS: StV zeigt aggressivere Ausschreibungs-Rabatte (12&ndash;22 &euro;/MS) &mdash; das ist Bieter-Wettbewerb, nicht LPV
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 5: Berichterstellung -->
+  <!-- ================================================================ -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <h2>5. Berichterstellung</h2>
+      <span class="status status-warn">Werte implementiert, Zuordnung = Heuristik</span>
+    </div>
+    <div class="section-source">LPV Teil A &sect;5 + TÜV-Korrespondenz</div>
+
+    <div class="card warn">
+      <h3>TÜV-Korrespondenz spezifiziert für Blitzschutz</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Berichtstyp</th><th>Preis</th><th>Details</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Blitzschutzanlagen bei kleinen Anlagen</td><td class="mono-cell price">119 &euro;</td><td>&mdash;</td></tr>
+            <tr><td>1) Standardbericht mit einheitlicher Vorlage</td><td class="mono-cell price">380 &euro;</td><td>Umfang bis 10 Seiten</td></tr>
+            <tr><td>2) Standardbericht mit komplexem/besonderem Sachverhalt</td><td class="mono-cell price">550 &euro;</td><td>+ umfangreiche Anlagenbeschreibungen</td></tr>
+            <tr><td>3) Individueller Begutachtungsbericht</td><td class="mono-cell">n.V.</td><td>Ausserhalb der Standardvorlagen</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card warn">
+      <h3>Unsere Zuordnung (HEURISTIK)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Messstellen</th><th>Kategorie</th><th>Berichtspreis</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>&le;10 Messstellen</td><td>klein</td><td class="mono-cell price">119 &euro;</td></tr>
+            <tr><td>11&ndash;40 Messstellen</td><td>standard</td><td class="mono-cell price">380 &euro;</td></tr>
+            <tr><td>&gt;40 Messstellen</td><td>komplex</td><td class="mono-cell price">550 &euro;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 6: Zuschläge (CORE) -->
+  <!-- ================================================================ -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <h2>6. Zuschläge</h2>
+      <span class="status status-ok">Implementiert (5 Typen)</span>
+    </div>
+    <div class="section-source">LPV Teil A &sect;11&ndash;13</div>
+
+    <div class="card highlight ok">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Zuschlag</th><th>Aufschlag</th><th>Basis</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Nicht-Vereinsmitglied</td><td class="mono-cell price">bis +20%</td><td>auf alle Preise (&bdquo;Audi-Logik&ldquo;, TÜV SÜD EG bestatigt)</td></tr>
+            <tr><td>Einzelprüfung (ohne Rahmenvertrag)</td><td class="mono-cell price">bis +20%</td><td>auf WP-Preise</td></tr>
+            <tr><td>Erstprüfung (vor Inbetriebnahme)</td><td class="mono-cell price">bis +100%</td><td>auf WP-Preise</td></tr>
+            <tr><td>Eilzuschlag / Sondertermin</td><td class="mono-cell price">bis +25%</td><td>&mdash;</td></tr>
+            <tr><td>Bevorzugte Bearbeitung</td><td class="mono-cell price">bis +100%</td><td>&mdash;</td></tr>
+            <tr><td>Ausserhalb normaler Dienstzeit</td><td class="mono-cell price">bis +100%</td><td>&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul style="margin-top: 12px;">
+        <li>Erfolgloser Termin: anteiliger Preis + Reisekosten (LPV &sect;12)</li>
+        <li>Außerordentliche Untersuchungen: nach Aufwand (LPV &sect;13)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 7: Prüfungsarten -->
+  <!-- ================================================================ -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <h2>7. Prüfungsarten</h2>
+      <span class="status status-ok">Implementiert</span>
+    </div>
+    <div class="section-source">LPV Teil A &sect;5.2</div>
+
+    <div class="card ok">
+      <h3>Unterscheidung nach Art der Prüfung</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Art</th><th>Beschreibung</th><th>Zuschlag</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>BA</code></td><td>Bauartprüfung</td><td>&mdash;</td></tr>
+            <tr><td><code>EP</code></td><td>Einzelprüfung</td><td>&mdash;</td></tr>
+            <tr><td><code>EP</code></td><td>Erstprüfung &mdash; Abnahmeprüfung vor erster Inbetriebnahme</td><td class="mono-cell price">bis +100%</td></tr>
+            <tr><td><code>WP</code></td><td>Wiederkehrende Prüfung &mdash; Standard</td><td>&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note">
+        <strong>WP Voraussetzungen:</strong> a) TÜV SÜD Erstprüfung vorlag, b) vertragliche Vereinbarung, c) innerhalb normaler Arbeitszeit<br>
+        <strong>Enum im System:</strong> <code>art_pruefung</code> &rarr; WP / PI / PM / BG
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 8: ZUS/BetrSichV -->
+  <!-- ================================================================ -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <h2>8. Verrechnung bei überwachungsbedürftigen Anlagen</h2>
+      <span class="status status-no">Nicht implementiert (Phase 2)</span>
+    </div>
+    <div class="section-source">LPV &sect;7, BetrSichV</div>
+
+    <div class="card no">
+      <ul>
+        <li>Prüfung durch ZUS (Zugelassene Überwachungsstelle): nach Aufwand/TÜV SÜDale/Festpreis</li>
+        <li>Prüfungsumfang nach gültigen Rechtsverordnungen zum Zeitpunkt des Inkrafttretens</li>
+        <li>Reiseaufwand kann zusatzlich in Rechnung gestellt werden</li>
+      </ul>
+      <div class="note">Relevant für MA555 (Blitzschutz Ex, &sect;7(7) GefStoffV) &mdash; Phase 2</div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 9: Merkmale aus Sample-PDFs -->
+  <!-- ================================================================ -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <h2>9. Blitzschutz Merkmale aus 30 Sample-PDFs</h2>
+      <span class="status status-ok">17 Merkmale als Pydantic-Schema</span>
+    </div>
+    <div class="section-source">MA570 / MA572 / MA574 / MA555</div>
+
+    <div class="card ok">
+      <h3>Strukturell (immer vorhanden)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Merkmal</th><th>Werte / Bereich</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Nutzung des Gebaudes</td><td>Schule / Buro / Industrie / Krankenhaus / Hotel / Museum / Lager / Garage / Wohnung</td></tr>
+            <tr><td>Schutzklasse</td><td>I / II / III / IV &mdash; <span class="heuristik">in 49% der MA570-Berichte LEER!</span></td></tr>
+            <tr><td>Anzahl der Ableitungen / Messstellen</td><td>1&ndash;500 &mdash; <strong>PRIMARY COST DRIVER</strong></td></tr>
+            <tr><td>Bauart des Gebaudes</td><td>Ziegel / Stahlbeton / Holz / Stahl / Naturstein / gemischt</td></tr>
+            <tr><td>Art der Dacheindeckung</td><td>Blech / Kies / Folie / Ziegel / Dachpappe / Grundach</td></tr>
+            <tr><td>Werkstoff der Gebaudeleitung</td><td>&mdash;</td></tr>
+            <tr><td>Material Ableitung</td><td>Kupfer / Alulegierung / Stahl verzinkt / Edelstahl / metallene Fassade</td></tr>
+            <tr><td>Typ Erdungsanlage</td><td>Typ A Tiefenerder / Typ B Fundamenterder DIN 18014</td></tr>
+            <tr><td>Material Erdungsanlage</td><td>&mdash;</td></tr>
+            <tr><td>Blitzschutzpotentialausgleich</td><td>vorhanden / nicht</td></tr>
+            <tr><td>Überspannungsschutzgeräte SPD</td><td>vorhanden / nicht, Typ 1+2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card ok">
+      <h3>Geometrie (optional, selten vollständig)</h3>
+      <ul>
+        <li>Abmessungen L&times;B&times;H [m]</li>
+        <li>Gebaudeumfang [m]</li>
+      </ul>
+    </div>
+
+    <div class="card ok">
+      <h3>Prüfungs-Kontext</h3>
+      <ul>
+        <li>Art der Prüfung (WP / PI / PM / BG)</li>
+        <li>Grundlage (Auftrag Betreiber / &sect;2 SPrüfV / &sect;7(7) GefStoffV / Nachtragsbaugenehmigung)</li>
+        <li>Baurechtlich ja/nein</li>
+        <li>Sachverständiger + TÜV-Niederlassung</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 10: Mängel-Patterns -->
+  <!-- ================================================================ -->
+  <div class="section" id="s10">
+    <div class="section-header">
+      <h2>10. Mängel-Patterns aus Prüfberichten</h2>
+      <span class="status status-warn">Patterns identifiziert, nicht im Graph</span>
+    </div>
+    <div class="section-source">30 Sample-PDFs &mdash; für Risk Score</div>
+
+    <div class="card warn">
+      <h3>Haufigste Mängel-Kategorien</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Mängel</th><th>Haufigkeit</th><th>Einstufung</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Übergangswiderstand zu hoch (&gt;1&Omega;)</td><td>sehr häufig</td><td><code>1&ndash;2</code></td></tr>
+            <tr><td>Regenfallrohre nicht mit Blitzschutz verbunden</td><td>häufig</td><td><code>2</code></td></tr>
+            <tr><td>Bewuchs / Vegetation an Ableitungen</td><td>häufig bei Burgen/Schlössern</td><td><code>1</code></td></tr>
+            <tr><td>Erdeinführung vermutlich unterbrochen</td><td>&mdash;</td><td><code>2</code> (erheblich!)</td></tr>
+            <tr><td>Gefährliche Naherung (z.B. CEE-Steckdose)</td><td>&mdash;</td><td><code>2&ndash;3</code></td></tr>
+            <tr><td>Trennungsabstand nicht eingehalten (Kamine/Ausblaser)</td><td>&mdash;</td><td><code>2</code></td></tr>
+            <tr><td>Fangstangen Schutzwinkel nicht gewährleistet</td><td>&mdash;</td><td><code>2</code></td></tr>
+            <tr><td>SPD nicht mit Potentialausgleichsleitung verbunden</td><td>&mdash;</td><td><code>1&ndash;2</code></td></tr>
+            <tr><td>Fehlende Planunterlagen / Blitzschutzpläne</td><td>&mdash;</td><td><code>1</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card warn">
+      <h3>Einstufungs-Systematik (gemeinsam für alle MA-Codes)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Stufe</th><th>Bedeutung</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>0</code></td><td>kein Mangel</td></tr>
+            <tr><td><code>1</code></td><td>geringfugiger Mangel</td></tr>
+            <tr><td><code>2</code></td><td>erheblicher Mängel (unverzuglich zu beseitigen)</td></tr>
+            <tr><td><code>3</code></td><td>gefährlicher Mängel (sofortige Stilllegung möglich)</td></tr>
+            <tr><td><code>H</code></td><td>Hinweis</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note">Benotigt Ingest 5.403 PDFs</div>
+    </div>
+  </div>
+
+  <!-- SECTION 11 removed (Vorlage Kalkulation — Discovery, not pricing rules) -->
+
+  <!-- ================================================================ -->
+  <!-- SECTION 12: Validierung -->
+  <!-- ================================================================ -->
+  <div class="section" id="s12">
+    <div class="section-header">
+      <h2>12. Validierung: 316 Anlagen Stadtwerke Augsburg</h2>
+      <span class="status status-ok">Validierung durchgeführt</span>
+    </div>
+    <div class="section-source">Blitzschutz_StV.xlsx</div>
+
+    <div class="card ok">
+      <h3>Golden Set: 316 Anlagen mit realen TÜV-Preisen</h3>
+      <ul>
+        <li>4 Preisspalten: Klasse I&amp;II Vollprüfung / Sichtprüfung, Klasse III&amp;IV Vollprüfung / Sichtprüfung</li>
+        <li>Schutzklassen-Verteilung: I=8, II=23, III=274, IV=11</li>
+        <li>Trennstellen: min=1, max=100, median=12, P75=26</li>
+      </ul>
+    </div>
+
+    <div class="card ok">
+      <h3>Validierungsergebnis (LPV-Baseline vs StV)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Trennstellen</th><th>Abweichung StV vs LPV</th><th>Bewertung</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>TS 1&ndash;5</td><td class="mono-cell">StV +160%</td><td>Mindest-Fee im StV</td></tr>
+            <tr><td>TS 6&ndash;15</td><td class="mono-cell">StV +35%</td><td>&mdash;</td></tr>
+            <tr><td>TS 16&ndash;25</td><td class="mono-cell price">&Delta; 3%</td><td style="color: var(--green); font-weight: 600;">PERFEKT</td></tr>
+            <tr><td>TS 26&ndash;50</td><td class="mono-cell">StV &minus;25%</td><td>Ausschreibungs-Rabatt</td></tr>
+            <tr><td>TS 51&ndash;100</td><td class="mono-cell">StV &minus;45%</td><td>aggressiver Bieter-Rabatt</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><strong>Erkenntnis:</strong> LPV-Baseline ist korrekt für 16&ndash;25 MS. Abweichungen = Bieter-Strategien in Ausschreibungen.</div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 13: Batch-Extraktion Pipeline -->
+  <!-- ================================================================ -->
+  <div class="section" id="s13">
+    <div class="section-header">
+      <h2>13. Batch-Extraktion Pipeline</h2>
+      <span class="status status-ok">Pipeline getestet, bereit für Full-Ingest</span>
+    </div>
+    <div class="section-source">Anonymisierung + LLM</div>
+
+    <div class="card ok">
+      <h3>Pipeline-Ergebnisse (50 PDFs Batch-Test)</h3>
+      <ul>
+        <li>78% Schema-Validitat nach Haiku + Normalisierung + Sonnet-Retry</li>
+        <li>Schutzklasse: in 49% der PDFs LEER (Sachverständiger hat Feld nicht ausgefüllt)</li>
+        <li>22.5 PII-Items pro PDF anonymisiert (Telefon, Adressen, Namen, Equipment-Nr, Passworter)</li>
+        <li>Kosten: <span class="mono price">$167</span> für 5.403 MA570 PDFs (Haiku + Sonnet-Retry)</li>
+        <li>Type-preserving Pseudonyme: <code>&lt;SCHULE_xxx&gt;</code>, <code>&lt;KRANKENHAUS_xxx&gt;</code> etc.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 14: 4 Blitzschutz-Varianten -->
+  <!-- ================================================================ -->
+  <div class="section" id="s14">
+    <div class="section-header">
+      <h2>14. 4 Blitzschutz-Varianten nach Grundlage</h2>
+      <span class="status status-warn">MA570 + MA572 + MA574 implementiert, MA555 offen</span>
+    </div>
+
+    <div class="card ok">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>MA-Code</th><th>Anzahl PDFs</th><th>Beschreibung</th><th>Pricing-Modell</th><th>LPV-Referenz</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>MA570</code></td><td class="mono-cell">5.403</td>
+              <td>Umfassende Pr&uuml;fung &mdash; Auftrag des Betreibers (Standard, non-Baurecht)</td>
+              <td><strong>33 &euro;/Messstelle</strong> (Festpreis)</td>
+              <td>B04 &sect;8.1</td>
+              <td><span class="status status-ok" style="font-size:11px">Implementiert</span></td>
+            </tr>
+            <tr>
+              <td><code>MA572</code></td><td class="mono-cell">622</td>
+              <td>Baurecht Sonderbau &mdash; &sect;2 SPr&uuml;fV Bayern / Nachtragsbaugenehmigung (Krankenh&auml;user, Altenheime)</td>
+              <td><strong>33 &euro;/MS + 242 &euro; Ordnungspr&uuml;fung</strong></td>
+              <td>B04 &sect;8.1 + B05 &sect;1b</td>
+              <td><span class="status status-ok" style="font-size:11px">= MA570 + Flag</span></td>
+            </tr>
+            <tr>
+              <td><code>MA574</code></td><td class="mono-cell">1.189</td>
+              <td>Wiederkehrend &mdash; Beauftragung non-Baurecht (Nationalpark, Universit&auml;t)</td>
+              <td><strong>33 &euro;/MS</strong> (identisch zu MA570)</td>
+              <td>B04 &sect;8.1</td>
+              <td><span class="status status-ok" style="font-size:11px">= MA570</span></td>
+            </tr>
+            <tr style="background: #fefce8;">
+              <td><code>MA555</code></td><td class="mono-cell">1.333</td>
+              <td>Ex-Schutz &mdash; &sect;7(7) GefStoffV + Z&Uuml;S (Gasdruckregler, Biogas, Chemie)</td>
+              <td><strong>239 &euro;/h</strong> (komplexe Sachverhalte, nach bes. Vereinbarung)</td>
+              <td><strong>B04 &sect;9</strong></td>
+              <td><span class="status status-warn" style="font-size:11px">Heuristik n&ouml;tig</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MA555 DEEP DIVE -->
+    <div class="card warn">
+      <h3>MA555 Ex-Blitzschutz &mdash; Pricing-Analyse</h3>
+
+      <p><strong>LPV B04 &sect;9</strong> sagt w&ouml;rtlich:</p>
+      <blockquote style="background:#f9fafb; border-left:3px solid var(--tuev-blue); padding:12px 18px; margin:12px 0; font-style:italic; color:var(--gray-600);">
+        &bdquo;Die Pr&uuml;fung des Explosionsschutzes und der Explosionssicherheit von Anlagen in explosionsgef&auml;hrdeten Bereichen (z.B.: Lageranlagen, F&uuml;llstellen, Tankstellen, Flugfeldbetankungsanlagen, Entleerstellen) gem&auml;&szlig; &Uuml;AnlG wird <strong>nach besonderer Vereinbarung</strong> verrechnet.&ldquo;<br><br>
+        &bdquo;Heranzuziehen ist der Stundensatz f&uuml;r <strong>komplexe Sachverhalte, 239,- &euro;</strong>.&ldquo;
+      </blockquote>
+
+      <h4 style="margin-top:18px;">Datenanalyse: 5 Sample MA555-PDFs</h4>
+      <p>Wir haben 5 zuf&auml;llige MA555-Berichte analysiert. Ergebnis:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>In PDFs vorhanden?</th><th>Beispielwerte</th></tr></thead>
+          <tbody>
+            <tr><td>Anzahl Ableitungen/Messstellen</td><td><strong style="color:var(--green)">JA</strong> (identischer Cost-Driver wie MA570)</td><td>4, 6, 10, 30</td></tr>
+            <tr><td>Ex-Zonenplan</td><td><strong style="color:var(--green)">JA</strong></td><td>&bdquo;Zone 2: 3m Radius Ablaserohr Fermenter&ldquo;</td></tr>
+            <tr><td>Explosionsgruppe</td><td><strong style="color:var(--green)">JA</strong></td><td>IIA</td></tr>
+            <tr><td>Messwerte per Messstelle [&Omega;]</td><td><strong style="color:var(--green)">JA</strong></td><td>&lt;1, &lt;1, &lt;1</td></tr>
+            <tr><td>Schutzklasse</td><td>oft leer</td><td>&mdash;</td></tr>
+            <tr style="background:#fef2f2;">
+              <td><strong>Pr&uuml;fdauer / Stunden / Aufwand</strong></td>
+              <td><strong style="color:var(--red)">NEIN</strong></td>
+              <td>Nicht in Pr&uuml;fberichten enthalten (Booking/SAP-Daten)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 style="margin-top:18px;">Problem: Kein Stundennachweis in Berichten</h4>
+      <p>
+        LPV sagt <strong>239 &euro;/h</strong>, aber die Pr&uuml;fberichte enthalten <strong>keine Angabe &uuml;ber die Pr&uuml;fdauer</strong>
+        (Stunden, Aufwand, Dauer). Diese Information liegt ausschlie&szlig;lich in SAP/Booking-Systemen.
+      </p>
+      <p>
+        <strong>Wir haben aber denselben physischen Cost-Driver wie MA570:</strong> Anzahl Ableitungen/Messstellen (4&ndash;30 in Samples).
+        Die Ex-Inspektion ist <em>technisch gleich</em> (Messstellen messen, Blitzschutzanlage pr&uuml;fen) &mdash; nur mit zus&auml;tzlichem Ex-Aufwand:
+        Einweisung, Ex-Zonen-Verifikation, iskrobezpieczne Werkzeuge, ATEX-Dokumentation.
+      </p>
+
+      <h4 style="margin-top:18px;">Vorgeschlagene Heuristik (2 Optionen)</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Option</th><th>Formel</th><th>Beispiel (10 MS)</th><th>Pro/Contra</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>A: Stundenbasis</strong></td>
+              <td>hours = Ableitungen &times; 0.25h &times; 2.5 (Ex-Faktor)<br>Kosten = hours &times; 239 &euro;</td>
+              <td>10 &times; 0.25 &times; 2.5 = 6.25h &rarr; <strong>1.494 &euro;</strong></td>
+              <td>&#9888; Reine Heuristik &mdash; kein Stundennachweis in Daten</td>
+            </tr>
+            <tr style="background:#f0fdf4;">
+              <td><strong>B: MS-Basis mit Ex-Zuschlag</strong></td>
+              <td>Kosten = Ableitungen &times; 33 &euro; &times; Ex-Faktor<br>(Ex-Faktor &asymp; 2&ndash;3 &times;)</td>
+              <td>10 &times; 33 &times; 2.5 = <strong>825 &euro;</strong></td>
+              <td>&#9989; Nutzt bekannten Cost-Driver, nur Faktor zu kalibrieren</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Empfehlung: Option B</strong> (MS-Basis mit Ex-Zuschlag-Multiplikator). Der Multiplikator ist die einzige offene Gr&ouml;&szlig;e &mdash; zu kl&auml;ren mit TÜV SÜD EG.</p>
+    </div>
+
+    <!-- OPEN QUESTION -->
+    <div class="card" style="border-left: 4px solid var(--red); background: var(--red-bg);">
+      <h3 style="color:var(--red);">&#10067; Offene R&uuml;ckfrage an TÜV SÜD / TÜV SÜD EG</h3>
+      <p style="font-size:15px; line-height:1.7;">
+        <strong>&bdquo;Wie verrechnet ihr Blitzschutz-Pr&uuml;fungen im Ex-Bereich (MA555) im Vergleich zum Standard (MA570)?</strong><br>
+        Ist es ein Faktor auf den Messstellen-Preis (z.B. 33 &euro; &times; 2,5)?<br>
+        Oder tats&auml;chlich nach Stunden (239 &euro;/h &times; gesch&auml;tzte Pr&uuml;fdauer)?<br>
+        Wenn Stundenbasis &mdash; wie viele Stunden plant ihr typischerweise f&uuml;r eine Ex-Anlage mit 10 Messstellen?&ldquo;
+      </p>
+      <p style="font-size: 12px; color: var(--gray-400); margin-top:8px;">
+        &#8594; Geplant f&uuml;r Projektregeltermin 20.04.2026 (Frage #6)
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION: Inventarisierung Datenquellen -->
+  <!-- ================================================================ -->
+  <div class="section" id="sinv">
+    <div class="section-header">
+      <h2>Inventarisierung — Quelldateien und extrahierte Informationen</h2>
+      <span class="status status-ok">Vollständig</span>
+    </div>
+
+    <!-- BATCH 1 -->
+    <div style="margin: 28px 0 20px; padding: 14px 20px; background: linear-gradient(135deg, var(--tuev-blue) 0%, var(--tuev-blue-dark) 100%); border-radius: var(--radius); color: #fff;">
+      <div style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.7;">Batch 1</div>
+      <div style="font-size: 17px; font-weight: 700; margin-top: 2px;">Erstlieferung &mdash; Prüfberichte, LPV, Kalkulationstools</div>
+      <div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">Empfangen 10&ndash;17.04.2026 von Dr. Stefan Veit, Stefan Pausch, Matthias Pfeifer &middot; 36 Dateien &middot; 29,7 GB</div>
+    </div>
+
+    <h3 style="margin: 24px 0 12px; color: var(--tuev-blue); font-size: 16px; border-bottom: 2px solid var(--tuev-blue); padding-bottom: 6px;">Blitzschutz-relevante Dateien</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th style="width:30%">Datei</th><th>Typ</th><th style="width:50%">Extrahierte Informationen / Verwendungszweck</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#c41e3a;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">PDF</span> <code>LP_00_2026_Gesamt.pdf</code></span></td>
+            <td>PDF · 130 S.</td>
+            <td>
+              <strong>Master-Preisverzeichnis LPV 2025/2026.</strong> Teil A: Grundkosten (256€ Pauschale, 49€/Prüftag, Tagegeld 6/25/30€), Stundensätze (180–320€), Reisekosten (1,10€/km), Berichtskosten (119/380/550€), Zuschläge (Erstprüfung +100%, Nicht-Vereinsmitglied +20%, Eil +25%).
+              Teil B04 §8: <strong>Blitzschutz 33€/Messstelle</strong>, §8.2 innerer 208€/h, §9 Explosionsschutz 239€/h.
+              Teil B05 §1: Ordnungsprüfung 242€ (baurechtlich).
+              → <em>Basis für alle Pricing-Rules im Graph</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#64748b;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">MAIL</span> <code>TÜV-Korrespondenz 14.08.2025</code></span></td>
+            <td>E-Mail</td>
+            <td>
+              <strong>23 TÜV-Standort-Adressen</strong> (exakt, mit Straße + PLZ) für Reisekostenberechnung.
+              Bestätigung 4 Kostenblöcke (Reise + Grund + Prüf + Bericht).
+              Regel: <strong>„Bei mehrtägigen Prüfungen nur 1 Anfahrt"</strong>.
+              Berichtskosten spezifisch für Blitzschutz: „bei kleinen Anlagen 119€".
+              → <em>Standort-Daten im Graph, Reisekostenlogik in Engine</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#d4740e;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">DIR</span> <code>570_572_574/</code></span> Ordner<br><small>MA570: 5.403 · MA572: 622 · MA574: 1.189</small></td>
+            <td>7.214 PDFs · 3.3 GB</td>
+            <td>
+              <strong>Prüfberichte Blitzschutz</strong> (3 Varianten). Extrahiert: 17 Merkmale (Nutzung, Schutzklasse, Anzahl Ableitungen, Bauart, Dach, Material, Erdung, Potentialausgleich, Überspannungsschutz).
+              Mängel-Patterns (Übergangswiderstand, Bewuchs, Korrosion).
+              49% ohne Schutzklasse (Sachverständiger hat Feld nicht ausgefüllt).
+              → <em>Training Extraction-Pipeline, Merkmale-Schema, Mängel-Distribution</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#d4740e;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">DIR</span> <code>555/</code></span> Ordner<br><small>MA555: 1.333 PDFs</small></td>
+            <td>1.333 PDFs · 471 MB</td>
+            <td>
+              <strong>Blitzschutz Ex-Bereich</strong> (§7(7) GefStoffV, ZÜS). Zusätzliche Merkmale: Explosionsgruppe (IIA/IIB/IIC), Temperaturklasse (T1-T6), Ex-Zonenplan.
+              Keine Prüfdauer in Berichten (nur SAP/Booking).
+              → <em>Ex-Merkmale extrahiert, Pricing offen (239€/h, Stundenzahl unbekannt)</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>Anlagenliste-LV-Preisblätter_WP Blitzschutz_StV.xlsx</code></span></td>
+            <td>XLSX · 2 Sheets · 325×34</td>
+            <td>
+              <strong>Golden Validation Set</strong> — 316 Anlagen Stadtwerke Augsburg mit realen TÜV-Preisen.
+              4 Preisspalten: Klasse I&amp;II / III&amp;IV × Vollprüfung / Sichtprüfung.
+              Merkmale pro Anlage: Anzahl Trennstellen + Blitzschutzklasse (+ bei 82 Anlagen: Ableitungen, Gebäudeumfang).
+              Validierung: LPV-Match ±3% für 16–25 MS, Ausschreibungs-Rabatt 30–50% für &gt;25 MS.
+              → <em>Validierung Pricing-Engine, Ausschreibungs-Gap Discovery</em>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin: 32px 0 12px; color: var(--gray-500); font-size: 16px; border-bottom: 2px solid var(--gray-300); padding-bottom: 6px;">Übergreifende Dateien (alle Gewerke)</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th style="width:30%">Datei</th><th>Typ</th><th style="width:50%">Extrahierte Informationen / Verwendungszweck</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#8b5cf6;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSM</span> <code>2024-04-09 Vorlage Kalkulation.xlsm</code></span></td>
+            <td>XLSM · 24 Sheets · Makro</td>
+            <td>
+              <strong>Master-Kalkulationstemplate TÜV SÜD EG.</strong> 13 identische Gewerk-Sheets (GT RLT / Hygiene / MRA / RDA / NRA / SPR / FL / CO Warn + ET BMA / ALA / NEA / SiBel / VDS / allg. el. Anl. / DGUV V3 / Blitz + DD Behälter + FT-Liste).
+              Sheet <code>ET Blitz</code> (46×10): Blitzschutz-Kalkulationslogik.
+              Formeln nicht reverse-engineered — unsere Engine basiert auf LPV-Text.
+              → <em>Architektur-Validierung (Gewerk-Abstraktion), Referenz für Standort-Vergleich</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>NBG/Kalkulationshilfen Angebote v2.xlsx</code></span></td>
+            <td>XLSX · 15 Sheets</td>
+            <td>
+              <strong>Nürnberg per-Norm Kalkulator.</strong> Separiert DGUV ortsfest / ortsveränderlich (GETRENNT!).
+              Blitzschutz-Sheet mit 14 Spalten (vs 10 in Vorlage — mehr Merkmale).
+              → <em>Externe Validierung MA501 vs MA507 Hypothese, erweiterte Merkmale</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#8b5cf6;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSM</span> <code>BER/Kalkulation_BER_2026.xlsm</code></span></td>
+            <td>XLSM · 20 Sheets · Makro</td>
+            <td>
+              Berlin-Variante der Vorlage (ohne DD Behälter + FT-Liste). 17 Gewerk-Sheets. Vorkalkulierte-Zeiten erweitert (61 vs 44 Zeilen).
+              → <em>Standort-Variation, Referenz</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>Preistool_EG1_MUC 2026.xlsx</code></span></td>
+            <td>XLSX · 9 Sheets</td>
+            <td>
+              München-HQ-Preistool 2026. Sheets: VDI 6022 (Hygiene 80×11), C10 Stammkunden, Entwicklung Stundensätze PLV, Feuerlösch (Steigleitung / Wandhydranten / Außenhydranten / Küchenlöschanlage).
+              → <em>RLT-Pricing Referenz (VDI 6022), Stammkunden-Logik</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>MAN/Preisberechnung.xlsx</code></span></td>
+            <td>XLSX · 11 Sheets</td>
+            <td>
+              Mannheim-Kalkulator. Daten/Ergebnis-Split (GBT + ELT Baurecht + ELT + Feuerlösch). Berechnungsparameter (42×3) + Preise (4×5).
+              → <em>Inter-Standort-Vergleich, Preisparameter-Referenz</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>SBR/Kalkulation_IS-EG1-SBR.xlsx</code></span></td>
+            <td>XLSX · 7 Sheets</td>
+            <td>
+              Saarbrücken-Kalkulator. Unique: <code>Gespräch</code>-Sheet (Kundennotizen = Tribal Knowledge), <code>für Unterwegs</code> (Mobile-Format 138 Zeilen), <code>Installationskategorie</code> (VDE 0105-100).
+              → <em>Tribal-Knowledge-Discovery, Mobile-Use-Case</em>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin: 32px 0 12px; color: var(--gray-500); font-size: 16px; border-bottom: 2px solid var(--gray-300); padding-bottom: 6px;">Großkunden-Preislisten</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th style="width:30%">Datei</th><th>Typ</th><th style="width:50%">Extrahierte Informationen / Verwendungszweck</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>Anlagenliste-LV-Preisblätter_WP VdS+UVV_StV.xlsx</code></span></td>
+            <td>XLSX · 2 Sheets · 375×16</td>
+            <td>
+              VdS (Sprinkler/Feuerlösch) + UVV (DGUV V3) Standortvertrag-Preise. 375 Anlagen.
+              → <em>Phase 2: RLT/DGUV V3 Validierung</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>INTERN Volkswohlbund 3 Jahre.xlsx</code></span></td>
+            <td>XLSX · 2 Sheets · 340×41</td>
+            <td>
+              Dual-Tier-Pricing: <strong>INTERN 41 Spalten vs EXTERN 5 Spalten</strong> — TÜV versteckt 14 interne Berechnungen. 3-Jahres-Preisbindung.
+              → <em>Großkunden-Rabattstruktur, Dual-Pricing Discovery</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#c41e3a;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">PDF</span> <code>Preisliste Apleona 2026.pdf</code></span></td>
+            <td>PDF · 22 S.</td>
+            <td>
+              Apleona (Facility Management) Kundenspezifische Preisliste 2026. Pauschal-Modell (nicht editierbar).
+              → <em>Großkunden-Override-Pattern</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>WISAG_Preisblatt_Baukasten.xlsx</code></span></td>
+            <td>XLSX · 1 Sheet · 251×5</td>
+            <td>
+              WISAG Baukasten-Modell (modular): 251 Einzelpositionen zum Konfigurieren.
+              → <em>Modulares Pricing-Pattern</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#8b5cf6;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSM</span> <code>059E-2025 DGUV V3 Ausschreibung.xlsm</code></span></td>
+            <td>XLSM · 2 Sheets · Makro</td>
+            <td>
+              Audi-Ausschreibung DGUV V3 2025, GAEB-Konverter-Format (74×48). Standard-Baubranche Ausschreibungsformat.
+              → <em>Phase 2: DGUV V3 Validation, GAEB-Import</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#8b5cf6;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSM</span> <code>Gersthofen Elektr. Anlagen.xlsm</code></span></td>
+            <td>XLSM · 2 Sheets · 88.944 Zellen</td>
+            <td>
+              Edge-Case: <strong>Gersthofen auf Verteiler-Ebene</strong> (1.393 Positionen). Maximale Granularität DGUV V3.
+              → <em>Phase 2: DGUV V3 Stress-Test, Verteiler-Ebene Pricing</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>2020 Leistungsverzeichnis 6 Jahre.xlsx</code></span></td>
+            <td>XLSX · 3 Sheets</td>
+            <td>
+              Historischer 6-Jahres-Rahmenvertrag (2020). 257 SV-Prüfungen + 67 Förderanlagen + 46 Aufzug-Klassifikation.
+              → <em>Historischer Benchmark, Fördertechnik/Aufzug-Scope</em>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin: 32px 0 12px; color: var(--gray-500); font-size: 16px; border-bottom: 2px solid var(--gray-300); padding-bottom: 6px;">Prüfbericht-Archive (Phase 2 Gewerke)</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Ordner</th><th>MA-Code</th><th>Anzahl</th><th>Produkt</th><th>Relevanz Phase 1</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#d4740e;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">DIR</span> <code>438/</code></span></td><td>MA438</td><td>13.107</td><td>NRA — Natürliche Rauchabzugsanlagen</td><td>—</td></tr>
+          <tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#d4740e;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">DIR</span> <code>441_419/</code></span></td><td>MA419 + MA441</td><td>21.555</td><td>RLT Hygiene + Garagenlüftung + Brandschutzklappen</td><td>Phase 1 (RLT)</td></tr>
+          <tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#d4740e;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">DIR</span> <code>501/</code></span></td><td>MA501</td><td>8.284</td><td>Elektrische Anlage Ex-Bereich</td><td>—</td></tr>
+          <tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#d4740e;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">DIR</span> <code>507/</code></span></td><td>MA507</td><td>10.096</td><td>Ortsfeste elektrische Anlage DGUV V3</td><td>Phase 1 (DGUV V3)</td></tr>
+          <tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#d4740e;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">DIR</span> <code>510/</code></span></td><td>MA510</td><td>748</td><td>Starkstrom Sonderbau + ZB/NEA/USV</td><td>—</td></tr>
+          <tr><td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#d4740e;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">DIR</span> <code>560 (1)/</code></span></td><td>MA560</td><td>6.089</td><td>Ortsveränderliche Betriebsmittel</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- BATCH 2 -->
+    <div style="margin: 48px 0 20px; padding: 14px 20px; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); border-radius: var(--radius); color: #fff;">
+      <div style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.7;">Batch 2</div>
+      <div style="font-size: 17px; font-weight: 700; margin-top: 2px;">Versand-Auswertungen + Referenzdaten</div>
+      <div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">Empfangen 20&ndash;22.04.2026 von Stefan Pausch, Markus Burgey, Matthias Pfeifer &middot; 6 Dateien &middot; 28.674 Berichte + Inspektionspflichten + CRM PLZ</div>
+    </div>
+
+    <h3 style="margin: 24px 0 12px; color: var(--tuev-blue); font-size: 16px; border-bottom: 2px solid var(--tuev-blue); padding-bottom: 6px;">
+      Historische Versand-Auswertungen mit Finanzdaten
+    </h3>
+
+    <div class="card highlight ok" style="margin-bottom: 16px;">
+      <h3>Neue Datendimension: Reale Kosten + Stunden + Erlös pro Prüfbericht</h3>
+      <ul>
+        <li><strong>28.674 historische Berichte</strong> mit vollständigen Finanzdaten (Faktura, eigene Stunden, Reisekosten, Erlös-h-Satz)</li>
+        <li>24 Spalten pro Bericht inkl. <code>Wert Faktura</code>, <code>Kosten eigene Stunden</code>, <code>eigene Stunden</code>, <code>Reisekosten</code>, <code>Erlös-h-Satz PC-Sicht</code>, <code>Gesamtkosten PC-Sicht</code>, <code>produktive Stunden</code></li>
+        <li>Filter (Stefan Pausch, 22.04): Fakturasumme &gt; Aufwandssumme ignorieren (~780 Datensätze), nicht fakturierte ausschließen &rarr; ~6.000 belastbare Berichte pro Material</li>
+      </ul>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th style="width:25%">Datei</th><th>Typ</th><th style="width:50%">Inhalt / Verwendungszweck</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>438_Versand.xlsx</code></span></td>
+            <td>XLSX &middot; 9.905 Zeilen &middot; 24 Spalten</td>
+            <td>
+              <strong>NRA — Natürliche Rauchabzugsanlagen (MA438).</strong>
+              Top EQ-Art: Nat.Rauchabzug (8.857), natürliche Rauch- und Wärmeabzugsanlagen (451).
+              8 Materialvarianten: 438-WPBA (5.873), 438-TR (1.416), 438-EPBA (812), 438-PM (654), 438-WPSK (867), 438-PR (114), 438-EPSK (94), 438-PMSK (75).
+              Nach Stefan-Filter: 7.205 belastbare Berichte (73%).
+              &rarr; <em>Phase 1 RLT: Ground-Truth für Erlös-h-Satz + Reisekosten-Validierung NRA</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>441_419_Versand.xlsx</code></span></td>
+            <td>XLSX &middot; 13.894 Zeilen &middot; 24 Spalten</td>
+            <td>
+              <strong>RLT + Brandschutz + Ex-Schutz (MA419 + MA441).</strong>
+              Top EQ-Art: Lüftung allgemein (6.112), Lüft.Garage (3.004), Brandschutzklappe (1.453), Ex-Schutz (783), Lüft.Versamml (693), Hygieneinspektion (29).
+              20 Materialvarianten: 419-WPBA (6.619), 419-EX (1.508), 419-PMBA (986), 419-EPBA (864), 419-HYG (626), 441-WPBA (466), etc.
+              &rarr; <em>Phase 1 RLT: Primärdaten für Lüftungsanlagen-Kalkulator. EQ-Art-Verteilung deckt alle Sub-Gewerke ab</em>
+            </td>
+          </tr>
+          <tr style="background: linear-gradient(to right, var(--tuev-blue-light) 0%, #fff 100%);">
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>57234_Versand.xlsx</code></span></td>
+            <td>XLSX &middot; 4.875 Zeilen &middot; 24 Spalten</td>
+            <td>
+              <strong>Blitzschutz (MA570 / MA572 / MA574).</strong>
+              Top EQ-Art: äußerer Blitzschutz (1.929), Blitzschutzsystem (1.037), äuß Blitzschutz BY (654), Blitzsystem Baurecht (341).
+              8 Materialvarianten: 570-WP (3.207), 574-WP (886), 572-WP (372), 570-PI (196), 572-PI (94), 570-PM (63), 570-BG (37), 572-PM (20).
+              &rarr; <em>Phase 1 Blitzschutz: Validierung unserer Staffel-Heuristiken gegen reale Erlös-h-Sätze. Cross-Check mit 316 Anlagen StV Augsburg</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#9ca3af;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>438.xlsx</code></span></td>
+            <td>XLSX &middot; 9.924 Zeilen &middot; 15 Spalten</td>
+            <td>
+              <span style="color:var(--gray-400)">Gleicher Datensatz wie <code>438_Versand.xlsx</code>, aber <strong>ohne Finanzspalten</strong> (15 statt 24 Spalten). Ersetzt durch 438_Versand.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- NEW: Regulatorische & Regionale Referenzdaten (empfangen 20–22.04.2026) -->
+    <!-- ================================================================ -->
+    <h3 style="margin: 32px 0 12px; color: var(--tuev-blue); font-size: 16px; border-bottom: 2px solid var(--tuev-blue); padding-bottom: 6px;">
+      Regulatorische &amp; Regionale Referenzdaten
+    </h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th style="width:25%">Datei</th><th>Typ</th><th style="width:50%">Inhalt / Verwendungszweck</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>Inspektionspflichten.xlsx</code></span></td>
+            <td>XLSX &middot; 70 Zeilen &middot; 9 Spalten</td>
+            <td>
+              <strong>Prüffristenliste aus netinformRE.</strong> Autoritativer Katalog der Inspektionspflichten.
+              Spalten: Rechtsgebiet, Textstelle, Nutzungsart, Regelwerk, Gebäudeart, Prüfobjekt, Zyklus, Qualifikation, Rechtsstand.
+              Key entries: DGUV-V 3 / V 4 (Elektro, 4J/2J/12M), DIN EN 62305-3 (Blitzschutz LPS I&ndash;IV, 1J/2J/4J), MPrüfVO (Lüftung).
+              Matthias Pfeifer: &bdquo;beinhaltet die relevanten Regelwerke für unseren Prototypen&ldquo;.
+              &rarr; <em>Autoritatives Mapping Gebäudeart &times; Prüfobjekt &times; Zyklus &times; Qualifikation. Ersetzt handgefertigte Prüfpflicht-Nodes im Graph</em>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="display:inline-flex;align-items:center;gap:6px"><span style="background:#16a085;color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px">XLSX</span> <code>CRM PLZ NL (1).xlsx</code></span></td>
+            <td>XLSX &middot; 2 Sheets</td>
+            <td>
+              <strong>Zuordnung Postleitzahlen &rarr; Niederlassungen aus CRM.</strong>
+              Sheet &bdquo;Zuordnung&ldquo;: 8.309 PLZ &rarr; 24 Niederlassungen (0DRE, 0MUC, 0BER, 0NBG, 0HAM, 0ESS, 0STG&hellip;).
+              Sheet &bdquo;Gebietsstruktur&ldquo;: 3-stufig &mdash; IS-Region (Nord-Ost / Nord-West) &rarr; Hub (Leipzig / Hamburg / Essen&hellip;) &rarr; NL (Dresden / Chemnitz / Jena&hellip;) + TÜV Hessen separat.
+              <span style="color:var(--red); font-weight:600;">&#9888; Ohne Grenzregionen-EG</span> (Matthias: &bdquo;beinhaltet keine Besonderheiten der EG in den Grenzregionen&ldquo;).
+              &rarr; <em>Regionale Standort-Zuordnung für Reisekostenberechnung. Ergänzt die 23 Standort-Adressen um PLZ-Level-Routing</em>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="container">
+    <h3>Quellen</h3>
+    <ul>
+      <li>LPV 2025/2026 (130 Seiten) &mdash; Teil A (Allgemein) + Teil B04 (Blitzschutz)</li>
+      <li>TÜV-Korrespondenz 14.08.2025 &mdash; Standorte, Berichtspreise, Klarstellungen</li>
+      <li>30 Sample-PDFs &mdash; MA570 / MA572 / MA574 / MA555 Prüfberichte</li>
+      <li>Blitzschutz_StV.xlsx &mdash; 316 Anlagen Stadtwerke Augsburg (Validierungs-Golden-Set)</li>
+      <li>Vorlage Kalkulation.xlsm &mdash; 24 Sheets (13 Gewerk + Shared)</li>
+      <li>NBG Kalkulationshilfen &mdash; 15 Sheets (per-Norm Logik)</li>
+      <li>438_Versand / 441_419_Versand / 57234_Versand &mdash; 28.674 historische Berichte mit Finanzdaten (Pausch/Burgey, 20&ndash;22.04.2026)</li>
+      <li>Inspektionspflichten.xlsx &mdash; 70 Prüfpflichten aus netinformRE (Pfeifer, 21.04.2026)</li>
+      <li>CRM PLZ NL &mdash; 8.309 PLZ &rarr; 24 Niederlassungen (Pfeifer, 20.04.2026)</li>
+    </ul>
+    <div class="stand">Stand: 23.04.2026 &middot; Extrahiert aus: LPV 2025/2026 (130s), TÜV-Korrespondenz 14.08.2025, 30 Sample-PDFs MA570, 316 Anlagen StV Augsburg, Vorlage Kalkulation 24 Sheets, 28.674 Versand-Berichte, Inspektionspflichten netinformRE, CRM PLZ NL</div>
+  </div>
+</div>
+
+</body>
+</html>

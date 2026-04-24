@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[DEPRECATED] SmartCal@EG — Zwischenstand 20.04.2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --tuev-blue: #0046ad;
+    --tuev-dark: #003080;
+    --tuev-light: #e8f0fe;
+    --accent-red: #c41e3a;
+    --accent-green: #16a085;
+    --accent-amber: #d4740e;
+    --bg: #f8f9fc;
+    --card: #ffffff;
+    --text: #1a1f36;
+    --text-secondary: #5a6178;
+    --text-muted: #8892a8;
+    --border: #e2e6ef;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  .deck {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    padding: 48px 72px 64px;
+    overflow-y: auto;
+  }
+  .slide.active { display: block; }
+  .slide.hero { padding: 0; }
+
+  /* Hero slide */
+  .hero-wrap {
+    background: linear-gradient(135deg, #0046ad 0%, #003080 100%);
+    color: white;
+    height: 100%;
+    padding: 80px 96px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .hero-wrap::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -10%;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 100px;
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    width: fit-content;
+  }
+  .hero-badge .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.6);
+  }
+  .hero h1 { font-size: 64px; font-weight: 700; letter-spacing: -2px; line-height: 1.0; margin-bottom: 12px; }
+  .hero h1 span { font-weight: 300; opacity: 0.65; }
+  .hero .subtitle { font-size: 22px; opacity: 0.75; font-weight: 400; margin-bottom: 56px; max-width: 880px; }
+  .hero .meta {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 56px;
+    font-family: var(--font-mono);
+  }
+  .hero .meta-item .l { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.5; font-weight: 500; }
+  .hero .meta-item .v { font-size: 28px; font-weight: 500; margin-top: 4px; }
+
+  /* Standard slide header */
+  .slide-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 32px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--tuev-blue);
+  }
+  .slide-num {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--tuev-blue);
+    background: var(--tuev-light);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .slide-kicker {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+  h2 { font-size: 34px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.1; }
+  h2 .sub { font-weight: 300; color: var(--text-secondary); }
+
+  .slide-body { max-width: 1400px; }
+  .lede { font-size: 19px; color: var(--text-secondary); margin-bottom: 28px; max-width: 1200px; line-height: 1.5; }
+  .lede b { color: var(--text); }
+
+  /* Discovery cards */
+  .discovery {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin-bottom: 20px;
+  }
+  .discovery.highlight { border-left: 5px solid var(--accent-red); background: linear-gradient(90deg, rgba(196,30,58,0.03) 0%, white 200px); }
+  .discovery.good { border-left: 5px solid var(--accent-green); background: linear-gradient(90deg, rgba(22,160,133,0.03) 0%, white 200px); }
+  .discovery.amber { border-left: 5px solid var(--accent-amber); }
+
+  .discovery-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 6px; }
+  .discovery h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 12px; }
+  .discovery p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; margin-bottom: 10px; }
+  .discovery p b { color: var(--text); font-weight: 600; }
+  .discovery .imp { font-size: 13px; background: var(--tuev-light); padding: 10px 14px; border-radius: 8px; color: var(--tuev-dark); margin-top: 14px; }
+  .discovery .imp b { color: var(--tuev-blue); }
+
+  /* Grid layouts */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .stat-card .n { font-family: var(--font-mono); font-size: 36px; font-weight: 700; color: var(--tuev-blue); letter-spacing: -1px; }
+  .stat-card .u { font-family: var(--font-mono); font-size: 16px; color: var(--text-muted); font-weight: 400; margin-left: 4px; }
+  .stat-card .l { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-top: 4px; }
+  .stat-card .h { color: var(--text-muted); font-size: 11.5px; margin-top: 6px; }
+
+  /* Data tables */
+  .dt {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  .dt th { background: #f1f4f9; text-align: left; padding: 10px 14px; font-weight: 600; font-size: 11px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+  .dt td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .dt tr:last-child td { border-bottom: none; }
+  .dt td.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
+  .dt td.good { color: var(--accent-green); font-weight: 600; }
+  .dt td.bad { color: var(--accent-red); font-weight: 600; }
+  .dt td.amber { color: var(--accent-amber); font-weight: 600; }
+
+  /* Code blocks */
+  code, .mono { font-family: var(--font-mono); font-size: 13px; color: var(--tuev-dark); background: var(--tuev-light); padding: 2px 6px; border-radius: 4px; }
+
+  /* Quote box */
+  .quote {
+    background: var(--tuev-dark);
+    color: white;
+    padding: 24px 32px;
+    border-radius: 12px;
+    font-size: 18px;
+    line-height: 1.5;
+    font-style: italic;
+    margin: 20px 0;
+  }
+  .quote::before { content: '« '; font-size: 28px; opacity: 0.5; }
+  .quote::after { content: ' »'; font-size: 28px; opacity: 0.5; }
+  .quote b { font-style: normal; background: rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 4px; }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    bottom: 24px;
+    right: 28px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 8px 6px 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    z-index: 100;
+  }
+  .nav button {
+    border: 0;
+    background: var(--tuev-blue);
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav button:hover { background: var(--tuev-dark); }
+  .nav .pos { color: var(--text-secondary); font-weight: 500; }
+
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--tuev-blue);
+    transition: width 0.3s ease;
+    z-index: 99;
+  }
+
+  /* Bar chart in tables */
+  .bar { display: inline-block; background: var(--tuev-light); height: 16px; border-radius: 2px; vertical-align: middle; margin-right: 6px; position: relative; min-width: 2px; }
+  .bar.fill { background: var(--tuev-blue); }
+
+  ul.clean { list-style: none; }
+  ul.clean li { padding: 6px 0 6px 24px; position: relative; color: var(--text-secondary); font-size: 15px; line-height: 1.5; }
+  ul.clean li::before { content: ''; position: absolute; left: 4px; top: 13px; width: 6px; height: 6px; border-radius: 50%; background: var(--tuev-blue); opacity: 0.6; }
+  ul.clean li b { color: var(--text); }
+
+  .kbd { font-family: var(--font-mono); font-size: 11px; background: var(--border); padding: 2px 6px; border-radius: 4px; }
+
+  .tag { display: inline-block; font-family: var(--font-mono); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 100px; margin-right: 6px; }
+  .tag.red { background: #fde8ec; color: var(--accent-red); }
+  .tag.green { background: #e2f5f1; color: var(--accent-green); }
+  .tag.amber { background: #fbe9d4; color: var(--accent-amber); }
+  .tag.blue { background: var(--tuev-light); color: var(--tuev-blue); }
+</style>
+</head>
+<body>
+
+<div style="background:#991b1b;color:#fff;text-align:center;padding:14px 20px;font-family:system-ui;font-size:15px;font-weight:600;letter-spacing:0.3px;position:fixed;top:0;left:0;right:0;z-index:9999;">
+  DEPRECATED &mdash; Aktuelle Version: <a href="rules-blitzschutz.html" style="color:#fecaca;text-decoration:underline;">rules-blitzschutz.html</a> (Inventarisierung + Pricing Rules, Stand 23.04.2026)
+</div>
+
+<div class="progress" id="progress"></div>
+
+<div class="deck" id="deck">
+
+<!-- SLIDE 1: HERO -->
+<section class="slide active hero">
+  <div class="hero-wrap">
+    <div class="hero-badge"><span class="dot"></span>Projektregeltermin · 20.04.2026</div>
+    <h1>SmartCal<span>@EG</span></h1>
+    <h1 style="font-size: 32px; margin-top: 4px; opacity: 0.9;">Zwischenstand <span>·</span> was wir gefunden haben</h1>
+    <div class="subtitle">
+      12 Erkenntnisse aus eurer Datenbasis (29.7 GB, 68,434 Prüfberichte, LPV 2026, 15 Kalkulationstools)<br>
+      + erste Validierung: 316 Anlagen Stadtwerke Augsburg vs unser LPV-Kalkulator
+    </div>
+    <div class="meta">
+      <div class="meta-item"><div class="l">PDF extrahiert</div><div class="v">50 von 5,403</div></div>
+      <div class="meta-item"><div class="l">Validierung</div><div class="v">316 Anlagen</div></div>
+      <div class="meta-item"><div class="l">Grundgerüst</div><div class="v">3 Gewerke live</div></div>
+      <div class="meta-item"><div class="l">Bis KW27</div><div class="v">11 Wochen</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2: Discovery 1 — MA-Codes sind interne Geheimsprache -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">01 / 12</span>
+    <span class="slide-kicker">Discovery #1 — Taxonomie</span>
+  </div>
+  <div class="slide-body">
+    <h2>Eure <span>MA-Codes sind</span> in keinem öffentlichen LPV</h2>
+    <p class="lede">Wir haben die komplette LPV 2025/2026 (130 Seiten) analysiert und konnten <b>keinen einzigen MA-Code aus eurem Dataset</b> darin finden. MA438, MA419, MA441, MA501, MA507, MA510, MA555, MA560, MA570, MA572, MA574 — alle sind interne SAP/MAVO-Kodierung.</p>
+
+    <div class="discovery highlight">
+      <div class="discovery-label">Warum das wichtig ist</div>
+      <h3>Die öffentliche LPV verwendet eine andere Logik als eure Interna</h3>
+      <p>Die LPV ist strukturiert nach <b>Fachgebiet</b> (B01–B08) und <b>Objektart</b> (OA 101, 120, 604, 617 …). Die MA-Codes sind eine <b>detailliertere interne Ebene</b> — vermutlich Materialstämme aus SAP, die spezifische Prüfleistung + Variante kodieren.</p>
+      <div class="imp"><b>Konsequenz für SmartCal:</b> Wir bauen die MA-zu-LPV-Brücke selbst auf — als Wissensgraph — und können eure internen Kategorien erstmalig zu Prüfungen aus der LPV verknüpfen. Das ist <b>ein Artefakt, das bei euch bisher als Tacit Knowledge in Köpfen der Sachverständigen liegt</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: Discovery 2 — MA-Code Reverse-Engineering Result -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">02 / 12</span>
+    <span class="slide-kicker">Discovery #2 — MA-Decoding</span>
+  </div>
+  <div class="slide-body">
+    <h2>Wir haben alle 11 MA-Codes <span>rückwärts entschlüsselt</span></h2>
+    <p class="lede">Durch Analyse von 30 zufälligen Prüfberichten (3 pro MA-Gruppe) — <b>Treffsicherheit HIGH auf allen 11 Codes</b>. Einige Überraschungen:</p>
+
+    <table class="dt">
+      <thead>
+        <tr><th>MA-Code</th><th>Anzahl</th><th>Produkt (decoded)</th><th>Notiz</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>MA438</code></td><td class="num">13,107</td><td>NRA — Natürliche Rauchabzugsanlagen</td><td class="amber">NICHT Blitzschutz (Sufix TR war irreführend)</td></tr>
+        <tr><td><code>MA419</code></td><td class="num">18,264</td><td>RLT Hygiene VDI 6022 + Garagenlüftung</td><td>Größter Datensatz</td></tr>
+        <tr><td><code>MA441</code></td><td class="num">2,474</td><td>Brandschutzklappen (BSK)</td><td>Granularität <b>pro BSK</b></td></tr>
+        <tr><td><code>MA501</code></td><td class="num">8,284</td><td>Elektr. Anlage Ex-Bereich (Raffinerien)</td><td>VDE 0165 / EN 60079</td></tr>
+        <tr><td><code>MA507</code></td><td class="num">10,096</td><td>Ortsfeste elektr. Anlage DGUV V3</td><td class="good">Veit-Benchmark Phase 1</td></tr>
+        <tr><td><code>MA510</code></td><td class="num">748</td><td>Starkstrom Sonderbau + ZB+NEA+USV+SB</td><td>Reichhaltigster Bericht (40-60 Mängel)</td></tr>
+        <tr><td><code>MA555</code></td><td class="num">1,333</td><td>Blitzschutz Ex (§7(7) GefStoffV / ZÜS)</td><td class="amber">NICHT Sprinkler</td></tr>
+        <tr><td><code>MA560</code></td><td class="num">6,089</td><td>Ortsveränderliche Betriebsmittel</td><td class="amber">NICHT BMA (Bohrmaschinen, Leitungen!)</td></tr>
+        <tr><td><code>MA570</code></td><td class="num">5,403</td><td>Blitzschutz umfassend (non-Baurecht)</td><td class="good">Phase 1 primary</td></tr>
+        <tr><td><code>MA572</code></td><td class="num">622</td><td>Blitzschutz Baurecht Sonderbau (§2 SPrüfV)</td><td></td></tr>
+        <tr><td><code>MA574</code></td><td class="num">1,189</td><td>Blitzschutz wiederkehrend (Beauftragung)</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <div class="imp" style="margin-top: 18px; background: var(--tuev-light); padding: 12px 16px; border-radius: 8px; color: var(--tuev-dark); font-size: 14px;">
+      <b>3 Irreführungen aufgedeckt:</b> Sufix TR bei MA438 ist <b>Technische Revision (Rauchabzug)</b>, nicht Trennstelle (Blitzschutz). MA555 ist <b>Blitzschutz Ex</b>, nicht Sprinkler. MA560 sind <b>portable Geräte</b>, nicht BMA. — Nur durch tatsächliche Berichtsanalyse erkennbar.
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: Discovery 3 — Vier Blitzschutz-Varianten by Grundlage -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">03 / 12</span>
+    <span class="slide-kicker">Discovery #3 — Produktvarianten</span>
+  </div>
+  <div class="slide-body">
+    <h2>4 Blitzschutz-Varianten <span>unterscheiden sich NUR durch Grundlage</span></h2>
+    <p class="lede">MA570 + MA572 + MA574 + MA555 — dieselbe technische Prüfung nach <b>DIN EN 62305</b>, aber vier verschiedene <b>rechtliche Grundlagen</b> = vier eigenständige Pricing-Flows + Abläufe.</p>
+
+    <div class="grid-2">
+      <div class="discovery">
+        <div class="discovery-label">MA570 · 5,403 Berichte</div>
+        <h3>Umfassende Prüfung (Standard)</h3>
+        <p><b>Grundlage:</b> Auftrag des Betreibers</p>
+        <p><b>Typisch:</b> Schulen, Logistik (Heidenhain), öffentliche Gebäude</p>
+        <p><b>Pricing-Flow:</b> Standard LPV B04 §8.1 (33€/Messstelle)</p>
+      </div>
+      <div class="discovery">
+        <div class="discovery-label">MA572 · 622 Berichte</div>
+        <h3>Baurecht Sonderbau</h3>
+        <p><b>Grundlage:</b> §2 SPrüfV Bayern / Nachtragsbaugenehmigung</p>
+        <p><b>Typisch:</b> Krankenhäuser (Schön Klinik 178+52+25 Ableitungen!), Altenpflegeheime</p>
+        <p><b>Pricing-Flow:</b> <span class="tag amber">+20% Sonderbau</span> Bauaufsichtsbehörde-Flow</p>
+      </div>
+      <div class="discovery">
+        <div class="discovery-label">MA574 · 1,189 Berichte</div>
+        <h3>Wiederkehrend (Middle)</h3>
+        <p><b>Grundlage:</b> Beauftragung (non-Baurecht)</p>
+        <p><b>Typisch:</b> Nationalpark Betriebshof, FAU Erlangen Physikalisches Institut</p>
+        <p><b>Pricing-Flow:</b> Standard cyclic, kleinerer Umfang</p>
+      </div>
+      <div class="discovery">
+        <div class="discovery-label">MA555 · 1,333 Berichte</div>
+        <h3>Blitzschutz im Ex-Bereich</h3>
+        <p><b>Grundlage:</b> <code>§7(7) GefStoffV</code> + Ex-Zonenplan</p>
+        <p><b>Typisch:</b> Gasdruckregelstation, Biogas BHKW, Clariant Gendorf</p>
+        <p><b>Pricing-Flow:</b> <span class="tag red">ZÜS</span> eigene Preislogik, eigene Auftragsabwicklung</p>
+      </div>
+    </div>
+    <div class="imp" style="margin-top: 20px; background: var(--tuev-light); padding: 14px 18px; border-radius: 8px; color: var(--tuev-dark);">
+      <b>Konsequenz für SmartCal:</b> 1 User-facing Produkt "Blitzschutz" mit automatischer Routing-Logik basierend auf Grundlage-Input. Sachverständiger muss nicht mehr raten — Kalkulator fragt nach Grundlage + wählt Pricing.
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: Discovery 4 — Schön Klinik Edge Case -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">04 / 12</span>
+    <span class="slide-kicker">Discovery #4 — Edge case</span>
+  </div>
+  <div class="slide-body">
+    <h2>Schön Klinik Vogtareuth = <span>255 Ableitungen in einem Bericht</span></h2>
+    <p class="lede">Der größte gefundene Blitzschutz-Fall im Dataset — wird durch unseren Kalkulator als MA572 Baurecht Sonderbau erkannt und korrekt routed.</p>
+
+    <div class="grid-3">
+      <div class="stat-card">
+        <div><span class="n">178</span><span class="u">Messstellen</span></div>
+        <div class="l">Bestandsgebäude BA 00–05</div>
+      </div>
+      <div class="stat-card">
+        <div><span class="n">52</span><span class="u">Messstellen</span></div>
+        <div class="l">Kinderklinik BA 06</div>
+      </div>
+      <div class="stat-card">
+        <div><span class="n">25</span><span class="u">Messstellen</span></div>
+        <div class="l">+ OP Trakt + Hubschrauberlandeplatz</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px;" class="discovery">
+      <div class="discovery-label">Besondere Merkmale</div>
+      <ul class="clean">
+        <li><b>Trennungsabstand s = 24 cm</b> im OP Trakt (engineering-sensitiv)</li>
+        <li><b>Sauerstofftank:</b> Blitzstromtragfähigkeit muss nachgewiesen werden — separat zu dokumentieren</li>
+        <li><b>Hubschrauberlandeplatz:</b> eigener Teilgebäude mit Blitzschutz-Einstufung</li>
+        <li>Gefundene Mängel: <b>Fangstangen-Schutzwinkel nicht gewährleistet</b>, SPD nicht mit PA-Leitung verbunden, NA-Schilder fehlen</li>
+      </ul>
+      <div class="imp"><b>Wert für SmartCal:</b> solche Edge-Cases müssen unser Knowledge Graph <i>nicht ausrechnen</i>, sondern <i>anerkennen</i> — der Kalkulator flaggt automatisch "&gt;150 Messstellen = Sonderbau-Workflow aktivieren" und leitet zur manuellen Kalkulation über.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: Discovery 5 — Live Validation Result -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">05 / 12</span>
+    <span class="slide-kicker">Discovery #5 — Live-Validierung</span>
+  </div>
+  <div class="slide-body">
+    <h2>316 Anlagen Stadtwerke Augsburg <span>vs unser LPV-Kalkulator</span></h2>
+    <p class="lede">Wir haben das Excel "Anlagenliste-LV-Preisblätter_WP Blitzschutz_StV" (316 reale Preise) geladen und systematisch gegen unsere Kalkulations-Engine verglichen. <b>Das Ergebnis ist lehrreich.</b></p>
+
+    <table class="dt">
+      <thead>
+        <tr><th>Trennstellen</th><th class="num">n</th><th class="num">Ø StV-Preis</th><th class="num">Ø unser LPV</th><th>Abweichung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1–5 (sehr klein)</td><td class="num">54</td><td class="num">311 €</td><td class="num">121 €</td><td class="bad">StV <b>+160%</b> (Mindest-Fee)</td></tr>
+        <tr><td>6–15 (klein)</td><td class="num">138</td><td class="num">440 €</td><td class="num">325 €</td><td class="amber">StV +35%</td></tr>
+        <tr><td><b>16–25 (ideal)</b></td><td class="num">45</td><td class="num">624 €</td><td class="num">644 €</td><td class="good">Δ 3% — <b>perfekt</b></td></tr>
+        <tr><td>26–50 (groß)</td><td class="num">64</td><td class="num">793 €</td><td class="num">1,068 €</td><td class="amber">StV −25% (Rabatt)</td></tr>
+        <tr><td>51–100 (sehr groß)</td><td class="num">15</td><td class="num">1,080 €</td><td class="num">1,930 €</td><td class="bad">StV <b>−45% (Ausschreibungs-Bid)</b></td></tr>
+      </tbody>
+    </table>
+
+    <div class="discovery highlight" style="margin-top: 24px;">
+      <div class="discovery-label">Muster erkannt</div>
+      <h3>Stadtwerke Augsburg hat in der Ausschreibung ~50% Rabatt vs LPV durchgedrückt</h3>
+      <p>Für <b>große Objekte (&gt;25 Trennstellen)</b> zahlt Augsburg nicht die LPV-Nominale, sondern einen aggressiven Bieter-Preis. Für <b>kleine Objekte (&lt;10 TS)</b> dagegen ist ein <b>Mindest-Fee von ~250€</b> eingebaut — deutlich über 33€×TS.</p>
+      <div class="imp"><b>Konsequenz für Veit:</b> das ist kein Bug in unserer Kalkulation — das ist <i>eure eigene Geschäftsrealität</i>. Wir liefern die LPV-Baseline (33€/MS). Die Ausschreibung-Strategie kann ein separater Modus werden (Phase 2).</div>
+    </div>
+    <div class="quote">
+      Unser Kalkulator trifft den <b>LPV-Nominal</b> punktgenau für 16–25 TS. Abweichungen = <b>eure historischen Bieter-Rabatte</b>, die als Insight sichtbar werden.
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7: Discovery 6 — Vorlage 13 Gewerke Abstraction -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">06 / 12</span>
+    <span class="slide-kicker">Discovery #6 — Architektur</span>
+  </div>
+  <div class="slide-body">
+    <h2>Ihr habt <span>die Gewerk-Abstraktion</span> schon selbst gebaut</h2>
+    <p class="lede">Beim Reverse-Engineering der <b>Vorlage Kalkulation.xlsm</b> (24 Sheets, Makros) haben wir entdeckt: die TÜV-Vorlage ist kein Kalkulator — sie ist ein <b>Framework aus 13 identisch strukturierten Gewerk-Templates</b>. Wir replizieren eure eigene Logik.</p>
+
+    <div class="grid-2">
+      <div>
+        <table class="dt">
+          <thead><tr><th>Gewerk-Sheets (GT = Gebäudetechnik)</th><th>Größe</th></tr></thead>
+          <tbody>
+            <tr><td>GT RLT (Lüftung)</td><td class="num">47×10</td></tr>
+            <tr><td>GT Hygiene (VDI 6022)</td><td class="num">46×10</td></tr>
+            <tr><td>GT MRA / RDA / NRA (Rauchabzug)</td><td class="num">46×10</td></tr>
+            <tr><td>GT SPR / SPR-12,5J (Sprinkler)</td><td class="num">47×10</td></tr>
+            <tr><td>GT FL / CO Warn (Feuerlösch)</td><td class="num">46×10</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <table class="dt">
+          <thead><tr><th>Gewerk-Sheets (ET = Elektrotechnik)</th><th>Größe</th></tr></thead>
+          <tbody>
+            <tr><td>ET BMA / ALA / SiBel</td><td class="num">46-52×10</td></tr>
+            <tr><td>ET NEA / SSV / VDS</td><td class="num">46×10</td></tr>
+            <tr><td><b>ET DGUV V3</b></td><td class="num">46×10</td></tr>
+            <tr><td><b>ET Blitz</b></td><td class="num">46×10</td></tr>
+            <tr><td>DD Behälter + FT-Liste</td><td class="num">46×10</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="discovery good" style="margin-top: 24px;">
+      <div class="discovery-label">Warum das gut für uns ist</div>
+      <h3>Ein Gewerk-Template = 1-2 Tage SmartCal-Integration</h3>
+      <p>Unsere Architektur folgt genau diesem Muster: <code>backend/products/{gewerk}/</code> mit 4 Files (Merkmale, Pricing-Rules, Extraction-Prompt, Golden-Set). <b>Das heißt:</b> nach Phase 1 (3 Gewerke) sind alle weiteren 10 Gewerke ein <i>Plug-and-Play-Ausbau</i> — nicht Neubau.</p>
+      <div class="imp"><b>Phase 1 = Framework validieren</b> mit Blitzschutz + RLT + DGUV V3. Phase 2 = alle anderen Gewerke in Serie integrieren (1-2 Tage pro Gewerk).</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: Discovery 7 — Nürnberg inter mental model -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">07 / 12</span>
+    <span class="slide-kicker">Discovery #7 — Standort-Heterogenität</span>
+  </div>
+  <div class="slide-body">
+    <h2>Nürnberg denkt <span>anders als München</span> über Kalkulation</h2>
+    <p class="lede">Im Vergleich zwischen eurer Master-Vorlage (München HQ) und der Nürnberger Variante haben wir zwei <b>fundamental verschiedene mentale Modelle</b> entdeckt:</p>
+
+    <div class="grid-2">
+      <div class="discovery">
+        <div class="discovery-label">München / Master-Vorlage</div>
+        <h3>Per-Gewerk Organisation</h3>
+        <p>13 Sheets à 46×10 — <b>ein Sheet pro Gewerk</b> (GT RLT, ET BMA, ET Blitz …). Grundlage-Unterscheidungen versteckt innerhalb jedes Gewerks.</p>
+        <p style="color: var(--text-muted); font-size: 13px;">Gebauter Workflow: wähle Gewerk → wähle Merkmale.</p>
+      </div>
+      <div class="discovery">
+        <div class="discovery-label">Nürnberg Kalkulationshilfen v2</div>
+        <h3>Per-Norm Organisation</h3>
+        <p>15 Sheets — <b>Ortsfest DGUV</b> und <b>DGUV Ortsveränderlich</b> sind SEPARATE Sheets! Blitzschutz ist 14 Spalten breit (vs 10 in Vorlage) = mehr Merkmale.</p>
+        <p style="color: var(--text-muted); font-size: 13px;">Gebauter Workflow: wähle Norm/Grundlage → wähle Gewerk-Merkmale.</p>
+      </div>
+    </div>
+
+    <div class="discovery highlight" style="margin-top: 20px;">
+      <div class="discovery-label">Was das bedeutet</div>
+      <h3>Nürnberg validiert unsere Hypothese MA501 vs MA507 extern</h3>
+      <p>Unsere Analyse ergab: <code>MA501 = ortsveränderlich</code>, <code>MA507 = ortsfest</code>. <b>Nürnberg hat diese Unterscheidung EXPLIZIT als zwei getrennte Sheets</b> — das ist unabhängige Bestätigung ohne dass wir mit ihnen gesprochen hätten.</p>
+      <div class="imp"><b>Konsequenz:</b> Nürnberg-Kalkulationshilfen sind <b>hervorragender Golden-Set-Kandidat</b> für DGUV V3 (MA507). Außerdem ist Nürnberg ein potenzieller <b>lokaler Champion</b> für SmartCal-Adoption (sie denken strukturiert).</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 9: Discovery 8 — 4 Großkunden pricing styles -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">08 / 12</span>
+    <span class="slide-kicker">Discovery #8 — Pricing-Modelle</span>
+  </div>
+  <div class="slide-body">
+    <h2>4 Großkunden, <span>4 verschiedene Pricing-Mechaniken</span></h2>
+    <p class="lede">In euren Preisblättern haben wir entdeckt, dass TÜV mit <b>jedem Großkunden ein anderes Pricing-Modell</b> abstimmt — keine Einheitslogik. Das ist ein <i>Hidden Complexity Layer</i>.</p>
+
+    <div class="grid-auto">
+      <div class="discovery">
+        <div class="discovery-label">Apleona · 22 Seiten PDF</div>
+        <h3>Pauschal-Modell</h3>
+        <p>Fixed prices pro Anlage-Typ, PDF-Final-Format. Kunde kann nicht editieren, TÜV kann nicht nachverhandeln in-situ.</p>
+      </div>
+      <div class="discovery">
+        <div class="discovery-label">WISAG · 251 Positionen</div>
+        <h3>Baukasten-Modell</h3>
+        <p>Modular — jede Anlage setzt sich aus Teilkomponenten zusammen. TÜV wählt aus ~251 Baustein-Preisen. <b>Transparenter, aber komplexer.</b></p>
+      </div>
+      <div class="discovery">
+        <div class="discovery-label">Volkswohlbund · INTERN/EXTERN</div>
+        <h3>Dual-Tier mit 3-Jahres-Bindung</h3>
+        <p><b>INTERN sheet: 41 Spalten.</b> EXTERN sheet: nur 5 Spalten. Das heißt: TÜV versteckt 14 interne Rabatt-Logiken vor dem Kunden.</p>
+      </div>
+      <div class="discovery">
+        <div class="discovery-label">Audi (059E-Ausschreibung)</div>
+        <h3>GAEB-Format mit +20% Zuschlag</h3>
+        <p>Standard-Ausschreibung-Format Bauwesen (GAEB-Konverter), Veit sagte auf Kickoff: "auf diese Preise müssten wir 20% drauflegen, damit das Tool richtig rechnet ohne Rabatte."</p>
+      </div>
+    </div>
+
+    <div class="imp" style="margin-top: 20px; background: var(--tuev-light); padding: 14px 18px; border-radius: 8px; color: var(--tuev-dark);">
+      <b>Konsequenz für SmartCal:</b> der Kalkulator muss <b>multi-model</b> sein — nicht eine Engine, sondern eine Engine pro Kunde-Typ. Wir haben diese Multi-Model-Architektur in der Phase 1 Engine-Abstraktion bereits vorbereitet. Für Phase 2: je ein "Großkunden-Mode" pro Pricing-Mechanik (+4 Modi).
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 10: Discovery 9 — Schutzklasse-Lücke -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">09 / 12</span>
+    <span class="slide-kicker">Discovery #9 — Datenqualität</span>
+  </div>
+  <div class="slide-body">
+    <h2>49% eurer MA570-Berichte haben <span>Schutzklasse nicht ausgefüllt</span></h2>
+    <p class="lede">Batch-Extraktion von 50 zufälligen MA570-Berichten: bei <b>24 von 50 (48%)</b> steht das Pflichtfeld "Schutzklasse" <b>leer</b> in der Sektion "Technische Beschreibung".</p>
+
+    <pre style="background: var(--tuev-dark); color: #8ca1be; padding: 20px 24px; border-radius: 12px; font-family: var(--font-mono); font-size: 14px; line-height: 1.7; margin: 20px 0;">
+Auszug aus MA570-Bericht 4073_...pdf:
+  - Werkstoff der Gebäudeleitung:
+  - <span style="color: #ff7b72;">Schutzklasse:                      ← leer!</span>
+  - Anzahl der Ableitungen: 12 Ableitungen
+  - Blitzschutzpotentialausgleich: vorhanden</pre>
+
+    <div class="grid-3">
+      <div class="stat-card">
+        <div><span class="n">50</span><span class="u">PDFs</span></div>
+        <div class="l">Random sample</div>
+        <div class="h">aus 5,403 MA570-WP</div>
+      </div>
+      <div class="stat-card" style="border-color: var(--accent-red);">
+        <div><span class="n" style="color: var(--accent-red);">24</span><span class="u">(48%)</span></div>
+        <div class="l">Schutzklasse LEER</div>
+        <div class="h">in Sektion Technische Beschreibung</div>
+      </div>
+      <div class="stat-card">
+        <div><span class="n">~2,647</span><span class="u">Berichte</span></div>
+        <div class="l">Extrapoliert im ganzen Dataset</div>
+        <div class="h">mit offener Schutzklasse</div>
+      </div>
+    </div>
+
+    <div class="discovery amber" style="margin-top: 20px;">
+      <div class="discovery-label">Vermutliche Ursachen</div>
+      <ul class="clean">
+        <li>Sachverständiger hat das Feld übersprungen (arbeitet nach Standardannahme III)</li>
+        <li>Schutzklasse war in einer Tabelle auf Seite 2, die nicht in "Technische Beschreibung" übertragen wurde</li>
+        <li>Template-Bug: Feld im Berichts-Template vergessen bei bestimmten Gebäude-Typen</li>
+      </ul>
+      <div class="imp"><b>Für Veit:</b> wir haben das als Ingest-Strategie automatisch gelöst (Fallback Schule→III, Krankenhaus→II), aber das ist eine <b>sichtbare Qualitätslücke in euren historischen Prüfberichten</b>, die wir nach dem Ingest als Liste bereitstellen können — 2,647 Berichte zum Nachtragen.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 11: Discovery 10 — Haiku extraction works at $30 -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">10 / 12</span>
+    <span class="slide-kicker">Discovery #10 — Extraction-Pipeline live</span>
+  </div>
+  <div class="slide-body">
+    <h2>Wir können <span>eure 5,403 Blitzschutz-Berichte</span> für $167 vollständig in den Graph laden</h2>
+    <p class="lede">Batch-Test mit 50 PDFs (heute Morgen durchgeführt): <b>78% Schema-Validität</b> nach 3 Iterationen. PII ist vor dem LLM-Call anonymisiert.</p>
+
+    <div class="grid-2">
+      <div>
+        <h3 style="margin-bottom: 16px; font-size: 18px;">Pipeline-Schritte</h3>
+        <ul class="clean">
+          <li><b>1. PDF → Text</b> (pdfminer.six, lokal)</li>
+          <li><b>2. PII-Anonymisierung</b> (22 PII-Items/PDF maskiert: Auftrags-Nr, Equipment-Nr, Netinform-Password, Adressen, Namen, Firmen)</li>
+          <li><b>3. Haiku-Extraktion</b> (~4 Sek/PDF, parallel 5 Worker)</li>
+          <li><b>4. Enum-Normalisierung</b> ("kindergarten" → "schule", "3" → "III")</li>
+          <li><b>5. Pydantic-Validierung</b></li>
+          <li><b>6. Sonnet-Retry</b> bei Schema-Fehler (~$0.025/Fall)</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-bottom: 16px; font-size: 18px;">Batch-Ergebnis (50 PDFs)</h3>
+        <table class="dt">
+          <tbody>
+            <tr><td>Gesamtlaufzeit</td><td class="num">107 Sek</td></tr>
+            <tr><td>Erfolgreich (kein API-Fehler)</td><td class="num good">50/50 (100%)</td></tr>
+            <tr><td>Schema-valide nach Iteration 3</td><td class="num good">39/50 (78%)</td></tr>
+            <tr><td>PII-Items maskiert</td><td class="num">1,124 (22.5/PDF)</td></tr>
+            <tr><td>Haiku-Kosten</td><td class="num">$0.59</td></tr>
+            <tr><td>Sonnet-Retries (38)</td><td class="num">$0.95</td></tr>
+            <tr><td><b>Total</b></td><td class="num"><b>$1.54</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="discovery good" style="margin-top: 24px;">
+      <div class="discovery-label">Extrapolation für alle 24,511 PDFs (3 Gewerke)</div>
+      <h3>$760 für kompletten First-Ingest</h3>
+      <p><b>5,403 MA570</b> (Blitzschutz): ~$167 · <b>9,012 MA419</b> (RLT): ~$280 · <b>10,096 MA507</b> (DGUV V3): ~$313</p>
+      <div class="imp">Mit Anthropic Zero-Data-Retention-Vertrag + unserer PII-Maske verlässt kein sensibles Datum eure Umgebung in verarbeitbarer Form. Der Mapping-Tisch bleibt lokal auf MING Cloud, nur Pseudo-IDs gehen zu Claude.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 12: Discovery 11 — Live calc works -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">11 / 12</span>
+    <span class="slide-kicker">Discovery #11 — Was heute schon läuft</span>
+  </div>
+  <div class="slide-body">
+    <h2>3 Kalkulatoren <span>laufen bereits live auf FalkorDB</span></h2>
+    <p class="lede">Heute Morgen (16.04.2026): <b>backend + engine + 3 Gewerke + routing + validator</b> sind im Betrieb. Endpoints <code>/api/blitzschutz/calculate</code>, <code>/api/rlt/calculate</code>, <code>/api/dguv-v3/calculate</code> antworten.</p>
+
+    <div class="grid-3">
+      <div class="discovery">
+        <div class="discovery-label">Blitzschutz · MA570</div>
+        <h3 style="font-size: 18px;">Schule Würzburg, 35 MS</h3>
+        <p style="font-family: var(--font-mono); font-size: 20px; color: var(--tuev-blue); font-weight: 700; margin: 12px 0;">1,814 €</p>
+        <p style="font-size: 13px;">Grund 384 + Prüf 1,050 + Bericht 380</p>
+      </div>
+      <div class="discovery">
+        <div class="discovery-label">RLT · MA419</div>
+        <h3 style="font-size: 18px;">Hygiene Büro München, 4 Bereiche</h3>
+        <p style="font-family: var(--font-mono); font-size: 20px; color: var(--tuev-blue); font-weight: 700; margin: 12px 0;">3,539 €</p>
+        <p style="font-size: 13px;">VDI 6022 (208€/h)</p>
+      </div>
+      <div class="discovery">
+        <div class="discovery-label">DGUV V3 · MA507</div>
+        <h3 style="font-size: 18px;">Bürogebäude Hamburg 1,500 m²</h3>
+        <p style="font-family: var(--font-mono); font-size: 20px; color: var(--tuev-blue); font-weight: 700; margin: 12px 0;">1,480 €</p>
+        <p style="font-size: 13px;">LPV B04 Kap. 2 (250€ + Fläche × Kat)</p>
+      </div>
+    </div>
+
+    <div class="discovery" style="margin-top: 24px;">
+      <div class="discovery-label">Architektur-Key</div>
+      <h3>Product-agnostic Engine — neues Gewerk = 1-2 Tage</h3>
+      <p>Jedes Gewerk ist vier Files: <code>merkmale.py</code> (Pydantic), <code>pricing_rules.py</code> (Formeln aus LPV), <code>extraction_prompt.txt</code> (LLM-Anleitung), <code>golden_set.py</code> (Validierung-Quelle). Shared: <code>common/pricing_primitives.py</code> (Reisekosten, Tagegeld, Bericht, Zuschläge — alles aus LPV Teil A).</p>
+      <p><b>Phase 2 Scope</b> — MA572 + MA574 + MA555 + MA438 + MA441 + MA501 + MA510 + MA560 = ~2 Wochen Arbeit, nicht 2 Monate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 13: Discovery 12 / Next steps -->
+<section class="slide">
+  <div class="slide-header">
+    <span class="slide-num">12 / 12</span>
+    <span class="slide-kicker">Discovery #12 — Was wir noch nicht wissen</span>
+  </div>
+  <div class="slide-body">
+    <h2>5 Fragen <span>an euch heute</span></h2>
+    <p class="lede">Was wir von diesem Projektregeltermin mitnehmen wollen:</p>
+
+    <div class="grid-2">
+      <div class="discovery amber">
+        <div class="discovery-label">Frage 1 · an Pausch</div>
+        <h3>Schutzklasse-Lücke: Policy oder Vergessen?</h3>
+        <p>49% MA570-Berichte haben leere Schutzklasse. Ist das beabsichtigt (Standardannahme III) oder ein Template-Fehler, den wir via Ingest identifizieren und nachtragen sollen?</p>
+      </div>
+      <div class="discovery amber">
+        <div class="discovery-label">Frage 2 · an Veit</div>
+        <h3>LPV vs Ausschreibungs-Rabatte</h3>
+        <p>Unser Kalkulator liefert die LPV-Baseline. Stadtwerke Augsburg zeigt: in Ausschreibungen werden 25-45% Rabatt durchgeführt. Soll SmartCal einen "Ausschreibungsmodus" haben, oder bleiben wir bei LPV und Sachverständiger passt manuell an?</p>
+      </div>
+      <div class="discovery amber">
+        <div class="discovery-label">Frage 3 · an alle Tester</div>
+        <h3>Welches Gewerk zuerst in eurer Routine?</h3>
+        <p>Wir shippen Phase 1 mit Blitzschutz + RLT + DGUV V3. Wer von euch arbeitet mit welchem Gewerk am häufigsten? Wir priorisieren die UX danach.</p>
+      </div>
+      <div class="discovery amber">
+        <div class="discovery-label">Frage 4 · an Bremer / Fischermann</div>
+        <h3>Azure-Migration-Timeline</h3>
+        <p>MING Cloud läuft für POC. Wann ist Azure-Tenant verfügbar, und was muss SmartCal architektonisch mitbringen (Terraform done, container-ready)?</p>
+      </div>
+      <div class="discovery amber">
+        <div class="discovery-label">Frage 5 · an Pfeifer / Julia / Mario</div>
+        <h3>Großkundenprojektmanagement-Zugang</h3>
+        <p>Wir haben 4 Pricing-Modelle identifiziert (Apleona, WISAG, Volkswohlbund, Audi). Für Phase 2 brauchen wir 2-3 weitere Preislisten aus eurem Bestand als Referenz. Wer kann die Liste der aktiven Großkunden + deren Pricing-Mechanik zur Verfügung stellen?</p>
+      </div>
+      <div class="discovery" style="border-color: var(--tuev-blue);">
+        <div class="discovery-label">KW27 · 06.07.2026</div>
+        <h3>Abteilungsleitertagung — wo wir hinwollen</h3>
+        <p><b>Live-Demo 3 Kalkulatoren</b> + Graph Intelligence (5,403+9,012+10,096 Berichte ingested + Similar-Anlagen-Query + Risk-Score aus historischen Mängel-Patterns).</p>
+        <p><b>Success Criteria:</b> Veit + Abteilungsleiter klicken durch Kalkulator und sagen <i>"das spart Zeit"</i>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 14: Thank you / close -->
+<section class="slide hero">
+  <div class="hero-wrap" style="background: linear-gradient(135deg, #003080 0%, #000940 100%);">
+    <h1 style="font-size: 56px;">Danke <span>für heute.</span></h1>
+    <div class="subtitle" style="font-size: 24px;">
+      Wir melden uns mit Protokoll heute Nachmittag.<br>
+      Nächster Zwischenstand: Freitag KW17, Demo KW22 UAT.
+    </div>
+    <div style="margin-top: 40px; font-family: var(--font-mono); font-size: 14px; opacity: 0.7;">
+      Piotr · MING Labs · piotr@minglabs.com<br>
+      Projekt SmartCal@EG · TÜV SÜD Industrie Service GmbH
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="nav">
+  <button onclick="nav(-1)">‹</button>
+  <span class="pos"><span id="cur">1</span> / <span id="total">14</span></span>
+  <button onclick="nav(1)">›</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let i = 0;
+  document.getElementById('total').textContent = slides.length;
+  function show(idx) {
+    slides.forEach((s, n) => s.classList.toggle('active', n === idx));
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('progress').style.width = ((idx + 1) / slides.length * 100) + '%';
+    i = idx;
+  }
+  function nav(delta) {
+    show(Math.max(0, Math.min(slides.length - 1, i + delta)));
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nav(1);
+    if (e.key === 'ArrowLeft') nav(-1);
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+  show(0);
+</script>
+</body>
+</html>
