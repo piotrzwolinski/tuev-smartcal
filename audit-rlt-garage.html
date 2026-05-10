@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulationsnachweis — RLT Tiefgarage Nürnberg</title>
+<style>
+:root {
+  --tuev-blue: #0046ad;
+  --tuev-blue-light: #e8f0fc;
+  --green: #d4edda;
+  --green-border: #28a745;
+  --yellow: #fff3cd;
+  --yellow-border: #ffc107;
+  --gray: #f0f0f0;
+  --gray-border: #999;
+  --text: #1a1a1a;
+  --muted: #555;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: #fff;
+  line-height: 1.6;
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: var(--tuev-blue);
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.scenario-badge {
+  display: inline-block;
+  background: var(--tuev-blue);
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.input-box {
+  background: var(--tuev-blue-light);
+  border-left: 4px solid var(--tuev-blue);
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+  border-radius: 0 4px 4px 0;
+}
+
+.input-box h2 {
+  font-size: 1rem;
+  color: var(--tuev-blue);
+  margin-bottom: 0.5rem;
+}
+
+.input-box ul {
+  list-style: none;
+  padding: 0;
+}
+
+.input-box li {
+  padding: 0.2rem 0;
+  font-size: 0.9rem;
+}
+
+.input-box li::before {
+  content: "•";
+  color: var(--tuev-blue);
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 0.75rem;
+}
+
+details {
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+details[open] {
+  border-color: var(--tuev-blue);
+}
+
+summary {
+  padding: 0.85rem 1.25rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: #fafafa;
+  border-bottom: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+details[open] summary {
+  border-bottom: 1px solid #ddd;
+  background: var(--tuev-blue-light);
+  color: var(--tuev-blue);
+}
+
+summary::marker {
+  color: var(--tuev-blue);
+}
+
+.step-content {
+  padding: 1rem 1.25rem;
+}
+
+.field {
+  margin-bottom: 0.75rem;
+}
+
+.field-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.field-value {
+  font-size: 0.9rem;
+}
+
+.line-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.35rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.line-item.verified {
+  background: var(--green);
+  border-left: 3px solid var(--green-border);
+}
+
+.line-item.heuristic {
+  background: var(--yellow);
+  border-left: 3px solid var(--yellow-border);
+}
+
+.line-item.shared {
+  background: var(--gray);
+  border-left: 3px solid var(--gray-border);
+}
+
+.line-item .label {
+  flex: 1;
+}
+
+.line-item .amount {
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+
+.line-item .source {
+  font-size: 0.75rem;
+  color: var(--muted);
+  display: block;
+  margin-top: 0.1rem;
+}
+
+.line-item .warning {
+  font-size: 0.75rem;
+  color: #856404;
+  display: block;
+  margin-top: 0.1rem;
+}
+
+.sum-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  border-top: 2px solid var(--tuev-blue);
+  margin-top: 0.75rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--tuev-blue);
+}
+
+.formula-box {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.82rem;
+  margin: 0.5rem 0;
+  color: #333;
+}
+
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+.result-table th {
+  background: var(--tuev-blue);
+  color: #fff;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.result-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.result-table tr:last-child td {
+  border-bottom: none;
+}
+
+.result-table .total td {
+  font-weight: 700;
+  border-top: 2px solid var(--tuev-blue);
+  background: var(--tuev-blue-light);
+}
+
+.benchmark-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+
+.benchmark-table th {
+  background: #f0f0f0;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #ddd;
+}
+
+.benchmark-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.benchmark-table .delta {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.interpretation {
+  background: #f8f9fa;
+  border-left: 3px solid var(--tuev-blue);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+
+.interpretation li {
+  margin-bottom: 0.3rem;
+}
+
+.questions-list {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.questions-list li {
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.legend-swatch.verified { background: var(--green); border: 1px solid var(--green-border); }
+.legend-swatch.heuristic { background: var(--yellow); border: 1px solid var(--yellow-border); }
+.legend-swatch.shared { background: var(--gray); border: 1px solid var(--gray-border); }
+
+.confidence-badge {
+  display: inline-block;
+  background: var(--green);
+  border: 1px solid var(--green-border);
+  color: #155724;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ddd;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+footer p {
+  margin-bottom: 0.25rem;
+}
+
+@media print {
+  body { padding: 1cm; max-width: none; }
+  details { break-inside: avoid; }
+  details[open] summary { background: none; }
+  .line-item.verified { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .line-item.heuristic { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .line-item.shared { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<h1>Kalkulationsnachweis</h1>
+<p class="subtitle">Zur Verifizierung der Preislogik durch TÜV SÜD Projektleitung</p>
+
+<span class="scenario-badge">RLT Tiefgarage Nürnberg (MA419-WPBA)</span>
+
+<div class="input-box">
+  <h2>Kundenanfrage</h2>
+  <ul>
+    <li>Tiefgarage in Nürnberg, Anton-Pichler-Straße, PLZ 90431</li>
+    <li>600 m² Garagenfläche</li>
+    <li>24 Stellplätze — Mittelgarage nach GaStellV §1</li>
+    <li>2 Abluftventilatoren (Th. Wegener DE 134 S)</li>
+    <li>4 Brandschutzklappen in Lüftungsleitungen</li>
+    <li>Wiederkehrende Prüfung gemäß §2 SPrüfV (baurechtlich)</li>
+    <li>Rahmenvertrag vorhanden (Vereinsmitglied)</li>
+    <li>Kein Eilzuschlag, keine Erstprüfung</li>
+  </ul>
+  <p class="note">Basiert auf Musterbericht MA419-WPBA aus TÜV-Beispieldaten (Equipment 1649219)</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch verified"></div> Verifizierter Wert (LPV)</div>
+  <div class="legend-item"><div class="legend-swatch heuristic"></div> Heuristik / Klärungsbedarf</div>
+  <div class="legend-item"><div class="legend-swatch shared"></div> Geteilte Kosten</div>
+</div>
+
+<!-- Schritt 1 -->
+<details open>
+  <summary>Schritt 1: Varianten-Erkennung</summary>
+  <div class="step-content">
+    <div class="field">
+      <div class="field-label">Bezeichnung</div>
+      <div class="field-value">Erkennung der Prüfungsvariante aus Kundenangaben</div>
+    </div>
+    <div class="field">
+      <div class="field-label">Input-Merkmale</div>
+      <div class="field-value">"Tiefgarage", "Stellplätze", "GaStellV"</div>
+    </div>
+    <div class="field">
+      <div class="field-label">Ergebnis</div>
+      <div class="field-value"><strong>Variante = GARAGE (MA419-WPBA)</strong></div>
+    </div>
+    <div class="field">
+      <div class="field-label">Grundlage</div>
+      <div class="field-value">BayBO + GaStellV + VDI 2053</div>
+    </div>
+    <div class="field">
+      <div class="field-label">Qualifikation</div>
+      <div class="field-value">Fachrichtung Lüftungsanlagen</div>
+    </div>
+    <div class="field">
+      <div class="field-label">Quelle</div>
+      <div class="field-value">LPV B05, Prüfungsarten-Katalog</div>
+    </div>
+  </div>
+</details>
+
+<!-- Schritt 2 -->
+<details open>
+  <summary>Schritt 2: Prüfkosten (Hauptposition)</summary>
+  <div class="step-content">
+    <div class="field">
+      <div class="field-label">Formel</div>
+      <div class="formula-box">Prüfkosten = Grundpreis(Stellplätze) + Ventilatoren × Stückpreis + BSK × Stückpreis</div>
+    </div>
+
+    <div class="line-item heuristic">
+      <div class="label">
+        Grundpreis Garage: 24 Stellplätze ≤ 30 → Kleingarage
+        <span class="source">Quelle: LPV B05 Kap. 2.2 — "Anlage bis 25 Stellplätze: 450€"</span>
+        <span class="warning">⚠ Kalkulationshilfen sagt ≤25 SP, unser Schwellwert ist ≤30. Klärung mit TÜV erforderlich.</span>
+      </div>
+      <div class="amount">450,00 €</div>
+    </div>
+
+    <div class="line-item verified">
+      <div class="label">
+        Ventilatoren: 2 × 170,00 €
+        <span class="source">Quelle: LPV B05 Kap. 2 — "Zusätzliche Ventilatoren: 170€/Stück"</span>
+      </div>
+      <div class="amount">340,00 €</div>
+    </div>
+
+    <div class="line-item heuristic">
+      <div class="label">
+        Brandschutzklappen: 4 × 40,00 €
+        <span class="source">Quelle: LPV B05 Kap. 2 — "Brandschutzklappen"</span>
+        <span class="warning">⚠ Kalkulationshilfen zeigt ~45,50€/BSK. Klärung erforderlich.</span>
+      </div>
+      <div class="amount">160,00 €</div>
+    </div>
+
+    <div class="sum-line">
+      <span>Summe Prüfkosten</span>
+      <span>950,00 €</span>
+    </div>
+  </div>
+</details>
+
+<!-- Schritt 3 -->
+<details open>
+  <summary>Schritt 3: Grundkosten</summary>
+  <div class="step-content">
+    <div class="field">
+      <div class="field-label">Formel</div>
+      <div class="formula-box">Grundkosten = Pauschale + Ordnungsprüfung + Prüfmittelpauschale + Tagegeld</div>
+    </div>
+
+    <div class="line-item shared">
+      <div class="label">
+        Pauschale Auftragsverwaltung
+        <span class="source">Quelle: LPV Teil A §4 + TÜV-Korrespondenz</span>
+      </div>
+      <div class="amount">256,00 €</div>
+    </div>
+
+    <div class="line-item verified">
+      <div class="label">
+        Ordnungsprüfung (baurechtlich)
+        <span class="source">Quelle: LPV Teil A §4 — "nur bei baurechtlichen Prüfungen"</span>
+        <span class="source">Angewendet weil: Garagenlüftung = baurechtliche Prüfung (§2 SPrüfV)</span>
+      </div>
+      <div class="amount">242,00 €</div>
+    </div>
+
+    <div class="line-item heuristic">
+      <div class="label">
+        Prüfmittelpauschale: 0,5 Tage × 49,00 €
+        <span class="source">Quelle: LPV Teil A §4 — "49€ je Prüftag, je Sachverständiger"</span>
+        <span class="warning">Prüftage: ≤30 Stellplätze → 0,5 Tage (Heuristik)</span>
+      </div>
+      <div class="amount">24,50 €</div>
+    </div>
+
+    <div class="line-item verified">
+      <div class="label">
+        Tagegeld: 0,5 × 8h = 4h → unter 6h-Grenze
+        <span class="source">Quelle: LPV Teil A §4.3 — "6€ ab 6h, 25€ ab 8h, 30€ ab 14h"</span>
+      </div>
+      <div class="amount">0,00 €</div>
+    </div>
+
+    <div class="sum-line">
+      <span>Summe Grundkosten</span>
+      <span>522,50 €</span>
+    </div>
+  </div>
+</details>
+
+<!-- Schritt 4 -->
+<details open>
+  <summary>Schritt 4: Reisekosten</summary>
+  <div class="step-content">
+    <div class="field">
+      <div class="field-label">Formel</div>
+      <div class="formula-box">Reisekosten = (Strecke × 2) × Kilometergeld + Reisezeit × Stundensatz</div>
+    </div>
+
+    <div class="line-item verified">
+      <div class="label">
+        PLZ-Zuordnung: 90431 → NL Nürnberg (Edisonstraße 15)
+        <span class="source">Quelle: CRM PLZ NL Mapping (8.308 PLZ → 24 Niederlassungen)</span>
+      </div>
+      <div class="amount">—</div>
+    </div>
+
+    <div class="line-item shared">
+      <div class="label">
+        Fahrstrecke: ~3 km einfach (OSRM-Routing)
+        <span class="source">Kilometergeld: 6 km × 1,10 €</span>
+        <span class="source">Quelle: LPV Teil A §4.3 — "Kilometergeld PKW: 1,10€/km"</span>
+      </div>
+      <div class="amount">6,60 €</div>
+    </div>
+
+    <div class="line-item shared">
+      <div class="label">
+        Reisezeit: ~10 min roundtrip → 0,17h × 180 €
+        <span class="source">Quelle: LPV Teil A §4.2 — Stundensatz einfach 180€</span>
+      </div>
+      <div class="amount">~30,00 €</div>
+    </div>
+
+    <div class="sum-line">
+      <span>Summe Reisekosten</span>
+      <span>~37 € <small style="font-weight:normal;color:var(--muted)">(variiert je nach OSRM-Routing)</small></span>
+    </div>
+  </div>
+</details>
+
+<!-- Schritt 5 -->
+<details open>
+  <summary>Schritt 5: Berichterstellung</summary>
+  <div class="step-content">
+    <div class="field">
+      <div class="field-label">Formel</div>
+      <div class="formula-box">Berichtstyp = f(Stellplätze) → 24 SP ≤ 30 → "klein"</div>
+    </div>
+
+    <div class="line-item verified">
+      <div class="label">
+        Berichtskosten: Berichtstyp "klein"
+        <span class="source">Quelle: LPV B05 §11 / TÜV-Korrespondenz</span>
+      </div>
+      <div class="amount">119,00 €</div>
+    </div>
+
+    <div class="sum-line">
+      <span>Summe Berichterstellung</span>
+      <span>119,00 €</span>
+    </div>
+  </div>
+</details>
+
+<!-- Schritt 6 -->
+<details open>
+  <summary>Schritt 6: Zuschläge</summary>
+  <div class="step-content">
+    <div class="line-item verified">
+      <div class="label">Vereinsmitglied: Ja → kein Zuschlag</div>
+      <div class="amount">0,00 €</div>
+    </div>
+    <div class="line-item verified">
+      <div class="label">Eilzuschlag: Nein → kein Zuschlag</div>
+      <div class="amount">0,00 €</div>
+    </div>
+    <div class="line-item verified">
+      <div class="label">Erstprüfung: Nein → kein Zuschlag</div>
+      <div class="amount">0,00 €</div>
+    </div>
+
+    <div class="sum-line">
+      <span>Summe Zuschläge</span>
+      <span>0,00 €</span>
+    </div>
+  </div>
+</details>
+
+<!-- Schritt 7 -->
+<details open>
+  <summary>Schritt 7: Confidence Score</summary>
+  <div class="step-content">
+    <div class="line-item verified">
+      <div class="label">Stellplätze 24: im typischen Bereich (10–200)</div>
+      <div class="amount">✓</div>
+    </div>
+    <div class="line-item verified">
+      <div class="label">Ventilatoren 2: im typischen Bereich (1–6)</div>
+      <div class="amount">✓</div>
+    </div>
+    <div style="margin-top: 1rem;">
+      <span class="confidence-badge">Confidence: 100% — Alle Merkmale in typischen Bereichen</span>
+    </div>
+  </div>
+</details>
+
+<!-- Ergebnis -->
+<details open>
+  <summary>Ergebnis: Gesamtkalkulation</summary>
+  <div class="step-content">
+    <table class="result-table">
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th style="text-align:right;">Betrag</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Grundkosten (Pauschale + Ordnung + Prüfmittel)</td>
+          <td style="text-align:right;">522,50 €</td>
+        </tr>
+        <tr>
+          <td>Prüfkosten (Grundpreis + Ventilatoren + BSK)</td>
+          <td style="text-align:right;">950,00 €</td>
+        </tr>
+        <tr>
+          <td>Reisekosten (Kilometergeld + Reisezeit)</td>
+          <td style="text-align:right;">~37 €</td>
+        </tr>
+        <tr>
+          <td>Berichterstellung</td>
+          <td style="text-align:right;">119,00 €</td>
+        </tr>
+        <tr>
+          <td>Zuschläge</td>
+          <td style="text-align:right;">0,00 €</td>
+        </tr>
+        <tr class="total">
+          <td>Gesamtpreis (netto)</td>
+          <td style="text-align:right;">~1.628 €</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<!-- Benchmark -->
+<details open>
+  <summary>Benchmark: Vergleich mit historischen Daten</summary>
+  <div class="step-content">
+    <table class="benchmark-table">
+      <thead>
+        <tr>
+          <th>Kennzahl</th>
+          <th>Unsere Kalkulation</th>
+          <th>Versand Faktura (Median)</th>
+          <th>Versand Angebot (Median)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Gesamtpreis</td>
+          <td><strong>~1.628 €</strong></td>
+          <td>612 €</td>
+          <td>574 €</td>
+        </tr>
+        <tr>
+          <td>Delta vs Kalkulation</td>
+          <td>—</td>
+          <td class="delta">-62%</td>
+          <td class="delta">-65%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="interpretation">
+      <strong>Interpretation:</strong>
+      <ul style="margin-top:0.5rem; padding-left:1.25rem;">
+        <li>Unsere Kalkulation liegt auf <strong>LPV-Listenpreis-Niveau</strong></li>
+        <li>Historische Faktura (Median 612€, n=2.560 Garage-Prüfungen) ist 62% niedriger</li>
+        <li>Das ist konsistent mit dem Volkswohlbund-Effekt (Rahmenvertrag-Rabatte)</li>
+        <li>Für Ausschreibungen/Rahmenverträge: Marktpreis-Faktor ~0,38 auf LPV-Preis</li>
+        <li>⚠ Garage ist Sonderfall: Faktura &gt; Angebot (+27%) — häufig Zusatzleistungen bei der Prüfung</li>
+      </ul>
+    </div>
+  </div>
+</details>
+
+<!-- Offene Fragen -->
+<details open>
+  <summary>Offene Fragen an TÜV (für dieses Szenario)</summary>
+  <div class="step-content">
+    <ol class="questions-list">
+      <li>Stellplatz-Schwelle Kleingarage: ≤25 (Kalkulationshilfen) oder ≤30 (LPV)?</li>
+      <li>BSK-Preis: 40€ (LPV) oder 45,50€ (Kalkulationshilfen)?</li>
+      <li>Ist der hohe LPV-Preis vs Faktura-Median erwartbar? Oder rechnen wir falsch?</li>
+      <li>Enthält die Faktura auch CO-Warnanlagen-Prüfung (separates Equipment)?</li>
+    </ol>
+  </div>
+</details>
+
+<footer>
+  <p>SmartCal@EG · Synapse OS · Kalkulationsnachweis · Stand 10.05.2026</p>
+  <p>Quelle: LPV 2025/2026, Versand 441_419 (13.894 Datensätze), CRM PLZ NL (8.308 PLZ)</p>
+</footer>
+
+</body>
+</html>

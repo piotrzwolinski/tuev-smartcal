@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulationsnachweise — SmartCal@EG</title>
+<style>
+:root {
+  --tuev-blue: #0046ad;
+  --tuev-blue-light: #e8f0fc;
+  --green: #d4edda;
+  --green-border: #28a745;
+  --yellow: #fff3cd;
+  --yellow-border: #ffc107;
+  --gray: #f0f0f0;
+  --gray-border: #999;
+  --text: #1a1a1a;
+  --muted: #555;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: #fff;
+  line-height: 1.6;
+  padding: 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: var(--tuev-blue);
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+h2.product-header {
+  color: var(--tuev-blue);
+  font-size: 1.35rem;
+  margin-top: 3rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--tuev-blue);
+}
+
+.product-meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.toc {
+  background: var(--tuev-blue-light);
+  border: 1px solid #c0d8f0;
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.toc h2 {
+  font-size: 1rem;
+  color: var(--tuev-blue);
+  margin-bottom: 0.75rem;
+}
+
+.toc ol {
+  padding-left: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.toc li {
+  margin-bottom: 0.35rem;
+}
+
+.toc a {
+  color: var(--tuev-blue);
+  text-decoration: none;
+}
+
+.toc a:hover {
+  text-decoration: underline;
+}
+
+.toc .toc-section {
+  font-weight: 700;
+  margin-top: 0.75rem;
+  list-style: none;
+  margin-left: -1.5rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.scenario-badge {
+  display: inline-block;
+  background: var(--tuev-blue);
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.input-box {
+  background: var(--tuev-blue-light);
+  border-left: 4px solid var(--tuev-blue);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0 4px 4px 0;
+}
+
+.input-box h3 {
+  font-size: 0.95rem;
+  color: var(--tuev-blue);
+  margin-bottom: 0.5rem;
+}
+
+.input-box ul {
+  list-style: none;
+  padding: 0;
+}
+
+.input-box li {
+  padding: 0.2rem 0;
+  font-size: 0.88rem;
+}
+
+.input-box li::before {
+  content: "\2022";
+  color: var(--tuev-blue);
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 0.75rem;
+}
+
+.scenario-section {
+  margin-bottom: 2.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.scenario-section > summary {
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.05rem;
+  background: #fafafa;
+  border-bottom: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scenario-section[open] > summary {
+  border-bottom: 1px solid #ddd;
+  background: var(--tuev-blue-light);
+  color: var(--tuev-blue);
+}
+
+.scenario-section > summary::marker {
+  color: var(--tuev-blue);
+}
+
+.scenario-body {
+  padding: 1.25rem;
+}
+
+details.step {
+  margin-bottom: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+details.step[open] {
+  border-color: var(--tuev-blue);
+}
+
+details.step summary {
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: #fafafa;
+  border-bottom: 1px solid transparent;
+}
+
+details.step[open] summary {
+  border-bottom: 1px solid #e0e0e0;
+  background: var(--tuev-blue-light);
+  color: var(--tuev-blue);
+}
+
+details.step summary::marker {
+  color: var(--tuev-blue);
+}
+
+.step-content {
+  padding: 0.85rem 1rem;
+}
+
+.field {
+  margin-bottom: 0.6rem;
+}
+
+.field-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 0.1rem;
+}
+
+.field-value {
+  font-size: 0.88rem;
+}
+
+.line-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.45rem 0.75rem;
+  margin-bottom: 0.3rem;
+  border-radius: 4px;
+  font-size: 0.88rem;
+}
+
+.line-item.verified {
+  background: var(--green);
+  border-left: 3px solid var(--green-border);
+}
+
+.line-item.heuristic {
+  background: var(--yellow);
+  border-left: 3px solid var(--yellow-border);
+}
+
+.line-item.shared {
+  background: var(--gray);
+  border-left: 3px solid var(--gray-border);
+}
+
+.line-item .label {
+  flex: 1;
+}
+
+.line-item .amount {
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+
+.line-item .source {
+  font-size: 0.73rem;
+  color: var(--muted);
+  display: block;
+  margin-top: 0.1rem;
+}
+
+.line-item .warning {
+  font-size: 0.73rem;
+  color: #856404;
+  display: block;
+  margin-top: 0.1rem;
+}
+
+.sum-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.55rem 0.75rem;
+  border-top: 2px solid var(--tuev-blue);
+  margin-top: 0.6rem;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--tuev-blue);
+}
+
+.formula-box {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.78rem;
+  margin: 0.4rem 0;
+  color: #333;
+}
+
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.88rem;
+}
+
+.result-table th {
+  background: var(--tuev-blue);
+  color: #fff;
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.result-table td {
+  padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.result-table tr:last-child td {
+  border-bottom: none;
+}
+
+.result-table .total td {
+  font-weight: 700;
+  border-top: 2px solid var(--tuev-blue);
+  background: var(--tuev-blue-light);
+}
+
+.benchmark-box {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 0.85rem 1rem;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+}
+
+.benchmark-box h4 {
+  font-size: 0.85rem;
+  color: var(--tuev-blue);
+  margin-bottom: 0.5rem;
+}
+
+.benchmark-box table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0.5rem;
+}
+
+.benchmark-box th {
+  background: #e8e8e8;
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.benchmark-box td {
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid #eee;
+  font-size: 0.83rem;
+}
+
+.benchmark-box .delta-neg { color: #dc3545; font-weight: 600; }
+.benchmark-box .delta-pos { color: #28a745; font-weight: 600; }
+
+.interpretation {
+  background: #f0f8ff;
+  border-left: 3px solid var(--tuev-blue);
+  padding: 0.65rem 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.83rem;
+}
+
+.confidence-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.confidence-100 {
+  background: var(--green);
+  border: 1px solid var(--green-border);
+  color: #155724;
+}
+
+.confidence-85 {
+  background: #d1ecf1;
+  border: 1px solid #17a2b8;
+  color: #0c5460;
+}
+
+.confidence-64 {
+  background: var(--yellow);
+  border: 1px solid var(--yellow-border);
+  color: #856404;
+}
+
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.legend-swatch.verified { background: var(--green); border: 1px solid var(--green-border); }
+.legend-swatch.heuristic { background: var(--yellow); border: 1px solid var(--yellow-border); }
+.legend-swatch.shared { background: var(--gray); border: 1px solid var(--gray-border); }
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.85rem;
+}
+
+.summary-table th {
+  background: var(--tuev-blue);
+  color: #fff;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.summary-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.summary-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.summary-table .product-group td {
+  background: var(--tuev-blue-light);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--tuev-blue);
+  border-bottom: 1px solid var(--tuev-blue);
+}
+
+.chat-scenario {
+  background: #fff9e6;
+  border: 1px dashed var(--yellow-border);
+  border-radius: 5px;
+  padding: 1rem;
+  margin: 0.75rem 0;
+  font-size: 0.85rem;
+}
+
+.chat-scenario h4 {
+  color: #856404;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.questions-list {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  font-size: 0.88rem;
+}
+
+.questions-list li {
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ddd;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+footer p {
+  margin-bottom: 0.25rem;
+}
+
+@media print {
+  body { padding: 1cm; max-width: none; font-size: 9pt; }
+  .scenario-section, details.step { break-inside: avoid; }
+  .scenario-section[open] > summary, details.step[open] summary { background: none !important; }
+  .line-item.verified, .line-item.heuristic, .line-item.shared {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .toc { break-after: page; }
+  h2.product-header { break-before: page; }
+}
+</style>
+</head>
+<body>
+
+<h1>Kalkulationsnachweise — SmartCal@EG</h1>
+<p class="subtitle">12 Szenarien zur Verifizierung der Preislogik &middot; Stand 10.05.2026</p>
+
+<!-- Table of Contents -->
+<div class="toc">
+  <h2>Inhaltsverzeichnis</h2>
+  <ol>
+    <li class="toc-section">Blitzschutz (MA570)</li>
+    <li><a href="#s1">Schule Wuerzburg — 35 Trennstellen</a></li>
+    <li><a href="#s2">Krankenhaus Hamburg — 120 TS, Erstpruefung</a></li>
+    <li><a href="#s3">Industriehalle Augsburg — 80 TS, grobe Anfrage</a></li>
+    <li><a href="#s4">Wohngebaeude Muenchen — 4 Ableitungen</a></li>
+    <li class="toc-section">RLT-Anlage (MA419)</li>
+    <li><a href="#s5">Hygiene VDI 6022 Muenchen — 2 RLT-Geraete</a></li>
+    <li><a href="#s6">Tiefgarage Nuernberg — 24 SP (Hauptszenario)</a></li>
+    <li><a href="#s7">Hotel Lueftung — vage Anfrage (Chat-Szenario)</a></li>
+    <li><a href="#s8">Grossgarage Stuttgart — 200 SP, Eilzuschlag</a></li>
+    <li class="toc-section">DGUV V3 (MA507)</li>
+    <li><a href="#s9">Buero Regensburg — 2.000 m&sup2;, Standard</a></li>
+    <li><a href="#s10">Industrie Augsburg — 8.000 m&sup2;, NEA, Erstpruefung</a></li>
+    <li><a href="#s11">Krankenhaus Muenchen — 20.000 m&sup2;, Sonderflaeche</a></li>
+    <li><a href="#s12">Seniorentreff Regensburg — 200 m&sup2;, minimal</a></li>
+    <li class="toc-section">Anhang</li>
+    <li><a href="#summary">Zusammenfassung aller 12 Szenarien</a></li>
+    <li><a href="#questions">Offene Fragen</a></li>
+  </ol>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch verified"></div> LPV-verifizierter Wert</div>
+  <div class="legend-item"><div class="legend-swatch heuristic"></div> Heuristik / Klaerungsbedarf</div>
+  <div class="legend-item"><div class="legend-swatch shared"></div> Geteilte Kosten (alle Produkte)</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PRODUCT: BLITZSCHUTZ (MA570) -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<h2 class="product-header" id="blitzschutz">Blitzschutz (MA570)</h2>
+<p class="product-meta">Benchmark: Versand n=3.161 &middot; Faktura Median 420&euro; &middot; Angebot Median 3.000&euro;</p>
+
+<!-- SCENARIO 1 -->
+<details class="scenario-section" id="s1">
+  <summary>Szenario 1: Schule Wuerzburg — 35 Trennstellen</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Volksschule Wuerzburg, PLZ 97080</li>
+        <li>35 Trennstellen</li>
+        <li>Schutzklasse III, Kupfer</li>
+        <li>Wiederkehrende Pruefung</li>
+        <li>Vereinsmitglied</li>
+      </ul>
+    </div>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">10x33&euro; + 10x30&euro; + 15x28&euro; = 330 + 300 + 420</div>
+        <div class="line-item verified">
+          <div class="label">Staffel 1: 10 TS x 33,00&euro; <span class="source">LPV B04 &sect;8.1, Staffel 1 (TS 1-10)</span></div>
+          <div class="amount">330,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Staffel 2: 10 TS x 30,00&euro; <span class="source">LPV B04 &sect;8.1, Staffel 2 (TS 11-20)</span></div>
+          <div class="amount">300,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Staffel 3: 15 TS x 28,00&euro; <span class="source">LPV B04 &sect;8.1, Staffel 3 (TS 21-40)</span></div>
+          <div class="amount">420,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>1.050,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">Pauschale 256&euro; + Pruefmittel (49&euro; x 2,0 Tage) + Tagegeld (16h = 30&euro;)</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung <span class="source">LPV Teil A &sect;4</span></div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">Pruefmittelpauschale: 2,0 Tage x 49&euro; <span class="source">LPV Teil A &sect;4</span><span class="warning">Prueftage: 35 TS &gt; 30 &rarr; 2,0 Tage (Heuristik)</span></div>
+          <div class="amount">98,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 2,0 Tage x 8h = 16h &rarr; 30&euro; <span class="source">LPV Teil A &sect;4.3 — ab 14h: 30&euro;</span></div>
+          <div class="amount">30,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>384,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">PLZ 97080 &rarr; CRM &rarr; NL Wuerzburg, 0,4 km einfach <span class="source">OSRM-Routing (basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">8,29 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>8,29 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">35 TS &rarr; standard <span class="source">LPV B04 &sect;11</span></div>
+          <div class="amount">380,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>380,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Vereinsmitglied &rarr; kein Zuschlag</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Zuschlaege</span>
+          <span>0,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten</td><td style="text-align:right;">1.050,00 &euro;</td></tr>
+            <tr><td>Grundkosten</td><td style="text-align:right;">384,00 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">8,29 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">380,00 &euro;</td></tr>
+            <tr><td>Zuschlaege</td><td style="text-align:right;">0,00 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">1.822,29 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-85">Confidence: 85% — &gt;25 TS loest Ausschreibungs-Warning aus</span></p>
+      </div>
+    </details>
+
+    <div class="benchmark-box">
+      <h4>Benchmark</h4>
+      <table>
+        <thead><tr><th>Vergleich</th><th>Wert</th><th>Delta</th></tr></thead>
+        <tbody>
+          <tr><td>Faktura Median (n=3.161)</td><td>420 &euro;</td><td class="delta-neg">&minus;77%</td></tr>
+          <tr><td>Angebot Median</td><td>3.000 &euro;</td><td class="delta-pos">+65%</td></tr>
+        </tbody>
+      </table>
+      <div class="interpretation">Die Kalkulation bildet den LPV-Listenpreis korrekt ab. Die niedrige Faktura erklaert sich durch Rahmenvertrag-Rabatte bei &gt;25 TS (typisch Ausschreibung).</div>
+    </div>
+  </div>
+</details>
+
+<!-- SCENARIO 2 -->
+<details class="scenario-section" id="s2">
+  <summary>Szenario 2: Krankenhaus Hamburg — 120 TS, Erstpruefung</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Krankenhaus Hamburg, PLZ 22525</li>
+        <li>120 Trennstellen</li>
+        <li>Schutzklasse II, Sonderbau &sect;2 SPruefV</li>
+        <li>Erstpruefung</li>
+        <li>Kein Rahmenvertrag (kein Vereinsmitglied)</li>
+      </ul>
+    </div>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">10x33 + 10x30 + 20x28 + 60x26 + 20x24</div>
+        <div class="line-item verified">
+          <div class="label">Staffel 1: 10 x 33&euro; <span class="source">LPV B04 &sect;8.1</span></div>
+          <div class="amount">330,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Staffel 2: 10 x 30&euro;</div>
+          <div class="amount">300,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Staffel 3: 20 x 28&euro;</div>
+          <div class="amount">560,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Staffel 4: 60 x 26&euro; <span class="source">LPV B04 &sect;8.1, Staffel 4 (TS 41-100)</span></div>
+          <div class="amount">1.560,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Staffel 5: 20 x 24&euro; <span class="source">LPV B04 &sect;8.1, Staffel 5 (TS 101+)</span></div>
+          <div class="amount">480,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>3.230,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">256&euro; + 242&euro; (Ordnung/baurecht) + 49&euro; x 3,0 + Tagegeld 30&euro;</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung <span class="source">LPV Teil A &sect;4</span></div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Ordnungspruefung (baurechtlich, &sect;2 SPruefV) <span class="source">LPV Teil A &sect;4</span></div>
+          <div class="amount">242,00 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">Pruefmittelpauschale: 3,0 Tage x 49&euro; <span class="source">LPV Teil A &sect;4</span><span class="warning">Prueftage: 120 TS &rarr; max(3, 120/40) = 3,0</span></div>
+          <div class="amount">147,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 3,0 Tage &rarr; 30&euro; <span class="source">LPV Teil A &sect;4.3</span></div>
+          <div class="amount">30,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>675,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">PLZ 22525 &rarr; CRM &rarr; NL Hamburg, 6,4 km einfach <span class="source">(basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">82,39 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>82,39 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">120 TS &rarr; komplex <span class="source">LPV B04 &sect;11</span></div>
+          <div class="amount">550,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>550,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="formula-box">Subtotal = 4.537,39&euro; &rarr; Nicht-Vereinsmitglied +20% &rarr; Erstpruefung +100% (compound)</div>
+        <div class="line-item heuristic">
+          <div class="label">Nicht-Vereinsmitglied: +20% auf 4.537,39&euro; <span class="source">LPV Teil A &sect;6</span></div>
+          <div class="amount">907,48 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">Erstpruefung: +100% auf (4.537,39 + 907,48) = 5.444,87&euro; <span class="source">LPV Teil A &sect;5 (compound)</span></div>
+          <div class="amount">5.444,87 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Zuschlaege</span>
+          <span>6.352,35 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten</td><td style="text-align:right;">3.230,00 &euro;</td></tr>
+            <tr><td>Grundkosten</td><td style="text-align:right;">675,00 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">82,39 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">550,00 &euro;</td></tr>
+            <tr><td>Zuschlaege (NV +20%, Erst +100%)</td><td style="text-align:right;">6.352,35 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">10.889,74 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-85">Confidence: 85% — Compound-Zuschlaege korrekt berechnet</span></p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- SCENARIO 3 -->
+<details class="scenario-section" id="s3">
+  <summary>Szenario 3: Industriehalle Augsburg — 80 TS, grobe Anfrage</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Industriehalle Augsburg, PLZ 86199</li>
+        <li>ca. 80 Messstellen</li>
+        <li>Keine Schutzklasse angegeben</li>
+      </ul>
+    </div>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">10x33 + 10x30 + 20x28 + 40x26 = 330 + 300 + 560 + 1.040</div>
+        <div class="line-item verified">
+          <div class="label">Staffel 1: 10 x 33&euro;</div>
+          <div class="amount">330,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Staffel 2: 10 x 30&euro;</div>
+          <div class="amount">300,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Staffel 3: 20 x 28&euro;</div>
+          <div class="amount">560,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Staffel 4: 40 x 26&euro;</div>
+          <div class="amount">1.040,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>2.230,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">256&euro; + 49&euro; x 3,0 + Tagegeld 30&euro;</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung</div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">Pruefmittelpauschale: 3,0 Tage x 49&euro; <span class="warning">Prueftage: 80 TS &rarr; 3,0</span></div>
+          <div class="amount">147,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 30&euro;</div>
+          <div class="amount">30,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>433,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">CRM &rarr; NL Augsburg, 3,2 km einfach <span class="source">(basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">41,23 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>41,23 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">80 TS &rarr; komplex</div>
+          <div class="amount">550,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>550,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Keine Zuschlaege</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten</td><td style="text-align:right;">2.230,00 &euro;</td></tr>
+            <tr><td>Grundkosten</td><td style="text-align:right;">433,00 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">41,23 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">550,00 &euro;</td></tr>
+            <tr><td>Zuschlaege</td><td style="text-align:right;">0,00 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">3.254,23 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-64">Confidence: 64% — Schutzklasse fehlt (Fallback III, x0,75) + &gt;25 TS (x0,85)</span></p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- SCENARIO 4 -->
+<details class="scenario-section" id="s4">
+  <summary>Szenario 4: Wohngebaeude Muenchen — 4 Ableitungen</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Einfamilienhaus Muenchen, PLZ 80686</li>
+        <li>4 Ableitungen</li>
+        <li>Schutzklasse IV</li>
+      </ul>
+    </div>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">4 x 33&euro; = 132&euro;</div>
+        <div class="line-item verified">
+          <div class="label">Staffel 1: 4 TS x 33&euro; <span class="source">LPV B04 &sect;8.1, Staffel 1 (TS 1-10)</span></div>
+          <div class="amount">132,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>132,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">256&euro; + 49&euro; x 0,5 + Tagegeld 0&euro; (&lt;6h)</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung</div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Pruefmittelpauschale: 0,5 Tage x 49&euro; <span class="source">4 TS &rarr; 0,5 Tage</span></div>
+          <div class="amount">24,50 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 0,5 x 8h = 4h &rarr; unter 6h-Grenze</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>280,50 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">CRM &rarr; NL Muenchen, 0,5 km einfach <span class="source">(basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">9,65 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>9,65 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">4 TS &rarr; klein</div>
+          <div class="amount">119,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>119,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Keine Zuschlaege</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten</td><td style="text-align:right;">132,00 &euro;</td></tr>
+            <tr><td>Grundkosten</td><td style="text-align:right;">280,50 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">9,65 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">119,00 &euro;</td></tr>
+            <tr><td>Zuschlaege</td><td style="text-align:right;">0,00 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">541,15 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-100">Confidence: 100% — Alle Merkmale vollstaendig und im typischen Bereich</span></p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PRODUCT: RLT-ANLAGE (MA419) -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<h2 class="product-header" id="rlt">RLT-Anlage (MA419)</h2>
+<p class="product-meta">
+  HYG: Versand n=8.191 &middot; Faktura Median 977&euro; &middot; Angebot Median 2.455&euro;<br>
+  GARAGE: Versand n=2.640 &middot; Faktura Median 629&euro; &middot; Angebot Median 574&euro;
+</p>
+
+<!-- SCENARIO 5 -->
+<details class="scenario-section" id="s5">
+  <summary>Szenario 5: Hygiene VDI 6022 Muenchen — 2 RLT-Geraete</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Buerogebaeude Muenchen, PLZ 80333</li>
+        <li>VDI 6022 Hygienepruefung</li>
+        <li>2 RLT-Geraete, 9.000 m&sup3;/h</li>
+        <li>Hersteller: Huber &amp; Ranner, BJ 2012</li>
+      </ul>
+      <p class="note">Basiert auf Musterbericht MA419-HYG Equipment 3342467, Pruefer Lukas Spielberger, 10.04.2024</p>
+    </div>
+
+    <details class="step" open>
+      <summary>Varianten-Erkennung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Keywords: "VDI 6022" &rarr; <strong>Variante = HYGIENE</strong> <span class="source">LPV B05 Kap. 2.7</span></div>
+          <div class="amount">—</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">2 Bereiche x (2,5h x 208&euro; + 180&euro; Labor) = 2 x (520 + 180)</div>
+        <div class="line-item verified">
+          <div class="label">Pruefzeit: 2 Bereiche x 2,5h x 208&euro;/h <span class="source">LPV B05 Kap. 2.7</span></div>
+          <div class="amount">1.040,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Laborkosten: 2 Bereiche x 180&euro; <span class="source">LPV B05 Kap. 2.7</span></div>
+          <div class="amount">360,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>1.400,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">256&euro; + 49&euro; x 0,8 + Tagegeld 6&euro; (6,4h)</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung</div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Pruefmittelpauschale: 0,8 Tage x 49&euro; <span class="source">max(0,5; 2 x 0,4) = 0,8</span></div>
+          <div class="amount">39,20 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 0,8 x 8h = 6,4h &rarr; 6&euro; <span class="source">LPV Teil A &sect;4.3 — ab 6h: 6&euro;</span></div>
+          <div class="amount">6,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>301,20 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">CRM &rarr; NL Muenchen, 0,5 km einfach <span class="source">(basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">9,65 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>9,65 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">2 Bereiche &rarr; klein</div>
+          <div class="amount">119,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>119,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Keine Zuschlaege</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten (Pruefzeit + Labor)</td><td style="text-align:right;">1.400,00 &euro;</td></tr>
+            <tr><td>Grundkosten</td><td style="text-align:right;">301,20 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">9,65 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">119,00 &euro;</td></tr>
+            <tr><td>Zuschlaege</td><td style="text-align:right;">0,00 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">1.829,85 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-100">Confidence: 100% — Alle Merkmale vollstaendig und im typischen Bereich</span></p>
+      </div>
+    </details>
+
+    <div class="benchmark-box">
+      <h4>Benchmark (HYG)</h4>
+      <table>
+        <thead><tr><th>Vergleich</th><th>Wert</th><th>Delta</th></tr></thead>
+        <tbody>
+          <tr><td>Faktura Median (n=8.191)</td><td>977 &euro;</td><td class="delta-neg">&minus;47%</td></tr>
+          <tr><td>Angebot Median</td><td>2.455 &euro;</td><td class="delta-pos">+34%</td></tr>
+        </tbody>
+      </table>
+      <div class="interpretation">Die Kalkulation bildet den LPV-Listenpreis korrekt ab. Die Differenz zur historischen Faktura entsteht durch Rahmenvertrag-Rabatte und gebuendelte Auftraege.</div>
+    </div>
+  </div>
+</details>
+
+<!-- SCENARIO 6 — THE MAIN ONE -->
+<details class="scenario-section" id="s6" open>
+  <summary>Szenario 6: Tiefgarage Nuernberg — 24 SP (Hauptszenario)</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Tiefgarage Nuernberg, Anton-Pichler-Strasse, PLZ 90431</li>
+        <li>600 m&sup2; Garagenflaeche</li>
+        <li>24 Stellplaetze — Mittelgarage nach GaStellV &sect;1</li>
+        <li>2 Abluftventilatoren (Th. Wegener DE 134 S)</li>
+        <li>4 Brandschutzklappen in Lueftungsleitungen</li>
+        <li>Wiederkehrende Pruefung gemaess &sect;2 SPruefV (baurechtlich)</li>
+        <li>Rahmenvertrag vorhanden (Vereinsmitglied)</li>
+      </ul>
+      <p class="note">Basiert auf Musterbericht MA419-WPBA Equipment 1649219, Pruefer Albert Muehlberger, 26.03.2026</p>
+    </div>
+
+    <details class="step" open>
+      <summary>Varianten-Erkennung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Keywords: "Tiefgarage", "Stellplaetze" &rarr; <strong>Variante = GARAGE (MA419-WPBA)</strong> <span class="source">LPV B05 Kap. 2.2</span></div>
+          <div class="amount">—</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">Grundpreis(SP) + Ventilatoren x Stueckpreis + BSK x Stueckpreis</div>
+        <div class="line-item heuristic">
+          <div class="label">
+            Grundpreis Garage: 24 Stellplaetze &le; 30 &rarr; Kleingarage
+            <span class="source">Quelle: LPV B05 Kap. 2.2 — "Anlage bis 25 Stellplaetze: 450&euro;"</span>
+            <span class="warning">&#9888; Kalkulationshilfen sagt &le;25 SP. Klaerung erforderlich.</span>
+          </div>
+          <div class="amount">450,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Ventilatoren: 2 x 170,00&euro; <span class="source">LPV B05 Kap. 2</span></div>
+          <div class="amount">340,00 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">
+            Brandschutzklappen: 4 x 40,00&euro;
+            <span class="source">LPV B05 Kap. 2</span>
+            <span class="warning">&#9888; Kalkulationshilfen zeigt 45,50&euro;/BSK. Klaerung erforderlich.</span>
+          </div>
+          <div class="amount">160,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>950,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">256&euro; + 242&euro; (Ordnung/baurecht) + 49&euro; x 0,5 + Tagegeld 0&euro; (&lt;6h)</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung <span class="source">LPV Teil A &sect;4</span></div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Ordnungspruefung (baurechtlich, &sect;2 SPruefV) <span class="source">LPV Teil A &sect;4</span></div>
+          <div class="amount">242,00 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">Pruefmittelpauschale: 0,5 Tage x 49&euro; <span class="warning">&le;30 Stellplaetze &rarr; 0,5 Tage (Heuristik)</span></div>
+          <div class="amount">24,50 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 0,5 x 8h = 4h &rarr; unter 6h-Grenze</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>522,50 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">PLZ 90431 &rarr; CRM &rarr; NL Nuernberg (Edisonstrasse 15), 1,4 km einfach <span class="source">(basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">20,42 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>20,42 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">24 SP &le; 30 &rarr; klein <span class="source">LPV B05 &sect;11</span></div>
+          <div class="amount">119,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>119,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Vereinsmitglied: Ja &rarr; kein Zuschlag</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Eilzuschlag: Nein</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Erstpruefung: Nein</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Zuschlaege</span>
+          <span>0,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten (Grundpreis + Ventilatoren + BSK)</td><td style="text-align:right;">950,00 &euro;</td></tr>
+            <tr><td>Grundkosten (Pauschale + Ordnung + Pruefmittel)</td><td style="text-align:right;">522,50 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">20,42 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">119,00 &euro;</td></tr>
+            <tr><td>Zuschlaege</td><td style="text-align:right;">0,00 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">1.611,92 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-100">Confidence: 100% — Alle Merkmale vollstaendig und im typischen Bereich</span></p>
+      </div>
+    </details>
+
+    <div class="benchmark-box">
+      <h4>Benchmark (GARAGE)</h4>
+      <table>
+        <thead><tr><th>Vergleich</th><th>Wert</th><th>Delta</th></tr></thead>
+        <tbody>
+          <tr><td>Faktura Median (n=2.640)</td><td>629 &euro;</td><td class="delta-neg">&minus;61%</td></tr>
+          <tr><td>Angebot Median</td><td>574 &euro;</td><td class="delta-neg">&minus;64%</td></tr>
+        </tbody>
+      </table>
+      <div class="interpretation">
+        Die Kalkulation bildet den LPV-Listenpreis korrekt ab. Die Differenz zur historischen Faktura (Median 629&euro;) entsteht durch Rahmenvertrag-Rabatte, Wettbewerbspreise und gebuendelte Auftraege (z.B. mehrere Garagen in einem Serviceauftrag).
+      </div>
+      <p style="font-size:0.8rem; color:var(--muted); margin-top:0.5rem;"><strong>Offene Fragen:</strong> SP-Schwelle (&le;25 vs &le;30), BSK-Preis (40&euro; vs 45,50&euro;), CO-Warnanlagen separat?</p>
+    </div>
+  </div>
+</details>
+
+<!-- SCENARIO 7 — CHAT SCENARIO -->
+<details class="scenario-section" id="s7">
+  <summary>Szenario 7: Hotel Lueftung — vage Anfrage (Chat-Szenario)</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>"Ich brauche ein Angebot fuer die Lueftungspruefung in unserem Hotel"</li>
+      </ul>
+    </div>
+
+    <div class="chat-scenario">
+      <h4>System-Reaktion: Rueckfragen statt Kalkulation</h4>
+      <p>Das System erkennt unzureichende Informationen und stellt Rueckfragen:</p>
+      <ul style="margin-top:0.5rem; padding-left:1.25rem; font-size:0.85rem;">
+        <li><strong>Variante unklar:</strong> "Handelt es sich um eine Hygienepruefung (VDI 6022) oder eine Garagenlueftung?"</li>
+        <li><strong>Keine Bereiche/Stellplaetze:</strong> "Wie viele Pruefbereiche / Stellplaetze sind vorhanden?"</li>
+        <li><strong>Standort:</strong> "Bitte geben Sie die PLZ und Stadt an."</li>
+      </ul>
+    </div>
+
+    <details class="step" open>
+      <summary>Fallback-Kalkulation (nur Orientierung)</summary>
+      <div class="step-content">
+        <p style="font-size:0.85rem; color:var(--muted); margin-bottom:0.75rem;">Diese Kalkulation basiert auf Mindestannahmen (1 Pruefbereich HYG). Der tatsaechliche Preis wird nach Klaerung der Rueckfragen neu berechnet.</p>
+        <table class="result-table">
+          <thead><tr><th>Position (Mindestannahme)</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten (1 Bereich HYG: 2,5h x 208&euro; + 180&euro;)</td><td style="text-align:right;">700,00 &euro;</td></tr>
+            <tr><td>Grundkosten (256 + 49x0,5 + 0)</td><td style="text-align:right;">280,50 &euro;</td></tr>
+            <tr><td>Reisekosten (Fallback NL Muenchen)</td><td style="text-align:right;">9,65 &euro;</td></tr>
+            <tr><td>Berichterstellung (klein)</td><td style="text-align:right;">119,00 &euro;</td></tr>
+            <tr class="total"><td>Orientierungspreis (netto)</td><td style="text-align:right;">1.109,15 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.8rem; color:#856404; margin-top:0.5rem;"><strong>Hinweis:</strong> Nur als Groessenordnung. Wird nach Klaerung aktualisiert.</p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- SCENARIO 8 -->
+<details class="scenario-section" id="s8">
+  <summary>Szenario 8: Grossgarage Stuttgart — 200 SP, Eilzuschlag</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Grossgarage Stuttgart (Filderstadt), PLZ 70794</li>
+        <li>200 Stellplaetze</li>
+        <li>6 Ventilatoren</li>
+        <li>12 Brandschutzklappen</li>
+        <li>Eilzuschlag erforderlich</li>
+      </ul>
+    </div>
+
+    <details class="step" open>
+      <summary>Varianten-Erkennung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Keywords: "Grossgarage", "Stellplaetze" &rarr; <strong>Variante = GARAGE</strong></div>
+          <div class="amount">—</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">200 SP &gt; 100 &rarr; Grossgarage 1.250&euro; + 6x170&euro; + 12x40&euro;</div>
+        <div class="line-item verified">
+          <div class="label">Grundpreis Grossgarage: 200 SP &gt; 100 <span class="source">LPV B05 Kap. 2.2</span></div>
+          <div class="amount">1.250,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Ventilatoren: 6 x 170&euro;</div>
+          <div class="amount">1.020,00 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">Brandschutzklappen: 12 x 40&euro; <span class="warning">&#9888; Kalkulationshilfen: 45,50&euro;/BSK</span></div>
+          <div class="amount">480,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>2.750,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">256&euro; + 242&euro; (baurecht) + 49&euro; x 2,0 + 30&euro; (Tagegeld 16h)</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung</div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Ordnungspruefung (baurechtlich)</div>
+          <div class="amount">242,00 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">Pruefmittelpauschale: 2,0 Tage x 49&euro; <span class="warning">&gt;100 SP &rarr; 2,0 Tage</span></div>
+          <div class="amount">98,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 2,0 Tage x 8h = 16h &rarr; 30&euro;</div>
+          <div class="amount">30,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>626,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">PLZ 70794 &rarr; CRM &rarr; NL Filderstadt (0STG), 0,9 km einfach <span class="source">(basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">16,75 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>16,75 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">200 SP &rarr; komplex</div>
+          <div class="amount">550,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>550,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="formula-box">Subtotal 3.942,75&euro; x 1,25 (Eilzuschlag)</div>
+        <div class="line-item heuristic">
+          <div class="label">Eilzuschlag: +25% auf 3.942,75&euro; <span class="source">LPV Teil A &sect;5</span></div>
+          <div class="amount">985,69 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Zuschlaege</span>
+          <span>985,69 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten</td><td style="text-align:right;">2.750,00 &euro;</td></tr>
+            <tr><td>Grundkosten</td><td style="text-align:right;">626,00 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">16,75 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">550,00 &euro;</td></tr>
+            <tr><td>Eilzuschlag +25%</td><td style="text-align:right;">985,69 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">4.928,43 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-100">Confidence: 100% — Alle Merkmale vollstaendig und im typischen Bereich</span></p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- PRODUCT: DGUV V3 (MA507) -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<h2 class="product-header" id="dguv">DGUV V3 — Ortsfeste el. Anlage (MA507)</h2>
+<p class="product-meta">Kein Versand fuer MA507 vorhanden. Benchmark nur aus Gersthofen-Ausschreibung (n=40).</p>
+
+<!-- SCENARIO 9 -->
+<details class="scenario-section" id="s9">
+  <summary>Szenario 9: Buero Regensburg — 2.000 m&sup2;, Standard</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Buerogebaeude Regensburg, PLZ 93051</li>
+        <li>2.000 m&sup2;, BJ 2017</li>
+        <li>TN-C-S-Netz, Versorger Rewag</li>
+        <li>8 Unterverteilungen (UV), 2 Hauptverteilungen (HV)</li>
+      </ul>
+      <p class="note">Basiert auf Musterbericht MA507-WP Equipment 3570076, Pruefer Dominik Goehlert, 09.10.2025</p>
+    </div>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">250 + (2.000/10) x 1,00&euro; + 8 x 25&euro; + 2 x 85&euro;</div>
+        <div class="line-item verified">
+          <div class="label">Grundpreis DGUV V3 <span class="source">LPV B04 Kap. 2</span></div>
+          <div class="amount">250,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Flaechenpauschale: 2.000/10 x 1,00&euro; <span class="source">Kat 1 (Buero): 1,00&euro;/10m&sup2;</span></div>
+          <div class="amount">200,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Unterverteilungen: 8 x 25&euro;</div>
+          <div class="amount">200,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Hauptverteilungen: 2 x 85&euro;</div>
+          <div class="amount">170,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>820,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">256&euro; + 49&euro; x 1,0 + 25&euro; (Tagegeld 8h)</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung</div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Pruefmittelpauschale: 1,0 Tag x 49&euro; <span class="source">2.000 m&sup2; &rarr; 1,0 Tag</span></div>
+          <div class="amount">49,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 1,0 x 8h = 8h &rarr; 25&euro; <span class="source">LPV Teil A &sect;4.3 — ab 8h: 25&euro;</span></div>
+          <div class="amount">25,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>330,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">CRM &rarr; NL Regensburg, 0,3 km einfach <span class="source">(basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">2,83 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>2,83 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">2.000 m&sup2; + 10 Verteilungen &rarr; standard</div>
+          <div class="amount">380,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>380,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Keine Zuschlaege</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten</td><td style="text-align:right;">820,00 &euro;</td></tr>
+            <tr><td>Grundkosten</td><td style="text-align:right;">330,00 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">2,83 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">380,00 &euro;</td></tr>
+            <tr><td>Zuschlaege</td><td style="text-align:right;">0,00 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">1.532,83 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-100">Confidence: 100% — Alle Merkmale vollstaendig und im typischen Bereich</span></p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- SCENARIO 10 -->
+<details class="scenario-section" id="s10">
+  <summary>Szenario 10: Industrie Augsburg — 8.000 m&sup2;, NEA, Erstpruefung</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Industrieanlage Augsburg, PLZ 86199</li>
+        <li>8.000 m&sup2;, Kategorie 2</li>
+        <li>20 UV, 4 HV, 1 NSHV</li>
+        <li>NEA 400 kVA</li>
+        <li>Erstpruefung, kein Vereinsmitglied</li>
+      </ul>
+    </div>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">250 + (8.000/10)x2,00 + 20x25 + 4x85 + 1x145 + 320(NEA)</div>
+        <div class="line-item verified">
+          <div class="label">Grundpreis DGUV V3</div>
+          <div class="amount">250,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Flaechenpauschale: 8.000/10 x 2,00&euro; <span class="source">Kat 2 (Industrie): 2,00&euro;/10m&sup2;</span></div>
+          <div class="amount">1.600,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Unterverteilungen: 20 x 25&euro;</div>
+          <div class="amount">500,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Hauptverteilungen: 4 x 85&euro;</div>
+          <div class="amount">340,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">NSHV: 1 x 145&euro;</div>
+          <div class="amount">145,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Netzersatzanlage (NEA) 400 kVA</div>
+          <div class="amount">320,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>3.155,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">256&euro; + 49&euro; x 3,2 + 30&euro; (Tagegeld)</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung</div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">Pruefmittelpauschale: 3,2 Tage x 49&euro; <span class="warning">max(2, 8.000/2.500) = 3,2</span></div>
+          <div class="amount">156,80 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 30&euro;</div>
+          <div class="amount">30,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>442,80 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">CRM &rarr; NL Augsburg, 3,2 km einfach <span class="source">(basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">41,23 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>41,23 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">8.000 m&sup2; + 25 Verteilungen &rarr; komplex</div>
+          <div class="amount">550,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>550,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="formula-box">Subtotal 4.189,03&euro; &rarr; NV +20% &rarr; Erst +100% (compound)</div>
+        <div class="line-item heuristic">
+          <div class="label">Nicht-Vereinsmitglied: +20% auf 4.189,03&euro; <span class="source">LPV Teil A &sect;6</span></div>
+          <div class="amount">837,81 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">Erstpruefung: +100% auf (4.189,03 + 837,81) = 5.026,84&euro; <span class="source">LPV Teil A &sect;5 (compound)</span></div>
+          <div class="amount">5.026,84 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Zuschlaege</span>
+          <span>5.864,65 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten</td><td style="text-align:right;">3.155,00 &euro;</td></tr>
+            <tr><td>Grundkosten</td><td style="text-align:right;">442,80 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">41,23 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">550,00 &euro;</td></tr>
+            <tr><td>Zuschlaege (NV +20%, Erst +100%)</td><td style="text-align:right;">5.864,65 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">10.053,68 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-100">Confidence: 100% — Compound-Zuschlaege korrekt berechnet</span></p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- SCENARIO 11 -->
+<details class="scenario-section" id="s11">
+  <summary>Szenario 11: Krankenhaus Muenchen — 20.000 m&sup2;, Sonderflaeche</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Krankenhaus Muenchen, PLZ 80686</li>
+        <li>20.000 m&sup2;, Kategorie 5 (OP-Saele)</li>
+        <li>30 UV, 5 HV, 2 NSHV</li>
+        <li>NEA + SV-NSHV</li>
+      </ul>
+    </div>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">250 + (20.000/10)x5,00 + 30x25 + 5x85 + 2x145 + 320(NEA) + 180(SV-NSHV)</div>
+        <div class="line-item verified">
+          <div class="label">Grundpreis DGUV V3</div>
+          <div class="amount">250,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Flaechenpauschale: 20.000/10 x 5,00&euro; <span class="source">Kat 5 (OP-Saele): 5,00&euro;/10m&sup2;</span></div>
+          <div class="amount">10.000,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Unterverteilungen: 30 x 25&euro;</div>
+          <div class="amount">750,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Hauptverteilungen: 5 x 85&euro;</div>
+          <div class="amount">425,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">NSHV: 2 x 145&euro;</div>
+          <div class="amount">290,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Netzersatzanlage (NEA)</div>
+          <div class="amount">320,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">SV-NSHV (Sicherheitsversorgung)</div>
+          <div class="amount">180,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>12.215,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">256&euro; + 49&euro; x 8,0 + 30&euro; (Tagegeld)</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung</div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item heuristic">
+          <div class="label">Pruefmittelpauschale: 8,0 Tage x 49&euro; <span class="warning">max(2, 20.000/2.500) = 8,0</span></div>
+          <div class="amount">392,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 30&euro;</div>
+          <div class="amount">30,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>678,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">CRM &rarr; NL Muenchen <span class="source">(basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">9,65 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>9,65 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">20.000 m&sup2; + 37 Verteilungen &rarr; komplex</div>
+          <div class="amount">550,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>550,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Keine Zuschlaege</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten</td><td style="text-align:right;">12.215,00 &euro;</td></tr>
+            <tr><td>Grundkosten</td><td style="text-align:right;">678,00 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">9,65 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">550,00 &euro;</td></tr>
+            <tr><td>Zuschlaege</td><td style="text-align:right;">0,00 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">13.452,65 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-100">Confidence: 100% — Alle Merkmale vollstaendig und im typischen Bereich</span></p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- SCENARIO 12 -->
+<details class="scenario-section" id="s12">
+  <summary>Szenario 12: Seniorentreff Regensburg — 200 m&sup2;, minimal</summary>
+  <div class="scenario-body">
+    <div class="input-box">
+      <h3>Kundenanfrage</h3>
+      <ul>
+        <li>Seniorentreff Regensburg, PLZ 93051</li>
+        <li>200 m&sup2;, TT-System</li>
+        <li>Versorger Rewag</li>
+        <li>1 Unterverteilung</li>
+      </ul>
+    </div>
+
+    <details class="step" open>
+      <summary>Pruefkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">250 + (200/10) x 1,00&euro; + 1 x 25&euro;</div>
+        <div class="line-item verified">
+          <div class="label">Grundpreis DGUV V3</div>
+          <div class="amount">250,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Flaechenpauschale: 200/10 x 1,00&euro;</div>
+          <div class="amount">20,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Unterverteilungen: 1 x 25&euro;</div>
+          <div class="amount">25,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Pruefkosten</span>
+          <span>295,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Grundkosten</summary>
+      <div class="step-content">
+        <div class="formula-box">256&euro; + 49&euro; x 0,5 + 0&euro; (Tagegeld &lt;6h)</div>
+        <div class="line-item shared">
+          <div class="label">Pauschale Auftragsverwaltung</div>
+          <div class="amount">256,00 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Pruefmittelpauschale: 0,5 Tage x 49&euro; <span class="source">200 m&sup2; &rarr; 0,5 Tage</span></div>
+          <div class="amount">24,50 &euro;</div>
+        </div>
+        <div class="line-item verified">
+          <div class="label">Tagegeld: 0,5 x 8h = 4h &rarr; unter 6h-Grenze</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Grundkosten</span>
+          <span>280,50 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Reisekosten</summary>
+      <div class="step-content">
+        <div class="line-item shared">
+          <div class="label">CRM &rarr; NL Regensburg <span class="source">(basierend auf OSRM-Routing am 10.05.2026)</span></div>
+          <div class="amount">2,83 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Reisekosten</span>
+          <span>2,83 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Berichterstellung</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">200 m&sup2; + 1 Verteilung &rarr; klein</div>
+          <div class="amount">119,00 &euro;</div>
+        </div>
+        <div class="sum-line">
+          <span>Summe Bericht</span>
+          <span>119,00 &euro;</span>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Zuschlaege</summary>
+      <div class="step-content">
+        <div class="line-item verified">
+          <div class="label">Keine Zuschlaege</div>
+          <div class="amount">0,00 &euro;</div>
+        </div>
+      </div>
+    </details>
+
+    <details class="step" open>
+      <summary>Ergebnis</summary>
+      <div class="step-content">
+        <table class="result-table">
+          <thead><tr><th>Position</th><th style="text-align:right;">Betrag</th></tr></thead>
+          <tbody>
+            <tr><td>Pruefkosten</td><td style="text-align:right;">295,00 &euro;</td></tr>
+            <tr><td>Grundkosten</td><td style="text-align:right;">280,50 &euro;</td></tr>
+            <tr><td>Reisekosten</td><td style="text-align:right;">2,83 &euro;</td></tr>
+            <tr><td>Berichterstellung</td><td style="text-align:right;">119,00 &euro;</td></tr>
+            <tr><td>Zuschlaege</td><td style="text-align:right;">0,00 &euro;</td></tr>
+            <tr class="total"><td>Gesamtpreis (netto)</td><td style="text-align:right;">697,33 &euro;</td></tr>
+          </tbody>
+        </table>
+        <p><span class="confidence-badge confidence-100">Confidence: 100% — Alle Merkmale vollstaendig und im typischen Bereich</span></p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SUMMARY TABLE -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<h2 class="product-header" id="summary">Zusammenfassung aller 12 Szenarien</h2>
+
+<table class="summary-table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Szenario</th>
+      <th>Produkt</th>
+      <th style="text-align:right;">Gesamtpreis</th>
+      <th>Confidence</th>
+      <th>vs Faktura Median</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="product-group"><td colspan="6">BLITZSCHUTZ (MA570) — Faktura Median 420&euro;</td></tr>
+    <tr>
+      <td>1</td>
+      <td>Schule Wuerzburg, 35 TS</td>
+      <td>MA570</td>
+      <td style="text-align:right;">1.822,29 &euro;</td>
+      <td>85%</td>
+      <td>&minus;77%</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Krankenhaus Hamburg, 120 TS</td>
+      <td>MA570</td>
+      <td style="text-align:right;">10.889,74 &euro;</td>
+      <td>85%</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Industriehalle Augsburg, 80 TS</td>
+      <td>MA570</td>
+      <td style="text-align:right;">3.254,23 &euro;</td>
+      <td>64%</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Wohngebaeude Muenchen, 4 Abl.</td>
+      <td>MA570</td>
+      <td style="text-align:right;">541,15 &euro;</td>
+      <td>100%</td>
+      <td>—</td>
+    </tr>
+    <tr class="product-group"><td colspan="6">RLT-ANLAGE (MA419) — Faktura Median HYG 977&euro; / GARAGE 629&euro;</td></tr>
+    <tr>
+      <td>5</td>
+      <td>Hygiene VDI 6022 Muenchen, 2 RLT</td>
+      <td>MA419-HYG</td>
+      <td style="text-align:right;">1.829,85 &euro;</td>
+      <td>100%</td>
+      <td>&minus;47%</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Tiefgarage Nuernberg, 24 SP</td>
+      <td>MA419-GARAGE</td>
+      <td style="text-align:right;">1.611,92 &euro;</td>
+      <td>100%</td>
+      <td>&minus;61%</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Hotel Lueftung (vage)</td>
+      <td>MA419</td>
+      <td style="text-align:right;"><em>1.109,15 &euro;*</em></td>
+      <td>—</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Grossgarage Stuttgart, 200 SP</td>
+      <td>MA419-GARAGE</td>
+      <td style="text-align:right;">4.928,43 &euro;</td>
+      <td>100%</td>
+      <td>—</td>
+    </tr>
+    <tr class="product-group"><td colspan="6">DGUV V3 (MA507) — Kein Versand vorhanden</td></tr>
+    <tr>
+      <td>9</td>
+      <td>Buero Regensburg, 2.000 m&sup2;</td>
+      <td>MA507</td>
+      <td style="text-align:right;">1.532,83 &euro;</td>
+      <td>100%</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Industrie Augsburg, 8.000 m&sup2;</td>
+      <td>MA507</td>
+      <td style="text-align:right;">10.053,68 &euro;</td>
+      <td>100%</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Krankenhaus Muenchen, 20.000 m&sup2;</td>
+      <td>MA507</td>
+      <td style="text-align:right;">13.452,65 &euro;</td>
+      <td>100%</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Seniorentreff Regensburg, 200 m&sup2;</td>
+      <td>MA507</td>
+      <td style="text-align:right;">697,33 &euro;</td>
+      <td>100%</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>
+<p style="font-size:0.8rem; color:var(--muted);">* Szenario 7: Nur Orientierungswert auf Basis Mindestannahmen (Rueckfragen offen).</p>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- OFFENE FRAGEN -->
+<!-- ═══════════════════════════════════════════════════ -->
+
+<h2 class="product-header" id="questions">Offene Fragen (gesammelt)</h2>
+
+<ol class="questions-list">
+  <li><strong>Stellplatz-Schwelle:</strong> &le;25 (Kalkulationshilfen) oder &le;30 (LPV)? Betrifft Szenarien 6, 8.</li>
+  <li><strong>BSK-Preis:</strong> 40&euro; (LPV) oder 45,50&euro; (Kalkulationshilfen)? Betrifft Szenarien 6, 8.</li>
+  <li><strong>Blitzschutz &gt;25 TS:</strong> Ist Ausschreibungs-Rabatt Standard oder Sonderfall? Betrifft Szenarien 1, 2, 3.</li>
+  <li><strong>DGUV V3 Grundpreis:</strong> 250&euro; (unser Code) vs 518&euro; (Volkswohlbund). Woher die Differenz? Betrifft Szenarien 9–12.</li>
+  <li><strong>CO-Warnanlagen bei Garagen:</strong> Separates Equipment oder inkludiert? Betrifft Szenario 6.</li>
+  <li><strong>MA507 Versand:</strong> Wann lieferbar fuer bessere Kalibrierung? Betrifft Szenarien 9–12.</li>
+  <li><strong>Fehlende Schutzklasse:</strong> ~58% der MA570 PDFs ohne Angabe. Wie sollen wir damit umgehen? Betrifft Szenario 3.</li>
+  <li><strong>Marktpreis-Faktor:</strong> Sollen wir einen "Schieberegler" fuer Listenpreis vs Marktpreis einbauen?</li>
+</ol>
+
+<footer>
+  <p>SmartCal@EG &middot; Synapse OS &middot; Kalkulationsnachweise &middot; Stand 10.05.2026</p>
+  <p>Quellen: LPV 2025/2026, Versand 441_419 + 57234, CRM PLZ NL, Kalkulationshilfen Angebote v2, Volkswohlbund Preisliste</p>
+</footer>
+
+</body>
+</html>

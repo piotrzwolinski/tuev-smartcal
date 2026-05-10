@@ -6,7 +6,7 @@ export interface ProductConfig {
   apiPrefix: string;
   lpvRef: string;
   placeholder: string;
-  suggestions: { label: string; text: string }[];
+  suggestions: { label: string; text: string; auditAnchor?: string }[];
 }
 
 export const PRODUCTS: ProductConfig[] = [
@@ -22,18 +22,22 @@ export const PRODUCTS: ProductConfig[] = [
       {
         label: "🏫 Schule Würzburg — komplett",
         text: "Volksschule in Würzburg, 97080, Schulstraße 12. 35 Trennstellen, Schutzklasse III, Kupferableitungen. Wiederkehrende Prüfung, Rahmenvertrag vorhanden.",
+        auditAnchor: "s1",
       },
       {
         label: "🏥 Krankenhaus Hamburg — komplex",
         text: "Krankenhaus in Hamburg, 120 Ableitungen, Schutzklasse II, Sonderbau nach §2 SPrüfV. Erstprüfung vor Inbetriebnahme, kein Rahmenvertrag.",
+        auditAnchor: "s2",
       },
       {
         label: "🏭 Industriehalle — grob",
         text: "Ich habe eine Industriehalle in Augsburg, brauche ein Angebot für die Blitzschutzprüfung. Ungefähr 80 Messstellen.",
+        auditAnchor: "s3",
       },
       {
         label: "🏠 Kleines Wohngebäude",
         text: "Einfamilienhaus in München, Blitzschutzanlage mit 4 Ableitungen.",
+        auditAnchor: "s4",
       },
     ],
   },
@@ -49,18 +53,22 @@ export const PRODUCTS: ProductConfig[] = [
       {
         label: "🏢 Hygiene Büro München — VDI 6022",
         text: "Wir brauchen eine Hygieneinspektion nach VDI 6022 für unser Bürogebäude in der Brienner Straße, 80333 München. 2 RLT-Geräte, Baujahr 2012, Hersteller Huber & Ranner, Nennvolumenstrom 9.000 m³/h, Kreuzstromwärmetauscher.",
+        auditAnchor: "s5",
       },
       {
         label: "🅿️ Tiefgarage Nürnberg — Baurecht",
         text: "Tiefgarage in Nürnberg, 90431, Anton-Pichler-Straße. 600 m², 24 Stellplätze, Mittelgarage, 2 Abluftventilatoren, 4 Brandschutzklappen. Wiederkehrende Prüfung gemäß SPrüfV.",
+        auditAnchor: "s6",
       },
       {
         label: "🏨 Hotel Lüftung — vage Anfrage",
         text: "Ich brauche ein Angebot für die Lüftungsprüfung in unserem Hotel. Großes Gebäude, mehrere Etagen.",
+        auditAnchor: "s7",
       },
       {
         label: "🏬 Großgarage 200 Stellplätze",
         text: "Großgarage Einkaufszentrum Stuttgart, 200 Stellplätze, 6 Ventilatoren, 12 BSK, Eilzuschlag wegen Fristablauf nächste Woche.",
+        auditAnchor: "s8",
       },
     ],
   },
@@ -76,18 +84,22 @@ export const PRODUCTS: ProductConfig[] = [
       {
         label: "🏢 Bürogebäude Regensburg — Standard",
         text: "Bürogebäude in Regensburg, Kumpfmühler Straße 52, 93051. Circa 2.000 m², Baujahr 2017, TN-C-S Netzform, Netzbetreiber Rewag. 8 Unterverteilungen, 2 Hauptverteilungen.",
+        auditAnchor: "s9",
       },
       {
         label: "🏭 Industrieanlage — komplex mit NEA",
         text: "Industrieanlage in Augsburg, 8.000 m² Produktionsfläche, 20 Unterverteilungen, 4 Hauptverteilungen, 1 NSHV. Netzersatzanlage vorhanden, 400 kVA Trafo. Erstprüfung, kein Rahmenvertrag.",
+        auditAnchor: "s10",
       },
       {
         label: "🏥 Krankenhaus — Sonderfläche",
         text: "Krankenhaus München, 20.000 m², davon OP-Säle und Intensivstation. Sicherheitsstromversorgung und Netzersatzanlage vorhanden. 30 UV, 5 HV, 2 NSHV.",
+        auditAnchor: "s11",
       },
       {
         label: "👴 Seniorentreff — klein",
         text: "Seniorentreff in Regensburg, kleines Beratungsbüro, circa 200 Quadratmeter, 1 Unterverteilung.",
+        auditAnchor: "s12",
       },
     ],
   },

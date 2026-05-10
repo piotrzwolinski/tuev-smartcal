@@ -10,10 +10,10 @@ interface Props {
   onSend: (text: string) => void;
   loading: boolean;
   placeholder?: string;
-  suggestions?: { label: string; text: string }[];
+  suggestions?: { label: string; text: string; auditAnchor?: string }[];
 }
 
-const DEFAULT_SUGGESTIONS = [
+const DEFAULT_SUGGESTIONS: { label: string; text: string; auditAnchor?: string }[] = [
   { label: "Bürogebäude, 5.000m², 3 Etagen, 2 Aufzüge, TG 15 Wallboxen", text: "Bürogebäude, 5.000m², 3 Etagen, 2 Aufzüge, Tiefgarage mit 15 Wallboxen" },
   { label: "Krankenhaus, 20.000m², 8 Etagen, 5 Aufzüge, NEA", text: "Krankenhaus, 20.000m², 8 Etagen, 5 Aufzüge, Notstromaggregat, RLT-Anlage" },
 ];
@@ -64,14 +64,26 @@ export default function ChatPanel({ messages, onSend, loading, placeholder, sugg
             </p>
             <div className="flex flex-col items-center gap-2">
               {activeSuggestions.map((s, i) => (
-                <button
-                  key={i}
-                  onClick={() => { setInput(s.text); inputRef.current?.focus(); }}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 transition-all shadow-sm"
-                >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  {s.label}
-                </button>
+                <div key={i} className="inline-flex items-center gap-1">
+                  <button
+                    onClick={() => { setInput(s.text); inputRef.current?.focus(); }}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-blue-50 hover:border-blue-300 hover:text-blue-800 transition-all shadow-sm"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    {s.label}
+                  </button>
+                  {s.auditAnchor && (
+                    <a
+                      href={`/audit-kalkulationsnachweise.html#${s.auditAnchor}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Kalkulationsnachweis öffnen"
+                      className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    >
+                      📊
+                    </a>
+                  )}
+                </div>
               ))}
             </div>
           </div>
