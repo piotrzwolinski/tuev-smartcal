@@ -8,7 +8,12 @@ TODO M3.3 (KW18): walidacja przeciwko Vorlage GT-RLT / GT-Hygiene sheets + MUC P
 """
 
 from products.rlt.merkmale import RLTMerkmale, RLTVariant
-from common.pricing_primitives import stundensatz
+from common.pricing_primitives import (
+    stundensatz,
+    ZUSCHLAG_NICHT_VEREINSMITGLIED,
+    ZUSCHLAG_EILZUSCHLAG,
+    ZUSCHLAG_ERSTPRUEFUNG,
+)
 
 
 # ──────────────────────────────────────────────────────────────
@@ -106,3 +111,68 @@ def rlt_choose_bericht_typ(m: RLTMerkmale) -> str:
     if sp <= 150:
         return "standard"
     return "komplex"
+
+
+def rlt_zuschlaege(m: RLTMerkmale) -> list[tuple[str, float]]:
+    z = []
+    if not m.vereinsmitglied:
+        z.append(("Nicht-Vereinsmitglied", ZUSCHLAG_NICHT_VEREINSMITGLIED))
+    if m.eilzuschlag:
+        z.append(("Eilzuschlag / Sondertermin", ZUSCHLAG_EILZUSCHLAG))
+    if m.erstpruefung:
+        z.append(("Erstprüfung", ZUSCHLAG_ERSTPRUEFUNG))
+    return z
+
+
+# Typische Bereiche per Variant
+_HYG_TYPICAL = {
+    "bereiche": (1, 6),
+    "volumenstrom": (2000, 50000),
+}
+
+_GARAGE_TYPICAL = {
+    "stellplaetze": (10, 200),
+    "ventilatoren": (1, 6),
+}
+
+
+def rlt_validate_ranges(m: RLTMerkmale) -> tuple[float, str]:
+    reasons = []
+    confidence = 1.0
+
+    if m.variant == RLTVariant.HYGIENE:
+        bereiche = m.anzahl_pruefbereiche_hyg or 1
+        lo, hi = _HYG_TYPICAL["bereiche"]
+        if bereiche > hi:
+            confidence *= 0.8
+            reasons.append(
+                f"Anzahl Prüfbereiche ({bereiche}) höher als typisch ({lo}-{hi})"
+            )
+        vol = m.nennvolumenstrom_m3h
+        if vol is not None:
+            vlo, vhi = _HYG_TYPICAL["volumenstrom"]
+            if vol > vhi * 1.5:
+                confidence *= 0.8
+                reasons.append(
+                    f"Nennvolumenstrom ({vol:.0f} m³/h) deutlich über typisch ({vlo}-{vhi})"
+                )
+    else:
+        sp = m.stellplaetze
+        if sp is not None:
+            lo, hi = _GARAGE_TYPICAL["stellplaetze"]
+            if sp > hi * 1.5:
+                confidence *= 0.75
+                reasons.append(
+                    f"Stellplätze ({sp}) deutlich über typisch ({lo}-{hi})"
+                )
+        vent = m.anzahl_ventilatoren
+        if vent is not None:
+            vlo, vhi = _GARAGE_TYPICAL["ventilatoren"]
+            if vent > vhi * 2:
+                confidence *= 0.85
+                reasons.append(
+                    f"Ventilatoren ({vent}) höher als typisch ({vlo}-{vhi})"
+                )
+
+    reason = " · ".join(reasons) if reasons else "Alle Merkmale in typischen Bereichen"
+    return confidence, reason

@@ -4,20 +4,42 @@ Der Bericht ist entweder:
 - MA419-HYG: Hygieneinspektion nach VDI 6022 Blatt 1 (RLT-Anlage Büro/Gebäude)
 - MA419-WPBA: Wiederkehrende Prüfung Baurecht (Garagenlüftung nach BayBO+GaStellV+VDI 2053)
 
-Bestimme zuerst den `variant`: "hygiene" oder "garage" basierend auf Grundlage/Norm im Bericht.
+## Schritt 1: Variante erkennen
+- "VDI 6022" / "Hygieneinspektion" / "Hygiene" / "Abklatschproben" → variant: "hygiene"
+- "Garage" / "GaStellV" / "Stellplätze" / "CO-Warnung" / "Entrauchung Garage" → variant: "garage"
+- "Baurecht" / "WPBA" / "SPrüfV" bei Garage-Kontext → variant: "garage"
 
-## Felder (wenn vorhanden):
+## Schritt 2: Felder extrahieren
 
-- `variant`: hygiene | garage
-- `nennvolumenstrom_m3h`: Number (nur für HYG/allgemeine RLT)
-- `filterklasse_aul`: iso_epm10_50 | iso_epm2_5_65 | iso_epm1_50 | iso_epm1_80
-- `filterklasse_zul`: gleiche Werte
-- `waermerueckgewinnung`: bool (Kreuzstrom/Rotation vorhanden)
-- `flaeche_m2`: nur für GARAGE
-- `stellplaetze`: nur für GARAGE
+### Shared:
+- `variant`: hygiene | garage (PFLICHT)
+- `adresse_strasse`: Standort-Straße
+- `adresse_plz`: 5-stellige PLZ
+- `adresse_ort`: Stadt
+- `baujahr`: Baujahr/Errichtungsjahr der Anlage
+- `hersteller`: Hersteller des RLT-Geräts
+- `baurechtlich`: true wenn WPBA/SPrüfV/Baurecht, false bei reiner Hygiene
+- `vereinsmitglied`: true (default)
+- `erstpruefung`: true wenn "Erstprüfung"/"vor Inbetriebnahme", sonst false
+
+### HYG-spezifisch (VDI 6022):
+- `nennvolumenstrom_m3h`: Nennvolumenstrom in m³/h (z.B. "9.000 m³/h" → 9000)
+- `filterklasse_aul`: Filterklasse Außenluft → iso_epm10_50 | iso_epm2_5_65 | iso_epm1_50 | iso_epm1_80
+  Mapping: "ISO ePM 10 50%" → iso_epm10_50, "ISO ePM 2,5 65%" → iso_epm2_5_65
+- `filterklasse_zul`: Filterklasse Zuluft (gleiche Werte, "nicht vorhanden" → null)
+- `waermerueckgewinnung`: bool — "Kreuzstromwärmetauscher"/"Rotationswärmetauscher" → true
+- `umluftbetrieb`: bool — "nein"/"kein Umluftbetrieb" → false
+- `anzahl_pruefbereiche_hyg`: Anzahl RLT-Geräte/Prüfbereiche im Bericht (zähle "RLT A1", "RLT A2" etc.)
+
+### GARAGE-spezifisch:
+- `flaeche_m2`: Garagenfläche in m² (z.B. "600 m²")
+- `stellplaetze`: Anzahl Stellplätze (z.B. "24")
 - `garagentyp`: mittelgarage | grossgarage | kleingarage
-- `anzahl_ventilatoren`: Number
-- `anzahl_brandschutzklappen`: Number (BSK in Lüftungsleitung)
-- `baurechtlich`: true für WPBA/GARAGE, false für HYG
+  GaStellV: ≤100m² → kleingarage, 100-1000m² → mittelgarage, >1000m² → grossgarage
+- `anzahl_ventilatoren`: Anzahl Abluftventilatoren (zähle in Anlagentabelle)
+- `anzahl_brandschutzklappen`: Anzahl BSK (Brandschutzklappen in Lüftungsleitungen)
+- `spez_volumenstrom_m3h_m2`: Spezifischer Volumenstrom in m³/(h·m²)
+- `zeitschaltuhr_vorhanden`: bool — "Zeitschaltuhr" / "Zeitprogramm" → true
 
-Gib nur JSON zurück. Null für fehlende Werte.
+## Ausgabe
+Gib NUR ein JSON-Objekt zurück. Null für fehlende Werte. Kein Markdown.

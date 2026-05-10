@@ -17,8 +17,13 @@ from products.rlt.pricing_rules import (
     rlt_pruefkosten,
     rlt_estimate_pruef_tage,
     rlt_choose_bericht_typ,
+    rlt_zuschlaege,
+    rlt_validate_ranges,
 )
 from products.rlt.golden_set import load_rlt_golden_set
+
+
+_PROMPT_PATH = __file__.replace("__init__.py", "extraction_prompt.txt")
 
 
 class RLTGewerk(Gewerk):
@@ -38,9 +43,18 @@ class RLTGewerk(Gewerk):
     def choose_bericht_typ(self, merkmale):
         return rlt_choose_bericht_typ(merkmale)
 
+    def zuschlaege(self, merkmale):
+        return rlt_zuschlaege(merkmale)
+
+    def validate_ranges(self, merkmale):
+        return rlt_validate_ranges(merkmale)
+
     def extraction_prompt(self) -> str:
-        # TODO M3.3 (KW18): pełny prompt
-        return "Extract RLT (VDI 6022 / Garagenlüftung) Merkmale to JSON per schema."
+        try:
+            with open(_PROMPT_PATH, encoding="utf-8") as f:
+                return f.read()
+        except FileNotFoundError:
+            return "Extract RLT (VDI 6022 / Garagenlüftung) Merkmale to JSON per schema."
 
     def golden_set(self):
         return load_rlt_golden_set()

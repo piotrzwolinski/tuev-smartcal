@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Zap,
   ChevronLeft,
@@ -14,18 +14,16 @@ import BlitzschutzAngebotPanel from "@/components/BlitzschutzAngebotPanel";
 import type { BlitzschutzAngebot } from "@/components/BlitzschutzAngebotPanel";
 import LoginScreen from "@/components/LoginScreen";
 import type { ChatMessage, TraceStep } from "@/lib/types";
+import { PRODUCTS, DEFAULT_PRODUCT, type ProductConfig } from "@/lib/products";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "";
 
-const BLITZ_SUGGESTIONS = [
-  { label: "Schule in Würzburg, 35 Trennstellen, Klasse III", text: "Schule in Würzburg, 35 Trennstellen, Klasse III" },
-  { label: "Kindergarten München, 8 Ableitungen", text: "Kindergarten in München, 8 Ableitungen" },
-  { label: "Industriehalle, 80 Messstellen, Augsburg", text: "Industriehalle in Augsburg, 80 Messstellen, Schutzklasse II" },
-  { label: "Krankenhaus, 120 Ableitungen, Sonderbau", text: "Krankenhaus in Hamburg, 120 Ableitungen, Schutzklasse II, Sonderbau, Erstprüfung" },
-];
-
 export default function Home() {
   const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("smartcal_auth") === "1") setAuthenticated(true);
+  }, []);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [trace, setTrace] = useState<TraceStep[]>([]);
   const [angebot, setAngebot] = useState<BlitzschutzAngebot | null>(null);
@@ -34,9 +32,20 @@ export default function Home() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [pricingMode, setPricingMode] = useState<"graph" | "python">("graph");
   const [provenance, setProvenance] = useState<Array<{step:string;source:string;value:unknown;node_id:string}>>([]);
+  const [activeProduct, setActiveProduct] = useState<ProductConfig>(DEFAULT_PRODUCT);
+
+  const switchProduct = (product: ProductConfig) => {
+    if (product.id === activeProduct.id) return;
+    setActiveProduct(product);
+    setMessages([]);
+    setTrace([]);
+    setAngebot(null);
+    setProvenance([]);
+    sessionRef.current = null;
+  };
 
   if (!authenticated) {
-    return <LoginScreen onLogin={() => setAuthenticated(true)} />;
+    return <LoginScreen onLogin={() => { sessionStorage.setItem("smartcal_auth", "1"); setAuthenticated(true); }} />;
   }
 
   const describeStep = (step: TraceStep): string => {
@@ -67,7 +76,7 @@ export default function Home() {
     setTrace([]);
 
     try {
-      const resp = await fetch(`${API}/api/blitzschutz/chat`, {
+      const resp = await fetch(`${API}${activeProduct.apiPrefix}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -180,7 +189,7 @@ export default function Home() {
                   </div>
                   <div>
                     <h1 className="text-sm font-bold text-slate-900 leading-tight">SmartCal@EG</h1>
-                    <p className="text-[10px] text-slate-400 font-medium">Blitzschutz · MA570</p>
+                    <p className="text-[10px] text-slate-400 font-medium">{activeProduct.name} · {activeProduct.lpvRef}</p>
                   </div>
                 </div>
               )}
@@ -193,18 +202,21 @@ export default function Home() {
                 <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Phase 1</span>
               </div>
             )}
-            <div className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium bg-[#0046ad] text-white shadow-lg shadow-blue-800/25">
-              <Zap className="w-5 h-5 flex-shrink-0" />
-              {!sidebarCollapsed && <span>Blitzschutz</span>}
-            </div>
-            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 cursor-not-allowed opacity-50" disabled>
-              <span className="w-5 h-5 text-center text-xs">RLT</span>
-              {!sidebarCollapsed && <span>RLT-Anlage</span>}
-            </button>
-            <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 cursor-not-allowed opacity-50" disabled>
-              <span className="w-5 h-5 text-center text-xs">V3</span>
-              {!sidebarCollapsed && <span>DGUV V3</span>}
-            </button>
+            {PRODUCTS.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => switchProduct(p)}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all",
+                  activeProduct.id === p.id
+                    ? "bg-[#0046ad] text-white shadow-lg shadow-blue-800/25"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                )}
+              >
+                <span className="w-5 h-5 text-center text-xs flex-shrink-0">{p.shortLabel}</span>
+                {!sidebarCollapsed && <span>{p.name}</span>}
+              </button>
+            ))}
           </nav>
 
           <button
@@ -219,8 +231,8 @@ export default function Home() {
         <main className="flex-1 min-w-0 flex flex-col overflow-hidden">
           <header className="h-16 border-b border-slate-200/60 bg-white backdrop-blur-xl sticky top-0 z-10 flex items-center justify-between px-6">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">Blitzschutz-Kalkulator</h2>
-              <p className="text-xs text-slate-500">Äußere Blitzschutzanlage · LPV B04 §8.1 · 33€/Messstelle</p>
+              <h2 className="text-lg font-semibold text-slate-900">{activeProduct.name}-Kalkulator</h2>
+              <p className="text-xs text-slate-500">{activeProduct.subtitle}</p>
             </div>
             <div className="flex items-center gap-2 bg-slate-100 rounded-lg p-1">
               <button
@@ -261,8 +273,8 @@ export default function Home() {
                   messages={messages}
                   onSend={handleSend}
                   loading={loading}
-                  placeholder="Beschreiben Sie Ihre Blitzschutzanlage..."
-                  suggestions={BLITZ_SUGGESTIONS}
+                  placeholder={activeProduct.placeholder}
+                  suggestions={activeProduct.suggestions}
                 />
               </div>
 
@@ -279,7 +291,7 @@ export default function Home() {
       </div>
 
       <footer className="h-10 flex items-center justify-center border-t border-slate-200/60 bg-white/70 backdrop-blur-xl">
-        <p className="text-xs text-slate-400 font-medium">Synapse OS for TÜV Süd · Blitzschutz MA570</p>
+        <p className="text-xs text-slate-400 font-medium">Synapse OS for TÜV Süd · {activeProduct.name} {activeProduct.lpvRef}</p>
       </footer>
     </div>
   );

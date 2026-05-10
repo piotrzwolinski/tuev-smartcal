@@ -167,13 +167,14 @@ def make_product_router(gewerk: Gewerk) -> APIRouter:
             coord = await chat_module.coordinator_respond(session, req.message)
             action = coord.get("action", "chat")
 
-            yield {"event": "message", "data": json.dumps({
-                "role": "assistant",
-                "content": coord.get("message", ""),
-            }, ensure_ascii=False)}
+            if action != "calculate":
+                yield {"event": "message", "data": json.dumps({
+                    "role": "assistant",
+                    "content": coord.get("message", ""),
+                }, ensure_ascii=False)}
 
             if action == "calculate":
-                params = coord.get("params", {})
+                params = {k: v for k, v in coord.get("params", {}).items() if v is not None}
 
                 # Stream "trace" events — user widzi kroki
                 yield {"event": "trace", "data": json.dumps({"step": "extract", "label": "Merkmale extrahiert", "payload": params}, ensure_ascii=False)}

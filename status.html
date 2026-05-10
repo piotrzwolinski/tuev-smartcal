@@ -3,478 +3,928 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartCal@EG — Project Status 10.04.2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>SmartCal@EG — PoC → MVP Statusbericht</title>
 <style>
   :root {
     --tuev-blue: #0046ad;
     --tuev-dark: #003080;
     --tuev-light: #e8f0fe;
-    --ming-red: #ee0000;
-    --ming-dark: #100a12;
     --green: #166534;
     --green-bg: #dcfce7;
     --yellow: #92400e;
     --yellow-bg: #fef3c7;
     --red: #991b1b;
     --red-bg: #fee2e2;
-    --bg: #f8f9fc;
+    --bg: #ffffff;
     --card: #ffffff;
     --text: #1a1f36;
     --text-secondary: #5a6178;
     --border: #e2e6ef;
-    --font-body: 'DM Sans', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
 
-  /* HERO */
-  .hero {
-    background: url('ming_background.png') center/cover no-repeat, linear-gradient(135deg, #100a12 0%, #2a0a0a 100%);
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--tuev-blue) 0%, var(--tuev-dark) 100%);
     color: white;
-    padding: 48px 48px 56px;
+    padding: 48px;
     position: relative;
-    overflow: hidden;
   }
-  .hero::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); }
-
-  .hero-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:40px; }
-  .hero-brand { display:flex; align-items:center; gap:10px; }
-  .hero-powered { opacity:0.6; font-size:11px; font-weight:500; letter-spacing:0.5px; }
-  .hero-powered strong { font-weight:700; opacity:1; }
-
-  .hero-badge {
-    display:inline-flex; align-items:center; gap:8px;
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.15);
-    border-radius:100px; padding:6px 14px;
-    font-size:11px; font-weight:500; letter-spacing:0.5px; text-transform:uppercase;
-    margin-bottom:20px;
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
   }
-  .hero-badge .dot { width:6px; height:6px; border-radius:50%; background:#4ade80; }
-
-  .hero h1 { font-size:40px; font-weight:700; letter-spacing:-1.5px; line-height:1.1; margin-bottom:10px; }
-  .hero h1 span { font-weight:300; opacity:0.7; }
-  .hero-sub { font-size:15px; opacity:0.6; margin-bottom:32px; max-width:640px; }
-
-  .hero-meta { display:flex; gap:32px; flex-wrap:wrap; }
-  .hero-meta-item { display:flex; flex-direction:column; gap:3px; }
-  .hero-meta-label { font-size:10px; text-transform:uppercase; letter-spacing:1px; opacity:0.4; font-weight:500; }
-  .hero-meta-value { font-family:var(--font-mono); font-size:14px; font-weight:500; }
+  .header-subtitle {
+    font-size: 15px;
+    opacity: 0.8;
+    margin-bottom: 28px;
+  }
+  .header-dates {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .header-date {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .header-date-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    font-weight: 600;
+  }
+  .header-date-value {
+    font-size: 14px;
+    font-weight: 600;
+  }
 
   /* CONTENT */
   .content { max-width: 1100px; margin: 0 auto; padding: 48px; }
 
   /* SECTIONS */
   .section { margin-bottom: 56px; }
-  .section-header { display:flex; align-items:center; gap:14px; margin-bottom:24px; }
-  .section-number {
-    font-family:var(--font-mono); font-size:13px; font-weight:600; color:white;
-    width:36px; height:36px; border-radius:10px;
-    display:flex; align-items:center; justify-content:center;
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+    color: var(--tuev-blue);
+    border-bottom: 2px solid var(--tuev-blue);
+    padding-bottom: 8px;
   }
-  .section-number.n1 { background:var(--tuev-blue); }
-  .section-number.n2 { background:var(--yellow); }
-  .section-number.n3 { background:var(--ming-red); }
-  .section-title { font-size:24px; font-weight:700; letter-spacing:-0.5px; }
-  .section-intro { font-size:15px; color:var(--text-secondary); margin-bottom:24px; line-height:1.7; max-width:860px; }
-
-  /* CARDS */
-  .card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
-    padding: 22px; margin-bottom: 12px;
+  .section-intro {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    margin-top: 12px;
+    line-height: 1.7;
   }
-  .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-  .card-title { font-size: 15px; font-weight: 700; }
-  .card-text { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
-  .card ul { list-style:none; padding:0; margin-top:8px; }
-  .card ul li { font-size:13px; color:var(--text-secondary); padding:4px 0 4px 16px; position:relative; }
-  .card ul li::before { content:''; position:absolute; left:0; top:12px; width:5px; height:5px; border-radius:50%; background:var(--tuev-blue); opacity:0.45; }
-  .card ul li.done::before { background:var(--green); opacity:0.8; }
-  .card ul li.missing::before { background:var(--yellow); }
-  .card ul li.blocker::before { background:var(--red); }
 
-  .card-blue { border-left:4px solid var(--tuev-blue); }
-  .card-green { border-left:4px solid var(--green); }
-  .card-yellow { border-left:4px solid var(--yellow); }
-  .card-red { border-left:4px solid var(--red); }
-
-  /* GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-
-  /* STAT TILES */
-  .stat {
-    background:var(--card); border:1px solid var(--border); border-radius:14px;
-    padding:22px; text-align:left;
+  /* SUBSECTION */
+  .subsection { margin-bottom: 28px; }
+  .subsection-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text);
   }
-  .stat-value { font-family:var(--font-mono); font-size:30px; font-weight:700; color:var(--tuev-blue); letter-spacing:-1px; }
-  .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-secondary); font-weight:600; margin-top:6px; }
-  .stat-detail { font-size:12px; color:var(--text-secondary); margin-top:8px; line-height:1.5; }
+  .subsection-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
 
-  /* BADGE */
+  /* LISTS */
+  ul.detail-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  ul.detail-list li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 4px 0 4px 18px;
+    position: relative;
+    line-height: 1.6;
+  }
+  ul.detail-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--tuev-blue);
+    opacity: 0.5;
+  }
+  ul.detail-list li strong { color: var(--text); }
+
+  /* PRODUCT CARDS */
+  .product-card {
+    background: #f8f9fc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .product-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .product-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .product-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .product-card ul li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 3px 0 3px 18px;
+    position: relative;
+    line-height: 1.6;
+  }
+  .product-card ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    opacity: 0.7;
+  }
+
+  /* BADGES */
   .badge {
-    font-size:10px; font-weight:600; padding:3px 10px; border-radius:100px; display:inline-block;
-    letter-spacing:0.5px; text-transform:uppercase;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    display: inline-block;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
   }
-  .badge-green { background:var(--green-bg); color:var(--green); }
-  .badge-yellow { background:var(--yellow-bg); color:var(--yellow); }
-  .badge-red { background:var(--red-bg); color:var(--red); }
-  .badge-blue { background:var(--tuev-light); color:var(--tuev-blue); }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+  .badge-blue { background: var(--tuev-light); color: var(--tuev-blue); }
 
-  /* TIMELINE BAR */
-  .timeline-bar { display:flex; gap:4px; margin-bottom:18px; }
-  .timeline-week {
-    flex:1; border-radius:8px; padding:12px 14px; color:white; min-height:72px;
+  /* STAT GRID */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
   }
-  .tw-kw { font-family:var(--font-mono); font-size:10px; font-weight:600; opacity:0.7; }
-  .tw-title { font-size:12px; font-weight:600; margin-top:4px; line-height:1.3; }
-  .tw-now { background:var(--tuev-blue); position:relative; }
-  .tw-now::after { content:'HEUTE'; position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:var(--ming-red); color:white; font-family:var(--font-mono); font-size:8px; font-weight:700; padding:2px 8px; border-radius:100px; letter-spacing:0.5px; }
-  .tw-next { background:#0060d0; }
-  .tw-later { background:#2e8b57; }
-  .tw-final { background:#d4740e; }
-  .tw-demo { background:var(--ming-red); }
+  .stat-box {
+    background: #f8f9fc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--tuev-blue);
+    letter-spacing: -1px;
+  }
+  .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* TABLES */
+  .table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  thead th {
+    background: #f1f4f9;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+
+  /* PRIORITY BLOCKS */
+  .priority-block {
+    margin-bottom: 24px;
+    border-left: 4px solid var(--border);
+    padding-left: 20px;
+  }
+  .priority-block.p0 { border-left-color: var(--red); }
+  .priority-block.p1 { border-left-color: var(--yellow); }
+  .priority-block.p2 { border-left-color: var(--tuev-blue); }
+  .priority-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ITEM */
+  .gap-item {
+    margin-bottom: 16px;
+    padding: 14px 18px;
+    background: #f8f9fc;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .gap-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .gap-item-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .gap-item-effort {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: #e8ecf4;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .gap-item-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    height: 8px;
+    background: #e8ecf4;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--tuev-blue);
+  }
+  .progress-fill.green { background: var(--green); }
+
+  /* QUESTIONS LIST */
+  ol.questions-list {
+    padding-left: 24px;
+    margin: 0;
+  }
+  ol.questions-list li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 8px 0;
+    line-height: 1.6;
+    border-bottom: 1px solid #f0f2f5;
+  }
+  ol.questions-list li:last-child { border-bottom: none; }
+  ol.questions-list li strong { color: var(--text); }
 
   /* DIVIDER */
-  .divider { height:1px; background:var(--border); margin:32px 0; }
-
-  /* CALLOUT */
-  .callout {
-    padding:18px 22px; border-radius:12px; font-size:13px;
-    display:flex; align-items:flex-start; gap:14px; margin-bottom:20px; line-height:1.6;
-  }
-  .callout-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
-  .callout-yellow { background:var(--yellow-bg); border:1px solid #fde68a; color:#78350f; }
-  .callout-blue { background:var(--tuev-light); border:1px solid #c4d7f5; color:var(--tuev-dark); }
-
-  /* NEXT STEPS TABLE */
-  .table-wrap { background:var(--card); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
-  table { width:100%; border-collapse:separate; border-spacing:0; }
-  thead th {
-    background:#f1f4f9; font-size:10px; text-transform:uppercase; letter-spacing:1px;
-    font-weight:600; color:var(--text-secondary); padding:14px 18px; text-align:left;
-    border-bottom:1px solid var(--border);
-  }
-  tbody td { padding:14px 18px; font-size:13px; border-bottom:1px solid var(--border); vertical-align:top; }
-  tbody tr:last-child td { border-bottom:none; }
-  td.mono { font-family:var(--font-mono); font-size:12px; color:var(--text-secondary); }
+  .divider { height: 1px; background: var(--border); margin: 40px 0; }
 
   /* FOOTER */
-  .footer { text-align:center; padding:48px; border-top:1px solid var(--border); margin-top:24px; }
-  .footer-partners { display:flex; align-items:center; justify-content:center; gap:28px; margin-bottom:10px; }
-  .footer-partner { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--text-secondary); }
-  .footer-sub { font-size:11px; color:var(--text-secondary); opacity:0.5; }
+  .footer {
+    text-align: center;
+    padding: 40px 48px;
+    border-top: 2px solid var(--border);
+    margin-top: 24px;
+    background: #f8f9fc;
+  }
+  .footer-main {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .footer-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    line-height: 1.6;
+  }
 
+  /* RESPONSIVE */
   @media (max-width: 860px) {
-    .hero { padding: 32px 24px; }
+    .header { padding: 32px 24px; }
     .content { padding: 32px 24px; }
-    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-    .hero h1 { font-size:30px; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .header h1 { font-size: 24px; }
+  }
+  @media (max-width: 500px) {
+    .stat-grid { grid-template-columns: 1fr; }
   }
   @media print {
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .hero { padding: 32px; }
+    .header { padding: 32px; }
     .content { padding: 24px; }
+    .section { page-break-inside: avoid; }
   }
 </style>
 </head>
 <body>
 
-<!-- HERO -->
-<header class="hero">
-  <div class="hero-top">
-    <div class="hero-brand">
-      <svg width="28" height="27" viewBox="0 0 36 35" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.3583 34.848L34.6346 21.6606C34.9554 21.3837 35.1394 20.9842 35.1394 20.5642V0.608917C35.1394 0.0865137 34.5141 -0.192483 34.115 0.151966L18.8387 13.3357C18.5178 13.6126 18.3337 14.0122 18.3337 14.4322V34.3912C18.3337 34.9136 18.9592 35.1924 19.3583 34.848ZM35.1389 34.3798V24.968C35.1389 24.4359 34.5412 24.1518 34.16 24.5025L29.3493 28.93C28.9205 29.3243 28.9205 30.0247 29.3493 30.4191L34.16 34.8453C34.5414 35.196 35.1389 34.9119 35.1389 34.3798ZM0 34.0296V0.667318C0 0.145957 0.620761 -0.13231 1.01675 0.211279L16.1512 13.3451C16.4694 13.6215 16.6522 14.0203 16.6522 14.4395V34.0296C16.6522 34.5655 16.2131 35 15.6717 35H0.980509C0.439049 35 0 34.5655 0 34.0296Z" fill="white"/></svg>
+<!-- HEADER -->
+<header class="header">
+  <h1>SmartCal@EG — PoC &rarr; MVP Statusbericht</h1>
+  <p class="header-subtitle">Stand: 10.05.2026 &middot; Synapse OS for T&Uuml;V S&Uuml;D IS-EG</p>
+  <div class="header-dates">
+    <div class="header-date">
+      <span class="header-date-label">PoC geliefert</span>
+      <span class="header-date-value">KW16 &middot; 18.04.2026</span>
     </div>
-    <div class="hero-powered"><span>Powered by</span> <strong>Synapse OS</strong></div>
-  </div>
-
-  <div class="hero-badge"><span class="dot"></span>Status · 10. April 2026</div>
-  <h1>SmartCal@EG <span>Project Status</span></h1>
-  <p class="hero-sub">Kurzer Lagebericht: Was wir heute wissen, was wir noch brauchen und die nächsten Schritte bis zur Live-Demo auf der Abteilungsleitertagung.</p>
-
-  <div class="hero-meta">
-    <div class="hero-meta-item">
-      <span class="hero-meta-label">Kunde</span>
-      <span class="hero-meta-value">TÜV SÜD IS · EG</span>
+    <div class="header-date">
+      <span class="header-date-label">MVP Deadline</span>
+      <span class="header-date-value">KW27 &middot; 06.07.2026</span>
     </div>
-    <div class="hero-meta-item">
-      <span class="hero-meta-label">Phase 1</span>
-      <span class="hero-meta-value">KW14–16 · 3 Wochen</span>
+    <div class="header-date">
+      <span class="header-date-label">Ziel-Event</span>
+      <span class="header-date-value">Abteilungsleitertagung</span>
     </div>
-    <div class="hero-meta-item">
-      <span class="hero-meta-label">MVP Demo</span>
-      <span class="hero-meta-value">KW27 · 06.07.2026</span>
-    </div>
-    <div class="hero-meta-item">
-      <span class="hero-meta-label">Investition Phase 1</span>
-      <span class="hero-meta-value">32.000 €</span>
+    <div class="header-date">
+      <span class="header-date-label">Verbleibend</span>
+      <span class="header-date-value">~8 Wochen</span>
     </div>
   </div>
 </header>
 
 <div class="content">
 
-  <!-- MINI TIMELINE -->
+  <!-- ============================================================ -->
+  <!-- SECTION 1: WAS IST IM POC -->
+  <!-- ============================================================ -->
   <section class="section">
-    <div class="section-header">
-      <div class="section-number n1">T</div>
-      <div class="section-title">Zeitachse auf einen Blick</div>
-    </div>
+    <h2 class="section-title">1. Was ist im PoC</h2>
+    <p class="section-intro">
+      Vollst&auml;ndiger Proof of Concept mit 3 Produkten, deterministischer Pricing-Engine, Knowledge Graph und Chat-Interface. Validiert gegen 15.220+ historische Datens&auml;tze.
+    </p>
 
-    <div class="timeline-bar">
-      <div class="timeline-week tw-now">
-        <div class="tw-kw">KW15</div>
-        <div class="tw-title">Kick-off · Datenextraktion</div>
-      </div>
-      <div class="timeline-week tw-next">
-        <div class="tw-kw">KW16</div>
-        <div class="tw-title">Produkte 2 &amp; 3 · Demo M1</div>
-      </div>
-      <div class="timeline-week tw-later">
-        <div class="tw-kw">KW17–20</div>
-        <div class="tw-title">UX · Features · Export</div>
-      </div>
-      <div class="timeline-week tw-final">
-        <div class="tw-kw">KW21–25</div>
-        <div class="tw-title">UAT · Polish · Go-Live</div>
-      </div>
-      <div class="timeline-week tw-demo">
-        <div class="tw-kw">KW27</div>
-        <div class="tw-title">Abteilungsleitertagung</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 1: WAS WIR HABEN -->
-  <section class="section">
-    <div class="section-header">
-      <div class="section-number n1">1</div>
-      <div class="section-title">Was wir heute haben</div>
-    </div>
-    <div class="section-intro">
-      Angebot, 12-Wochen-Plan, Team und — der wichtigste Asset — ein erster Stapel echter TÜV-Prüfberichte. Damit ist Phase 1 nicht nur theoretisch, sondern ab Tag 1 datengetrieben.
-    </div>
-
-    <div class="grid-4" style="margin-bottom:14px;">
-      <div class="stat">
-        <div class="stat-value">99</div>
-        <div class="stat-label">Prüfberichte erhalten</div>
-        <div class="stat-detail">TÜV SÜD IS Nürnberg · EG1-3 · Q1 2025</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">91</div>
-        <div class="stat-label">× Blitzschutz (WP)</div>
-        <div class="stat-detail">7× PI, 1× PM — ausreichend für Phase 1 Produkt 1</div>
-      </div>
-      <div class="stat">
+    <!-- Stats -->
+    <div class="stat-grid">
+      <div class="stat-box">
         <div class="stat-value">3</div>
-        <div class="stat-label">Wochen Phase 1</div>
-        <div class="stat-detail">KW14–16 · Proof of Value</div>
+        <div class="stat-label">Produkte shipped</div>
       </div>
-      <div class="stat">
-        <div class="stat-value">32k</div>
-        <div class="stat-label">€ netto · Phase 1</div>
-        <div class="stat-detail">18k Development + 14k Design</div>
+      <div class="stat-box">
+        <div class="stat-value">186</div>
+        <div class="stat-label">Regressionstests</div>
       </div>
-    </div>
-
-    <div class="grid-3">
-      <div class="card card-green">
-        <div class="card-header">
-          <div class="card-title">Angebot &amp; Plan</div>
-          <span class="badge badge-green">bereit</span>
-        </div>
-        <div class="card-text">Phase 1 Angebot vollständig, 12-Wochen-Projektplan bis MVP ausgearbeitet.</div>
-        <ul>
-          <li class="done">proposal.html (32k, 3 Produkte, 3 Wochen)</li>
-          <li class="done">PROJECT_PLAN_12W.md (KW14–KW27)</li>
-          <li class="done">4 Meilensteine definiert (M1–M4)</li>
-        </ul>
+      <div class="stat-box">
+        <div class="stat-value">15.220+</div>
+        <div class="stat-label">Validierungsdaten</div>
       </div>
-      <div class="card card-green">
-        <div class="card-header">
-          <div class="card-title">Stakeholder &amp; Kontext</div>
-          <span class="badge badge-green">geklärt</span>
-        </div>
-        <div class="card-text">Entscheidungsträger, Projektteam und fachliche Anker identifiziert.</div>
-        <ul>
-          <li class="done">Dr. Stefan Veit — GF-Leiter EG (Decision Maker)</li>
-          <li class="done">Stefan Pausch — Projektleiter</li>
-          <li class="done">Matthias Pfeifer — Vertrieb &amp; BD</li>
-          <li class="done">Veit-Research (4.629 BMA-Berichte) als Phase-2 Anker</li>
-        </ul>
-      </div>
-      <div class="card card-green">
-        <div class="card-header">
-          <div class="card-title">Datenbasis Blitzschutz</div>
-          <span class="badge badge-green">vorhanden</span>
-        </div>
-        <div class="card-text">99 echte Prüfberichte mit strukturierten Feldern, Mängeln und Messpunkten.</div>
-        <ul>
-          <li class="done">Objekt-, Anlagen- &amp; Betreiberdaten</li>
-          <li class="done">Technische Merkmale (Schutzklasse, Ableitungen, Material)</li>
-          <li class="done">Messergebnisse pro Messstelle</li>
-          <li class="done">Mängel mit Einstufung 1–3 inkl. Fotos</li>
-          <li class="done">Prüfintervall (nächste Prüfung)</li>
-        </ul>
+      <div class="stat-box">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Halluzinationsrisiko</div>
       </div>
     </div>
 
-    <div class="divider"></div>
+    <!-- Architecture -->
+    <div class="subsection">
+      <h3 class="subsection-title">Architektur</h3>
+      <ul class="detail-list">
+        <li><strong>Backend:</strong> FastAPI + FalkorDB (Knowledge Graph, 154 Nodes, 183 Edges) + Anthropic Claude (Haiku Coordinator, Sonnet Agent)</li>
+        <li><strong>Frontend:</strong> Next.js 15 + Tailwind, responsive, SSE Streaming, Multi-Produkt-Switching, Login</li>
+        <li><strong>Two-LLM Pattern:</strong> Coordinator (Chat/Parse) &rarr; PricingEngine (deterministisch) &rarr; Coordinator (Summarize)</li>
+        <li><strong>100% deterministische Preisberechnung</strong> — LLM nur f&uuml;r Natural Language Understanding, Zero Hallucination Risk bei Preisen</li>
+        <li><strong>14 Node-Labels, 17 Relationship-Types</strong> im Graph (Gebaeudetyp, Dienstleistung, Preisposition, Staffel, Merkmal, Stressor, Trait)</li>
+      </ul>
+    </div>
 
-    <div class="card card-blue">
-      <div class="card-title" style="margin-bottom:10px;">Was wir daraus für den Wissensgraph ziehen</div>
-      <div class="grid-2">
-        <ul>
-          <li class="done"><strong>Strukturelle Knoten:</strong> Objekt, Anlage, Gebäudetyp, Norm, Sachverständiger, Mangel, Messstelle</li>
-          <li class="done"><strong>Merkmale:</strong> Schutzklasse, Anzahl Ableitungen, Material, Bauart, Dachart, Nutzung</li>
-          <li class="done"><strong>Prüftiefe:</strong> aus MA-Code ableitbar (WP/PI/PM)</li>
-        </ul>
-        <ul>
-          <li class="done"><strong>Schätzformeln:</strong> Gebäudetyp × BGF → Anzahl Ableitungen, Prüfdauer, Intervall</li>
-          <li class="done"><strong>Mängel-Muster:</strong> typische Defekte pro Gebäudetyp &amp; Umgebung</li>
-          <li class="done"><strong>Cost-Driver:</strong> alle wesentlichen Preisparameter (nur noch ohne Euro-Werte)</li>
-        </ul>
+    <div class="divider" style="margin: 28px 0;"></div>
+
+    <!-- Product 1 -->
+    <div class="product-card">
+      <div class="product-card-header">
+        <div class="product-card-title">1. Blitzschutz (MA570) — FULL</div>
+        <span class="badge badge-green">&#10003; shipped</span>
+      </div>
+      <ul>
+        <li>7 Dateien, Graph Schema (73 Nodes), Chat Coordinator, Golden Set (316 Anlagen Augsburg StV)</li>
+        <li>Pricing: 33&euro;/Messstelle (LPV B04 &sect;8.1) + 5 Staffeln + Zuschl&auml;ge</li>
+        <li>Confidence Scoring (Veit-Angle), Cross-Sell-Empfehlungen</li>
+        <li>63 Regressionstests, alle bestanden</li>
+      </ul>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product-card">
+      <div class="product-card-header">
+        <div class="product-card-title">2. RLT-Anlage (MA419) — FULL</div>
+        <span class="badge badge-green">&#10003; shipped</span>
+      </div>
+      <ul>
+        <li>2 Varianten: Hygiene VDI 6022 + Garagenl&uuml;ftung GaStellV</li>
+        <li>Chat Coordinator mit Auto-Varianten-Erkennung</li>
+        <li>HYG: 208&euro;/h &times; Bereiche + Laborpauschale</li>
+        <li>Garage: 450/690/1.250&euro; per Stellplatz-Range + 170&euro;/Ventilator + 40&euro;/BSK</li>
+        <li>Golden Set: 10.345 Eintr&auml;ge aus Versand-Daten</li>
+        <li>63 Regressionstests, alle bestanden</li>
+      </ul>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="product-card">
+      <div class="product-card-header">
+        <div class="product-card-title">3. DGUV V3 ortsfest (MA507) — FULL</div>
+        <span class="badge badge-green">&#10003; shipped</span>
+      </div>
+      <ul>
+        <li>Formel: 250&euro; Grundpreis + Fl&auml;che &times; &euro;/10m&sup2; per Installationskategorie (5 Kategorien)</li>
+        <li>Verteilungen: UV 25&euro;, HV 85&euro;, NSHV 145&euro;</li>
+        <li>NEA/SV-NSHV Zuschl&auml;ge</li>
+        <li>Golden Set: 40 Anlagen aus Gersthofen Ausschreibung</li>
+        <li>60 Regressionstests, alle bestanden</li>
+      </ul>
+    </div>
+
+    <div class="divider" style="margin: 28px 0;"></div>
+
+    <!-- Shared Infrastructure -->
+    <div class="subsection">
+      <h3 class="subsection-title">Shared Infrastructure</h3>
+      <ul class="detail-list">
+        <li><strong>23 T&Uuml;V-Niederlassungen</strong> mit Geocoding (OSRM Routing)</li>
+        <li><strong>Reisekosten:</strong> Kilometergeld 1,10&euro;/km + Tagegeld (LPV Teil A &sect;4.3)</li>
+        <li><strong>Grundkosten:</strong> 256&euro; Pauschale + 242&euro; Ordnungspr&uuml;fung (baurechtlich) + 49&euro;/Tag Pr&uuml;fmittel</li>
+        <li><strong>Berichtstypen:</strong> klein 119&euro; / standard 380&euro; / komplex 550&euro;</li>
+        <li><strong>Zuschl&auml;ge:</strong> Nicht-Vereinsmitglied +20%, Eilzuschlag +25%, Erstpr&uuml;fung +100%</li>
+        <li><strong>186 Regressionstests</strong> gesamt, alle bestanden</li>
+        <li><strong>Frontend:</strong> Multi-Produkt-Switching, SSE Streaming, Login-System</li>
+      </ul>
+    </div>
+
+    <!-- Data processed -->
+    <div class="subsection">
+      <h3 class="subsection-title">Verarbeitete Daten</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Datei</th>
+              <th>Inhalt</th>
+              <th>Umfang</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>441_419_Versand.xlsx</strong></td>
+              <td>RLT Versand-Daten</td>
+              <td>13.894 Zeilen</td>
+            </tr>
+            <tr>
+              <td><strong>57234_Versand.xlsx</strong></td>
+              <td>Blitzschutz Versand-Daten</td>
+              <td>4.875 Zeilen</td>
+            </tr>
+            <tr>
+              <td><strong>Gersthofen Ausschreibung</strong></td>
+              <td>LV-Positionen DGUV V3</td>
+              <td>1.393 Positionen</td>
+            </tr>
+            <tr>
+              <td><strong>Pr&uuml;fberichte MA570</strong></td>
+              <td>Blitzschutz Inspektionsberichte</td>
+              <td>99 PDFs</td>
+            </tr>
+            <tr>
+              <td><strong>Sample PDFs</strong></td>
+              <td>MA419, MA507, MA438, MA501, MA510, MA555, MA560</td>
+              <td>7 MA-Codes</td>
+            </tr>
+            <tr>
+              <td><strong>LP_00_2026_Gesamt.pdf</strong></td>
+              <td>Komplette LPV 2025/2026</td>
+              <td>Vollst&auml;ndig</td>
+            </tr>
+            <tr>
+              <td><strong>Kriterien Preisfindung EG</strong></td>
+              <td>3 Pricing-Faktoren (Pausch, 04.05.2026)</td>
+              <td>Dokument</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- SECTION 2: WAS FEHLT NOCH -->
+  <!-- ============================================================ -->
+  <!-- SECTION 2: WAS FEHLT FUER MVP -->
+  <!-- ============================================================ -->
   <section class="section">
-    <div class="section-header">
-      <div class="section-number n2">2</div>
-      <div class="section-title">Was wir noch brauchen</div>
-    </div>
-    <div class="section-intro">
-      Die Prüfberichte decken die fachlich-technische Seite ab. Für eine funktionierende Kalkulation fehlt der kommerzielle Layer — insbesondere Preislogik und 1–2 Validierungsrunden mit einem Sachverständigen.
-    </div>
+    <h2 class="section-title">2. Was fehlt f&uuml;r MVP</h2>
+    <p class="section-intro">
+      Geordnet nach Priorit&auml;t. Gesamtaufwand P0+P1: ca. 16-20 Tage Entwicklung. MVP-Scope muss bis KW22 fixiert sein.
+    </p>
 
-    <div class="callout callout-yellow">
-      <div class="callout-icon">&#9888;</div>
-      <div><strong>Blocker für Projektstart:</strong> Ohne Preisdaten (LPV + Beispielangebote) kann das Phase-1-Deliverable nicht abgeschlossen werden. Diese Unterlagen sind für KW15 kritisch.</div>
-    </div>
-
-    <div class="grid-2">
-      <div class="card card-yellow">
-        <div class="card-header">
-          <div class="card-title">Von TÜV SÜD</div>
-          <span class="badge badge-yellow">offen</span>
-        </div>
-        <ul>
-          <li class="blocker"><strong>LPV / Preisliste</strong> für die 3 Startprodukte — KW15</li>
-          <li class="blocker"><strong>3–5 Beispielangebote</strong> pro Produkt — KW15</li>
-          <li class="missing"><strong>Kalkulationsexcel</strong> (falls vorhanden) — KW15</li>
-          <li class="missing"><strong>1–2h mit Sachverständigem</strong> (z.B. Julian Ritter, Unterzeichner Burg Lauenstein) — KW15–16</li>
-          <li class="missing"><strong>Finalisierung der 3 Startprodukte</strong> — Vorschlag: Blitzschutz, BMA, DGUV V3</li>
-          <li class="missing"><strong>TÜV Styleguide / Brand Assets</strong> — ab KW17</li>
-          <li class="missing"><strong>Hosting-Entscheidung</strong> (Cloud vs. TÜV-Infrastruktur) — bis KW22</li>
-        </ul>
+    <!-- P0 -->
+    <div class="priority-block p0">
+      <div class="priority-title">
+        <span class="badge badge-red">P0</span>
+        Blocker f&uuml;r Demo KW27
       </div>
 
-      <div class="card card-yellow">
-        <div class="card-header">
-          <div class="card-title">Intern (MING Labs &amp; wir)</div>
-          <span class="badge badge-yellow">offen</span>
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">1. Pricing-Kalibrierung</span>
+          <span class="gap-item-effort">3-5 Tage</span>
         </div>
-        <ul>
-          <li class="missing"><strong>Pricing-Abstimmung Phase 2+</strong> mit Matthias (Zielkorridor: 6-stellig)</li>
-          <li class="missing"><strong>Onboarding Katharina Jockenhöfer</strong> — Projektkoordination ab KW15</li>
-          <li class="missing"><strong>Direct-Access-Modell</strong> zu Veit/Pausch/Pfeifer klären</li>
-          <li class="missing"><strong>Extraktions-Pipeline</strong> für die 99 PDFs (LLM → strukturiertes JSON)</li>
-          <li class="missing"><strong>Graph-Schema v1 Blitzschutz</strong> auf Basis der echten Berichte</li>
-          <li class="missing"><strong>Kick-off Agenda &amp; Termin</strong> bestätigen</li>
-        </ul>
+        <div class="gap-item-text">
+          PoC berechnet LPV-Listenpreise. Reale Faktura ist <strong>-46% bis -85% niedriger</strong> (aus Versand-Daten).
+          Ben&ouml;tigt: Schieberegler "Listenpreis / Marktpreis / Ausschreibung" mit Multiplikator aus Versand.
+          Kalkulationshilfen zeigt abweichende Schwellen: BSK 45,50&euro; (nicht 40&euro;), Garage &le;25 SP (nicht &le;30).
+          Kl&auml;ren mit Pausch: welche Preise sind korrekt?
+        </div>
       </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">2. PLZ&rarr;Niederlassung CRM-Mapping</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          PoC: "n&auml;chster Standort" per Luftlinie/OSRM. CRM PLZ NL: 8.309 PLZ &rarr; 24 NL (offizielle Zuordnung).
+          Frankfurt &rarr; T&Uuml;V Hessen (nicht Darmstadt!) — falsche Reisekosten ohne CRM-Mapping.
+          Offen: Ist Zuordnung produktabh&auml;ngig?
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">3. T&Uuml;V Corporate Design</span>
+          <span class="gap-item-effort">2-3 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          PoC hat generisches Design (blau/wei&szlig;). T&Uuml;V hat Figma-basiertes Design System.
+          Farben, Fonts, Logo, Komponenten anpassen.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">4. Schieberegler grob/mittel/fein</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Feith-Request: grob = nur BGF + Sicherheitsfaktor, fein = alle Merkmale.
+          Chat-Flow unterst&uuml;tzt das schon implizit, UI-Toggle fehlt.
+        </div>
+      </div>
+    </div>
+
+    <!-- P1 -->
+    <div class="priority-block p1">
+      <div class="priority-title">
+        <span class="badge badge-yellow">P1</span>
+        Wichtig f&uuml;r MVP
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">5. Kriterien Preisfindung Integration</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Pausch (04.05): 3 Faktoren — Anlagenmerkmale (60-90%), Dokumentation (8-15%), Ortskenntnis (2-25%).
+          Skaliert nicht-linear mit BGF (&le;2.500m&sup2;: 90/8/2, &ge;10.000m&sup2;: 60/15/25).
+          Einbauen als Confidence-Modifikatoren + R&uuml;ckfragen.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">6. Inspektionspflichten-Lookup</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          70 Eintr&auml;ge: Regelwerk &times; Geb&auml;udeart &rarr; Pr&uuml;fzyklus + Qualifikation.
+          Chat antwortet: "Ihre n&auml;chste Pr&uuml;fung ist in X Jahren f&auml;llig."
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">7. Textbausteine / Angebots-Export</span>
+          <span class="gap-item-effort">2-3 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Feith-Request: Output zum Kopieren in SAP/Angebot.
+          PDF- oder Textblock-Export mit Positionen.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">8. Volkswohlbund-Kalibrierung</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          Reale Rahmenvertrag-Preise: EP vs PLV Vergleich.
+          UV: PLV 270&euro; vs EP 101&euro; (-63%) — typischer Rahmenvertrag-Rabatt?
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">9. MA507 Versand-Daten</span>
+          <span class="gap-item-effort">1 Tag (wenn geliefert)</span>
+        </div>
+        <div class="gap-item-text">
+          DGUV V3 Golden Set aktuell nur Gersthofen (40 Anlagen).
+          Mit Versand: tausende Eintr&auml;ge f&uuml;r bessere Kalibrierung.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">10. Multi-Geb&auml;ude Support</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Feith: "Schule + Turnhalle = 2 separate Anlagen".
+          Aktuell: single-Anlage pro Anfrage.
+        </div>
+      </div>
+    </div>
+
+    <!-- P2 -->
+    <div class="priority-block p2">
+      <div class="priority-title">
+        <span class="badge badge-blue">P2</span>
+        Nice to have f&uuml;r MVP
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">11. Graph-Engine f&uuml;r RLT/DGUV</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          graph_schema.py existiert, GraphPricingEngine-Adapter fehlt.
+          PoC: Python-Engine funktioniert, Graph-Engine nur f&uuml;r Blitzschutz.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">12. Reisekosten-Widget mit Karte</span>
+          <span class="gap-item-effort">1-2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Visuelle Darstellung der Routenberechnung und Kostenaufschl&uuml;sselung.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">13. Kombi-Begehung Rabatt-Logik</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          Blitzschutz + RLT gleichzeitig &rarr; nur 1&times; Reisekosten.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">14. Gebaeudedaten_MA570 Integration</span>
+          <span class="gap-item-effort">1 Tag (wenn Datei geliefert)</span>
+        </div>
+        <div class="gap-item-text">
+          Erweiterte Geb&auml;udedaten f&uuml;r Blitzschutz — abh&auml;ngig von Datenlieferung.
+        </div>
+      </div>
+    </div>
+
+    <!-- Effort summary -->
+    <div style="background: #f8f9fc; border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-top: 20px;">
+      <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Aufwands-&Uuml;bersicht</div>
+      <div style="display: flex; gap: 24px; flex-wrap: wrap; font-size: 13px; color: var(--text-secondary);">
+        <span><strong style="color: var(--red);">P0:</strong> 8-11 Tage</span>
+        <span><strong style="color: var(--yellow);">P1:</strong> 9-10 Tage</span>
+        <span><strong style="color: var(--tuev-blue);">P2:</strong> 5-6 Tage</span>
+        <span><strong>Gesamt:</strong> 22-27 Tage</span>
+      </div>
+      <div class="progress-bar" style="margin-top: 12px;">
+        <div class="progress-fill green" style="width: 40%;"></div>
+      </div>
+      <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">PoC = 40% des MVP-Scopes abgedeckt</div>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- SECTION 3: NEXT STEPS -->
+  <!-- ============================================================ -->
+  <!-- SECTION 3: PRODUKT-ROADMAP -->
+  <!-- ============================================================ -->
   <section class="section">
-    <div class="section-header">
-      <div class="section-number n3">3</div>
-      <div class="section-title">Nächste Schritte</div>
-    </div>
-    <div class="section-intro">
-      Priorität dieser Woche: Kick-off fixieren, fehlende Unterlagen bei TÜV anfordern, und parallel die Extraktions-Pipeline auf den 99 Berichten aufsetzen — damit wir am Tag der Unterlagen-Übergabe bereits einen funktionsfähigen Graph haben.
-    </div>
+    <h2 class="section-title">3. Produkt-Roadmap</h2>
+    <p class="section-intro">
+      Alle 11 EG-Produkte. Architektur ist produktagnostisch (Gewerk Base Class). Jedes neue Produkt = ~7 Dateien, ~2 Tage mit Daten.
+    </p>
 
-    <div class="table-wrap" style="margin-bottom:24px;">
+    <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th style="width:90px;">Wann</th>
-            <th style="width:200px;">Wer</th>
-            <th>Was</th>
-            <th style="width:110px;">Status</th>
+            <th style="width: 40px;">#</th>
+            <th>Produkt</th>
+            <th style="width: 140px;">Status</th>
+            <th style="width: 100px;">Phase</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class="mono">Heute</td>
-            <td>Piotr → Matthias</td>
-            <td>Sync: Pricing Phase 2+, Unterlagen-Request an TÜV abstimmen, Kick-off-Termin fixieren</td>
-            <td><span class="badge badge-red">dringend</span></td>
+            <td class="mono">1</td>
+            <td><strong>Blitzschutz</strong> (MA570)</td>
+            <td><span class="badge badge-green">&#10003; PoC shipped</span></td>
+            <td>Phase 1</td>
           </tr>
           <tr>
-            <td class="mono">Heute</td>
-            <td>Matthias → TÜV</td>
-            <td>Offizielle Anforderung: LPV, Beispielangebote, Kalkulationsexcel, Sachverständiger-Slot</td>
-            <td><span class="badge badge-red">dringend</span></td>
+            <td class="mono">2</td>
+            <td><strong>RLT + Garage</strong> (MA419)</td>
+            <td><span class="badge badge-green">&#10003; PoC shipped</span></td>
+            <td>Phase 1</td>
           </tr>
           <tr>
-            <td class="mono">KW15 · Mo–Mi</td>
-            <td>Piotr</td>
-            <td>Extraktions-Pipeline: 99 PDF → strukturiertes JSON (Objekt, Anlage, Merkmale, Mängel, Messstellen)</td>
-            <td><span class="badge badge-blue">geplant</span></td>
+            <td class="mono">3</td>
+            <td><strong>DGUV V3 ortsfest</strong> (MA507)</td>
+            <td><span class="badge badge-green">&#10003; PoC shipped</span></td>
+            <td>Phase 1</td>
           </tr>
           <tr>
-            <td class="mono">KW15 · Mi–Fr</td>
-            <td>Piotr</td>
-            <td>Graph-Schema v1 Blitzschutz + erste Schätzformeln (Gebäudetyp → Anzahl Ableitungen, Prüfdauer)</td>
-            <td><span class="badge badge-blue">geplant</span></td>
+            <td class="mono">4</td>
+            <td>DGUV ortsver&auml;nderlich (MA560?)</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
           </tr>
           <tr>
-            <td class="mono">KW15</td>
-            <td>Katharina</td>
-            <td>Projektkoordination Onboarding, Termine &amp; Dokumentenfluss TÜV ↔ MING</td>
-            <td><span class="badge badge-yellow">pending</span></td>
+            <td class="mono">5</td>
+            <td>BMA Brandmeldeanlage</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
           </tr>
           <tr>
-            <td class="mono">KW15/16</td>
-            <td>Piotr + TÜV-SV</td>
-            <td>Validierungs-Session: "Wir haben aus Ihren Berichten X extrahiert — stimmt das?" (Delta-Review)</td>
-            <td><span class="badge badge-yellow">pending</span></td>
+            <td class="mono">6</td>
+            <td>SAA Sprachalarmierung</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
           </tr>
           <tr>
-            <td class="mono">KW16</td>
-            <td>Piotr</td>
-            <td>Produkte 2 &amp; 3 in Graph einpflegen, Reisekosten-Modul, automatisierte Preistests</td>
-            <td><span class="badge badge-blue">geplant</span></td>
+            <td class="mono">7</td>
+            <td>PV-Anlagen</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
           </tr>
           <tr>
-            <td class="mono">Ende KW16</td>
-            <td>Piotr + Matthias + TÜV</td>
-            <td><strong>Meilenstein M1:</strong> Live-Demo der 3 Startprodukte mit echten Preisen</td>
-            <td><span class="badge badge-blue">Ziel</span></td>
+            <td class="mono">8</td>
+            <td>SiBel + SSV</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td class="mono">9</td>
+            <td>RWA / NRA Rauchabzug (MA438)</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td class="mono">10</td>
+            <td>Wandhydranten</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td class="mono">11</td>
+            <td>L&ouml;schanlagen</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div class="callout callout-blue">
-      <div class="callout-icon">&#9733;</div>
-      <div><strong>Strategischer Hebel:</strong> Die 99 Prüfberichte erlauben uns, Phase 2 (Risk-Based Inspection) nicht als Vision, sondern als <em>funktionierendes Add-on mit echten TÜV-Daten</em> beim Meilenstein M1 zu zeigen — direkt anschlussfähig an die Forschung von Dr. Veit.</div>
+    <div style="background: var(--tuev-light); border: 1px solid #c4d7f5; border-radius: 8px; padding: 14px 18px; font-size: 13px; color: var(--tuev-dark); line-height: 1.6; margin-top: 14px;">
+      <strong>Hinweis:</strong> Versand-Daten f&uuml;r MA438 (NRA) bereits vorhanden (9.905 Zeilen). Sample-PDFs f&uuml;r alle MA-Codes verf&uuml;gbar.
+      Architektur ist produktagnostisch — jedes neue Produkt = ~7 Dateien, ~2 Tage mit Daten.
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 4: OFFENE FRAGEN -->
+  <!-- ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">4. Offene Fragen an T&Uuml;V</h2>
+    <p class="section-intro">
+      Kl&auml;rung dieser Punkte ist Voraussetzung f&uuml;r die MVP-Fertigstellung. Priorisiert nach Dringlichkeit.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 40px;">#</th>
+            <th>Frage</th>
+            <th style="width: 100px;">Priorit&auml;t</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">1</td>
+            <td><strong>Pricing-Schwellen:</strong> BSK 40&euro; oder 45,50&euro;? Garage &le;25 oder &le;30 Stellpl&auml;tze?</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr>
+            <td class="mono">2</td>
+            <td><strong>PLZ&rarr;NL Zuordnung:</strong> produktabh&auml;ngig oder shared?</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr>
+            <td class="mono">3</td>
+            <td><strong>MA507 Versand:</strong> Wann lieferbar?</td>
+            <td><span class="badge badge-yellow">P1</span></td>
+          </tr>
+          <tr>
+            <td class="mono">4</td>
+            <td><strong>Gebaeudedaten_MA570_alle_PDFs_erweitert_v4_mit_Summen_MB.xlsx:</strong> Was genau enth&auml;lt diese Datei?</td>
+            <td><span class="badge badge-yellow">P1</span></td>
+          </tr>
+          <tr>
+            <td class="mono">5</td>
+            <td><strong>Preisebene:</strong> Welche Preisebene soll der Kalkulator ausgeben? (LPV-Listenpreis vs. typischer Marktpreis vs. Ausschreibungspreis)</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr>
+            <td class="mono">6</td>
+            <td><strong>Referenz-Angebote:</strong> 3 reale Offers f&uuml;r End-to-End-Validierung?</td>
+            <td><span class="badge badge-yellow">P1</span></td>
+          </tr>
+          <tr>
+            <td class="mono">7</td>
+            <td><strong>T&Uuml;V Design System:</strong> Zugang (Figma)?</td>
+            <td><span class="badge badge-yellow">P1</span></td>
+          </tr>
+          <tr>
+            <td class="mono">8</td>
+            <td><strong>"Volkswohlbund-Effekt":</strong> Wie umgehen mit Rahmenvertrag-Rabatt -63% bei UVs?</td>
+            <td><span class="badge badge-blue">P2</span></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 
@@ -482,17 +932,10 @@
 
 <!-- FOOTER -->
 <footer class="footer">
-  <div class="footer-partners">
-    <div class="footer-partner">
-      <svg width="18" height="17" viewBox="0 0 36 35" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M19.3583 34.848L34.6346 21.6606C34.9554 21.3837 35.1394 20.9842 35.1394 20.5642V0.608917C35.1394 0.0865137 34.5141 -0.192483 34.115 0.151966L18.8387 13.3357C18.5178 13.6126 18.3337 14.0122 18.3337 14.4322V34.3912C18.3337 34.9136 18.9592 35.1924 19.3583 34.848ZM35.1389 34.3798V24.968C35.1389 24.4359 34.5412 24.1518 34.16 24.5025L29.3493 28.93C28.9205 29.3243 28.9205 30.0247 29.3493 30.4191L34.16 34.8453C34.5414 35.196 35.1389 34.9119 35.1389 34.3798ZM0 34.0296V0.667318C0 0.145957 0.620761 -0.13231 1.01675 0.211279L16.1512 13.3451C16.4694 13.6215 16.6522 14.0203 16.6522 14.4395V34.0296C16.6522 34.5655 16.2131 35 15.6717 35H0.980509C0.439049 35 0 34.5655 0 34.0296Z" fill="#ee0000"/></svg>
-      <span><strong style="color:var(--ming-dark);">MING Labs</strong></span>
-    </div>
-    <span style="color:var(--border);">&middot;</span>
-    <div class="footer-partner">
-      <span style="color:var(--text-secondary); opacity:0.6;">Powered by <strong>Synapse OS</strong></span>
-    </div>
+  <div class="footer-main">Synapse OS &middot; Minglabs GmbH &middot; Stand 10.05.2026</div>
+  <div class="footer-sub">
+    PoC validiert gegen 10.345 RLT + 4.875 Blitzschutz + 40 DGUV V3 historische Datens&auml;tze
   </div>
-  <div class="footer-sub">Projekt-Status SmartCal@EG &middot; 10. April 2026 &middot; Vertraulich</div>
 </footer>
 
 </body>

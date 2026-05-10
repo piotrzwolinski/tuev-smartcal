@@ -16,8 +16,13 @@ from products.dguv_v3.pricing_rules import (
     dguv_pruefkosten,
     dguv_estimate_pruef_tage,
     dguv_choose_bericht_typ,
+    dguv_zuschlaege,
+    dguv_validate_ranges,
 )
 from products.dguv_v3.golden_set import load_dguv_golden_set
+
+
+_PROMPT_PATH = __file__.replace("__init__.py", "extraction_prompt.txt")
 
 
 class DGUVV3Gewerk(Gewerk):
@@ -37,9 +42,18 @@ class DGUVV3Gewerk(Gewerk):
     def choose_bericht_typ(self, merkmale):
         return dguv_choose_bericht_typ(merkmale)
 
+    def zuschlaege(self, merkmale):
+        return dguv_zuschlaege(merkmale)
+
+    def validate_ranges(self, merkmale):
+        return dguv_validate_ranges(merkmale)
+
     def extraction_prompt(self) -> str:
-        # TODO M3.4 (KW18): pełny prompt
-        return "Extract DGUV V3 ortsfeste elektrische Anlagen Merkmale to JSON per schema."
+        try:
+            with open(_PROMPT_PATH, encoding="utf-8") as f:
+                return f.read()
+        except FileNotFoundError:
+            return "Extract DGUV V3 ortsfeste elektrische Anlagen Merkmale to JSON per schema."
 
     def golden_set(self):
         return load_dguv_golden_set()
