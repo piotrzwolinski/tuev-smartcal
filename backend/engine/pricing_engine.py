@@ -62,7 +62,8 @@ class PricingEngine:
         adresse_lat = getattr(merkmale, "adresse_lat", None)
         adresse_lon = getattr(merkmale, "adresse_lon", None)
         if adresse_lat is not None and adresse_lon is not None:
-            standort = find_nearest_standort(adresse_lat, adresse_lon)
+            adresse_plz = getattr(merkmale, "adresse_plz", None)
+            standort = find_nearest_standort(adresse_lat, adresse_lon, plz=adresse_plz)
             km_one_way = standort["distance_km"]
             km_roundtrip = km_one_way * 2
             # Reisezeit: OSRM liefert echte Fahrzeit, sonst km/80 fallback
@@ -73,13 +74,18 @@ class PricingEngine:
                 kilometergeld(km_roundtrip, vehicle="pkw")
                 + reisezeit_h * stundensatz(self.default_reisezeit_stundensatz)
             )
+            zuordnung = standort.get("zuordnung", "nearest")
             if km_one_way > 0:
+                label = "Zuständiger TÜV-Standort" if zuordnung == "crm" else "Nächster TÜV-Standort"
                 warnings.append(
-                    f"Nächster TÜV-Standort: {standort['name']} "
+                    f"{label}: {standort['name']} "
                     f"({standort.get('adresse', '')}, {standort['plz']}) — "
                     f"{km_one_way:.0f} km / {duration_min:.0f} min einfach "
                     f"[{routing}]"
                 )
+            zuordnung_warnung = standort.get("zuordnung_warnung")
+            if zuordnung_warnung:
+                warnings.append(f"⚠ {zuordnung_warnung}")
         else:
             warnings.append("Adresse ohne Koordinaten — Reisekosten nicht berechnet")
 

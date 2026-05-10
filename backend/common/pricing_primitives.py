@@ -191,12 +191,109 @@ def _osrm_route(lat1: float, lon1: float, lat2: float, lon2: float) -> dict | No
     return None
 
 
-def find_nearest_standort(lat: float, lon: float) -> dict:
-    """Return nearest TÜV Niederlassung with Fahrstrecke (OSRM) or Luftlinie (fallback).
+_CRM_TO_STANDORT_ID = {
+    "0AUG": "AUG", "0BER": "BER", "0DRE": "DRE", "0ESS": "ESS",
+    "0FRE": "FRE", "0HAM": "HAM", "0HOF": "HOF", "0KAR": "KAR",
+    "0LEI": "LEI", "0MAN": "MAN", "0MUC": "MUC", "0NBG": "NBG",
+    "0RAV": "RAV", "0RGB": "RGB", "0SBR": "SBR", "0TRT": "TRT",
+    "0ULM": "ULM", "0WZB": "WZB",
+    "0STG": "FIL",  # Stuttgart-Filderstadt → Filderstadt
+    "0HBR": "HEI",  # Heilbronn CRM code
+    "0CHE": "DRE",  # Chemnitz → Dresden (closest we have)
+    "0JEN": "LEI",  # Jena → Leipzig (closest we have)
+    "0KLT": "SBR",  # Kaiserslautern → St. Ingbert (closest we have)
+    # HESE = TÜV Hessen (separate company) → no mapping, fallback to nearest
+}
 
-    Preselects top 3 by Haversine, then routes via OSRM for accurate km.
+_STANDORT_BY_ID = {s["id"]: s for s in TUEV_NIEDERLASSUNGEN}
+
+_PLZ_NL_CACHE: dict[str, str | None] = {}
+_PLZ_NL_LOADED = False
+
+
+def _load_plz_nl():
+    global _PLZ_NL_LOADED
+    if _PLZ_NL_LOADED:
+        return
+    _PLZ_NL_LOADED = True
+    from pathlib import Path
+    path = Path.home() / "Downloads" / "CRM PLZ NL (1).xlsx"
+    if not path.exists():
+        return
+    try:
+        from openpyxl import load_workbook
+        wb = load_workbook(path, data_only=True, read_only=True)
+        ws = wb["Zuordnung"]
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            cells = list(row)
+            if len(cells) >= 2 and cells[0] and cells[1]:
+                plz = str(cells[0]).strip().zfill(5)
+                crm_nl = str(cells[1]).strip()
+                standort_id = _CRM_TO_STANDORT_ID.get(crm_nl)
+                _PLZ_NL_CACHE[plz] = standort_id  # None for HESE etc.
+        wb.close()
+    except Exception:
+        pass
+
+
+def _find_by_plz(plz: str) -> dict | None:
+    """CRM PLZ→NL lookup. Returns Standort dict or None."""
+    _load_plz_nl()
+    plz_norm = plz.strip().zfill(5)
+    if plz_norm not in _PLZ_NL_CACHE:
+        return None
+    standort_id = _PLZ_NL_CACHE[plz_norm]
+    if standort_id is None:
+        return None  # HESE etc. — no TÜV SÜD NL
+    return _STANDORT_BY_ID.get(standort_id)
+
+
+def _route_to_standort(lat: float, lon: float, standort: dict) -> dict:
+    """Calculate route from (lat, lon) to a specific Standort."""
+    route = _osrm_route(lat, lon, standort["lat"], standort["lon"])
+    if route:
+        return {**standort, "distance_km": route["distance_km"],
+                "duration_min": route["duration_min"], "routing": "osrm"}
+    km = _haversine_km(lat, lon, standort["lat"], standort["lon"])
+    return {**standort, "distance_km": km, "duration_min": km / 80 * 60,
+            "routing": "haversine_fallback"}
+
+
+def find_nearest_standort(lat: float, lon: float, plz: str | None = None) -> dict:
+    """Return zuständige TÜV Niederlassung with Fahrstrecke.
+
+    Priority: CRM PLZ→NL mapping → fallback to nearest by distance.
+    If CRM maps to unknown NL (e.g. TÜV Hessen), falls back with warning.
     """
-    # Pre-filter top 3 by Luftlinie (avoid 23 OSRM calls)
+    # 1. Try CRM lookup
+    if plz:
+        crm_standort = _find_by_plz(plz)
+        if crm_standort:
+            result = _route_to_standort(lat, lon, crm_standort)
+            result["zuordnung"] = "crm"
+            return result
+
+        # PLZ exists in CRM but maps to non-TÜV-SÜD NL
+        _load_plz_nl()
+        plz_norm = plz.strip().zfill(5)
+        if plz_norm in _PLZ_NL_CACHE and _PLZ_NL_CACHE[plz_norm] is None:
+            # Fallback to nearest, but flag it
+            result = _find_nearest_by_distance(lat, lon)
+            result["zuordnung"] = "fallback"
+            result["zuordnung_warnung"] = (
+                f"PLZ {plz} ist lt. CRM nicht im TÜV SÜD IS-Gebiet "
+                f"(ggf. TÜV Hessen oder andere Gesellschaft). "
+                f"Nächster TÜV SÜD Standort als Fallback verwendet."
+            )
+            return result
+
+    # 2. Fallback: nearest by distance
+    result = _find_nearest_by_distance(lat, lon)
+    result["zuordnung"] = "nearest"
+    return result
+
+
+def _find_nearest_by_distance(lat: float, lon: float) -> dict:
     candidates = sorted(
         TUEV_NIEDERLASSUNGEN,
         key=lambda s: _haversine_km(lat, lon, s["lat"], s["lon"]),
@@ -204,18 +301,10 @@ def find_nearest_standort(lat: float, lon: float) -> dict:
 
     best = None
     best_km = float("inf")
-
     for c in candidates:
-        route = _osrm_route(lat, lon, c["lat"], c["lon"])
-        if route:
-            km = route["distance_km"]
-            entry = {**c, "distance_km": km, "duration_min": route["duration_min"], "routing": "osrm"}
-        else:
-            km = _haversine_km(lat, lon, c["lat"], c["lon"])
-            entry = {**c, "distance_km": km, "duration_min": km / 80 * 60, "routing": "haversine_fallback"}
-
-        if km < best_km:
-            best_km = km
+        entry = _route_to_standort(lat, lon, c)
+        if entry["distance_km"] < best_km:
+            best_km = entry["distance_km"]
             best = entry
 
     return best or {**candidates[0], "distance_km": 0, "routing": "error"}
