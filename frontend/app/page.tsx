@@ -254,11 +254,6 @@ export default function Home() {
               <h2 className="text-lg font-semibold text-slate-900">{activeProduct.name}-Kalkulator</h2>
               <p className="text-xs text-slate-500">{activeProduct.subtitle}</p>
             </div>
-            <div className="flex items-center gap-2 bg-slate-100 rounded-lg p-1">
-              <span className="px-3 py-1.5 rounded-md text-xs font-semibold bg-[#0046ad] text-white shadow">
-                Wissensgraph
-              </span>
-            </div>
             <button
               onClick={handleNewSession}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"

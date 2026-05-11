@@ -9,6 +9,7 @@ Analogicznie do chat.py w rootcie (smartcal), ale specjalizowany dla Blitzschutz
 """
 
 import json
+import re
 import uuid
 from dataclasses import dataclass, field
 from typing import Optional
@@ -115,6 +116,28 @@ User: "Büro in der Edisonstraße 15, 90431 Nürnberg, 12 Ableitungen"
 from common.geocode import geocode
 
 
+
+def _parse_llm_json(text: str) -> dict:
+    """Parse LLM response that should be JSON but may have extra text."""
+    text = text.strip()
+    # Try direct parse
+    try:
+        if "```json" in text:
+            text = text.split("```json")[1].split("```")[0].strip()
+        elif "```" in text:
+            text = text.split("```")[1].split("```")[0].strip()
+        return json.loads(text)
+    except (json.JSONDecodeError, IndexError):
+        pass
+    # Try extracting JSON object from text
+    match = re.search(r'\{[\s\S]*\}', text)
+    if match:
+        try:
+            return json.loads(match.group())
+        except json.JSONDecodeError:
+            pass
+    return {"message": text, "action": "chat"}
+
 @dataclass
 class BlitzschutzSession:
     session_id: str = field(default_factory=lambda: uuid.uuid4().hex[:12])
@@ -147,14 +170,7 @@ async def coordinator_respond(session: BlitzschutzSession, user_message: str) ->
     response = await llm.chat(messages=messages, max_tokens=1024, temperature=0.3)
 
     text = response.text.strip()
-    try:
-        if "```json" in text:
-            text = text.split("```json")[1].split("```")[0].strip()
-        elif "```" in text:
-            text = text.split("```")[1].split("```")[0].strip()
-        result = json.loads(text)
-    except json.JSONDecodeError:
-        result = {"message": text, "action": "chat"}
+    result = _parse_llm_json(text)
 
     session.messages.append({"role": "assistant", "content": json.dumps(result, ensure_ascii=False)})
 
@@ -231,14 +247,7 @@ async def coordinator_summarize(session: BlitzschutzSession) -> dict:
     response = await llm.chat(messages=messages, max_tokens=512, temperature=0.3)
 
     text = response.text.strip()
-    try:
-        if "```json" in text:
-            text = text.split("```json")[1].split("```")[0].strip()
-        elif "```" in text:
-            text = text.split("```")[1].split("```")[0].strip()
-        result = json.loads(text)
-    except json.JSONDecodeError:
-        result = {"message": text, "action": "chat"}
+    result = _parse_llm_json(text)
 
     session.messages.append({"role": "assistant", "content": json.dumps(result, ensure_ascii=False)})
     return result
