@@ -34,6 +34,15 @@ async def lifespan(app: FastAPI):
     try:
         get_graph()
         print("FalkorDB connected.")
+        from products.blitzschutz.graph_schema import load_blitzschutz_graph
+        from products.rlt.graph_schema import load_rlt_graph
+        from products.dguv_v3.graph_schema import load_dguv_graph
+        for name, loader in [("blitzschutz", load_blitzschutz_graph), ("rlt", load_rlt_graph), ("dguv_v3", load_dguv_graph)]:
+            try:
+                stats = loader()
+                print(f"  Graph '{name}': {stats.get('nodes', 0)} nodes, {stats.get('edges', 0)} edges")
+            except Exception as e:
+                print(f"  Graph '{name}' failed: {e}")
     except Exception as e:
         print(f"FalkorDB connection failed: {e}")
     yield
@@ -124,6 +133,20 @@ async def graph_load():
         return stats
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/graph/load-products")
+async def graph_load_products():
+    results = {}
+    from products.blitzschutz.graph_schema import load_blitzschutz_graph
+    from products.rlt.graph_schema import load_rlt_graph
+    from products.dguv_v3.graph_schema import load_dguv_graph
+    for name, loader in [("blitzschutz", load_blitzschutz_graph), ("rlt", load_rlt_graph), ("dguv_v3", load_dguv_graph)]:
+        try:
+            results[name] = await asyncio.to_thread(loader)
+        except Exception as e:
+            results[name] = {"error": str(e)}
+    return results
 
 
 @app.post("/api/calculate")
