@@ -219,6 +219,18 @@ export default function Home() {
             ))}
           </nav>
 
+          {!sidebarCollapsed && (
+            <div className="mx-3 mb-2 space-y-1">
+              <a href="/status.html" target="_blank" rel="noopener noreferrer"
+                className="block px-3 py-2 text-xs text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                📋 PoC → MVP Status
+              </a>
+              <a href="/audit-kalkulationsnachweise.html" target="_blank" rel="noopener noreferrer"
+                className="block px-3 py-2 text-xs text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                📊 Kalkulationsnachweise
+              </a>
+            </div>
+          )}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             className="mx-3 mb-3 p-2 rounded-lg border border-slate-200 text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"

@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartCal@EG — PoC → MVP Statusbericht</title>
+<style>
+  :root {
+    --tuev-blue: #0046ad;
+    --tuev-dark: #003080;
+    --tuev-light: #e8f0fe;
+    --green: #166534;
+    --green-bg: #dcfce7;
+    --yellow: #92400e;
+    --yellow-bg: #fef3c7;
+    --red: #991b1b;
+    --red-bg: #fee2e2;
+    --bg: #ffffff;
+    --card: #ffffff;
+    --text: #1a1f36;
+    --text-secondary: #5a6178;
+    --border: #e2e6ef;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--tuev-blue) 0%, var(--tuev-dark) 100%);
+    color: white;
+    padding: 48px;
+    position: relative;
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .header-subtitle {
+    font-size: 15px;
+    opacity: 0.8;
+    margin-bottom: 28px;
+  }
+  .header-dates {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .header-date {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .header-date-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    font-weight: 600;
+  }
+  .header-date-value {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* CONTENT */
+  .content { max-width: 1100px; margin: 0 auto; padding: 48px; }
+
+  /* SECTIONS */
+  .section { margin-bottom: 56px; }
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+    color: var(--tuev-blue);
+    border-bottom: 2px solid var(--tuev-blue);
+    padding-bottom: 8px;
+  }
+  .section-intro {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    margin-top: 12px;
+    line-height: 1.7;
+  }
+
+  /* SUBSECTION */
+  .subsection { margin-bottom: 28px; }
+  .subsection-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .subsection-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+
+  /* LISTS */
+  ul.detail-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  ul.detail-list li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 4px 0 4px 18px;
+    position: relative;
+    line-height: 1.6;
+  }
+  ul.detail-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--tuev-blue);
+    opacity: 0.5;
+  }
+  ul.detail-list li strong { color: var(--text); }
+
+  /* PRODUCT CARDS */
+  .product-card {
+    background: #f8f9fc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .product-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .product-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .product-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .product-card ul li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 3px 0 3px 18px;
+    position: relative;
+    line-height: 1.6;
+  }
+  .product-card ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    opacity: 0.7;
+  }
+
+  /* BADGES */
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    display: inline-block;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+  .badge-blue { background: var(--tuev-light); color: var(--tuev-blue); }
+
+  /* STAT GRID */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat-box {
+    background: #f8f9fc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--tuev-blue);
+    letter-spacing: -1px;
+  }
+  .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* TABLES */
+  .table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  thead th {
+    background: #f1f4f9;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 12px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+
+  /* PRIORITY BLOCKS */
+  .priority-block {
+    margin-bottom: 24px;
+    border-left: 4px solid var(--border);
+    padding-left: 20px;
+  }
+  .priority-block.p0 { border-left-color: var(--red); }
+  .priority-block.p1 { border-left-color: var(--yellow); }
+  .priority-block.p2 { border-left-color: var(--tuev-blue); }
+  .priority-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ITEM */
+  .gap-item {
+    margin-bottom: 16px;
+    padding: 14px 18px;
+    background: #f8f9fc;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .gap-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .gap-item-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .gap-item-effort {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: #e8ecf4;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .gap-item-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    height: 8px;
+    background: #e8ecf4;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--tuev-blue);
+  }
+  .progress-fill.green { background: var(--green); }
+
+  /* QUESTIONS LIST */
+  ol.questions-list {
+    padding-left: 24px;
+    margin: 0;
+  }
+  ol.questions-list li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 8px 0;
+    line-height: 1.6;
+    border-bottom: 1px solid #f0f2f5;
+  }
+  ol.questions-list li:last-child { border-bottom: none; }
+  ol.questions-list li strong { color: var(--text); }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 40px 0; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 40px 48px;
+    border-top: 2px solid var(--border);
+    margin-top: 24px;
+    background: #f8f9fc;
+  }
+  .footer-main {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .footer-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    line-height: 1.6;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 860px) {
+    .header { padding: 32px 24px; }
+    .content { padding: 32px 24px; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .header h1 { font-size: 24px; }
+  }
+  @media (max-width: 500px) {
+    .stat-grid { grid-template-columns: 1fr; }
+  }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header { padding: 32px; }
+    .content { padding: 24px; }
+    .section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <h1>SmartCal@EG — PoC &rarr; MVP Statusbericht</h1>
+  <p class="header-subtitle">Stand: 10.05.2026 &middot; Synapse OS for T&Uuml;V S&Uuml;D IS-EG</p>
+  <div class="header-dates">
+    <div class="header-date">
+      <span class="header-date-label">PoC geliefert</span>
+      <span class="header-date-value">KW16 &middot; 18.04.2026</span>
+    </div>
+    <div class="header-date">
+      <span class="header-date-label">MVP Deadline</span>
+      <span class="header-date-value">KW27 &middot; 06.07.2026</span>
+    </div>
+    <div class="header-date">
+      <span class="header-date-label">Ziel-Event</span>
+      <span class="header-date-value">Abteilungsleitertagung</span>
+    </div>
+    <div class="header-date">
+      <span class="header-date-label">Verbleibend</span>
+      <span class="header-date-value">~8 Wochen</span>
+    </div>
+  </div>
+</header>
+
+<div class="content">
+
+  <!-- ============================================================ -->
+  <!-- SECTION 1: WAS IST IM POC -->
+  <!-- ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">1. Was ist im PoC</h2>
+    <p class="section-intro">
+      Vollst&auml;ndiger Proof of Concept mit 3 Produkten, deterministischer Pricing-Engine, Knowledge Graph und Chat-Interface. Validiert gegen 15.220+ historische Datens&auml;tze.
+    </p>
+
+    <!-- Stats -->
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Produkte shipped</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">186</div>
+        <div class="stat-label">Regressionstests</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">15.220+</div>
+        <div class="stat-label">Validierungsdaten</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Halluzinationsrisiko</div>
+      </div>
+    </div>
+
+    <!-- Architecture -->
+    <div class="subsection">
+      <h3 class="subsection-title">Architektur</h3>
+      <ul class="detail-list">
+        <li><strong>Backend:</strong> FastAPI + FalkorDB (Knowledge Graph, 154 Nodes, 183 Edges) + Anthropic Claude (Haiku Coordinator, Sonnet Agent)</li>
+        <li><strong>Frontend:</strong> Next.js 15 + Tailwind, responsive, SSE Streaming, Multi-Produkt-Switching, Login</li>
+        <li><strong>Two-LLM Pattern:</strong> Coordinator (Chat/Parse) &rarr; PricingEngine (deterministisch) &rarr; Coordinator (Summarize)</li>
+        <li><strong>100% deterministische Preisberechnung</strong> — LLM nur f&uuml;r Natural Language Understanding, Zero Hallucination Risk bei Preisen</li>
+        <li><strong>14 Node-Labels, 17 Relationship-Types</strong> im Graph (Gebaeudetyp, Dienstleistung, Preisposition, Staffel, Merkmal, Stressor, Trait)</li>
+      </ul>
+    </div>
+
+    <div class="divider" style="margin: 28px 0;"></div>
+
+    <!-- Product 1 -->
+    <div class="product-card">
+      <div class="product-card-header">
+        <div class="product-card-title">1. Blitzschutz (MA570) — FULL</div>
+        <span class="badge badge-green">&#10003; shipped</span>
+      </div>
+      <ul>
+        <li>7 Dateien, Graph Schema (73 Nodes), Chat Coordinator, Golden Set (316 Anlagen Augsburg StV)</li>
+        <li>Pricing: 33&euro;/Messstelle (LPV B04 &sect;8.1) + 5 Staffeln + Zuschl&auml;ge</li>
+        <li>Confidence Scoring (Veit-Angle), Cross-Sell-Empfehlungen</li>
+        <li>63 Regressionstests, alle bestanden</li>
+      </ul>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product-card">
+      <div class="product-card-header">
+        <div class="product-card-title">2. RLT-Anlage (MA419) — FULL</div>
+        <span class="badge badge-green">&#10003; shipped</span>
+      </div>
+      <ul>
+        <li>2 Varianten: Hygiene VDI 6022 + Garagenl&uuml;ftung GaStellV</li>
+        <li>Chat Coordinator mit Auto-Varianten-Erkennung</li>
+        <li>HYG: 208&euro;/h &times; Bereiche + Laborpauschale</li>
+        <li>Garage: 450/690/1.250&euro; per Stellplatz-Range + 170&euro;/Ventilator + 40&euro;/BSK</li>
+        <li>Golden Set: 10.345 Eintr&auml;ge aus Versand-Daten</li>
+        <li>63 Regressionstests, alle bestanden</li>
+      </ul>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="product-card">
+      <div class="product-card-header">
+        <div class="product-card-title">3. DGUV V3 ortsfest (MA507) — FULL</div>
+        <span class="badge badge-green">&#10003; shipped</span>
+      </div>
+      <ul>
+        <li>Formel: 250&euro; Grundpreis + Fl&auml;che &times; &euro;/10m&sup2; per Installationskategorie (5 Kategorien)</li>
+        <li>Verteilungen: UV 25&euro;, HV 85&euro;, NSHV 145&euro;</li>
+        <li>NEA/SV-NSHV Zuschl&auml;ge</li>
+        <li>Golden Set: 40 Anlagen aus Gersthofen Ausschreibung</li>
+        <li>60 Regressionstests, alle bestanden</li>
+      </ul>
+    </div>
+
+    <div class="divider" style="margin: 28px 0;"></div>
+
+    <!-- Shared Infrastructure -->
+    <div class="subsection">
+      <h3 class="subsection-title">Shared Infrastructure</h3>
+      <ul class="detail-list">
+        <li><strong>23 T&Uuml;V-Niederlassungen</strong> mit Geocoding (OSRM Routing)</li>
+        <li><strong>Reisekosten:</strong> Kilometergeld 1,10&euro;/km + Tagegeld (LPV Teil A &sect;4.3)</li>
+        <li><strong>Grundkosten:</strong> 256&euro; Pauschale + 242&euro; Ordnungspr&uuml;fung (baurechtlich) + 49&euro;/Tag Pr&uuml;fmittel</li>
+        <li><strong>Berichtstypen:</strong> klein 119&euro; / standard 380&euro; / komplex 550&euro;</li>
+        <li><strong>Zuschl&auml;ge:</strong> Nicht-Vereinsmitglied +20%, Eilzuschlag +25%, Erstpr&uuml;fung +100%</li>
+        <li><strong>186 Regressionstests</strong> gesamt, alle bestanden</li>
+        <li><strong>Frontend:</strong> Multi-Produkt-Switching, SSE Streaming, Login-System</li>
+      </ul>
+    </div>
+
+    <!-- Data processed -->
+    <div class="subsection">
+      <h3 class="subsection-title">Verarbeitete Daten</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Datei</th>
+              <th>Inhalt</th>
+              <th>Umfang</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>441_419_Versand.xlsx</strong></td>
+              <td>RLT Versand-Daten</td>
+              <td>13.894 Zeilen</td>
+            </tr>
+            <tr>
+              <td><strong>57234_Versand.xlsx</strong></td>
+              <td>Blitzschutz Versand-Daten</td>
+              <td>4.875 Zeilen</td>
+            </tr>
+            <tr>
+              <td><strong>Gersthofen Ausschreibung</strong></td>
+              <td>LV-Positionen DGUV V3</td>
+              <td>1.393 Positionen</td>
+            </tr>
+            <tr>
+              <td><strong>Pr&uuml;fberichte MA570</strong></td>
+              <td>Blitzschutz Inspektionsberichte</td>
+              <td>99 PDFs</td>
+            </tr>
+            <tr>
+              <td><strong>Sample PDFs</strong></td>
+              <td>MA419, MA507, MA438, MA501, MA510, MA555, MA560</td>
+              <td>7 MA-Codes</td>
+            </tr>
+            <tr>
+              <td><strong>LP_00_2026_Gesamt.pdf</strong></td>
+              <td>Komplette LPV 2025/2026</td>
+              <td>Vollst&auml;ndig</td>
+            </tr>
+            <tr>
+              <td><strong>Kriterien Preisfindung EG</strong></td>
+              <td>3 Pricing-Faktoren (Pausch, 04.05.2026)</td>
+              <td>Dokument</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 2: WAS FEHLT FUER MVP -->
+  <!-- ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">2. Was fehlt f&uuml;r MVP</h2>
+    <p class="section-intro">
+      Geordnet nach Priorit&auml;t. Gesamtaufwand P0+P1: ca. 16-20 Tage Entwicklung. MVP-Scope muss bis KW22 fixiert sein.
+    </p>
+
+    <!-- P0 -->
+    <div class="priority-block p0">
+      <div class="priority-title">
+        <span class="badge badge-red">P0</span>
+        Blocker f&uuml;r Demo KW27
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">1. Pricing-Kalibrierung</span>
+          <span class="gap-item-effort">3-5 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          PoC berechnet LPV-Listenpreise. Reale Faktura ist <strong>-46% bis -85% niedriger</strong> (aus Versand-Daten).
+          Ben&ouml;tigt: Schieberegler "Listenpreis / Marktpreis / Ausschreibung" mit Multiplikator aus Versand.
+          Kalkulationshilfen zeigt abweichende Schwellen: BSK 45,50&euro; (nicht 40&euro;), Garage &le;25 SP (nicht &le;30).
+          Kl&auml;ren mit Pausch: welche Preise sind korrekt?
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">2. PLZ&rarr;Niederlassung CRM-Mapping</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          PoC: "n&auml;chster Standort" per Luftlinie/OSRM. CRM PLZ NL: 8.309 PLZ &rarr; 24 NL (offizielle Zuordnung).
+          Frankfurt &rarr; T&Uuml;V Hessen (nicht Darmstadt!) — falsche Reisekosten ohne CRM-Mapping.
+          Offen: Ist Zuordnung produktabh&auml;ngig?
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">3. T&Uuml;V Corporate Design</span>
+          <span class="gap-item-effort">2-3 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          PoC hat generisches Design (blau/wei&szlig;). T&Uuml;V hat Figma-basiertes Design System.
+          Farben, Fonts, Logo, Komponenten anpassen.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">4. Schieberegler grob/mittel/fein</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Feith-Request: grob = nur BGF + Sicherheitsfaktor, fein = alle Merkmale.
+          Chat-Flow unterst&uuml;tzt das schon implizit, UI-Toggle fehlt.
+        </div>
+      </div>
+    </div>
+
+    <!-- P1 -->
+    <div class="priority-block p1">
+      <div class="priority-title">
+        <span class="badge badge-yellow">P1</span>
+        Wichtig f&uuml;r MVP
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">5. Kriterien Preisfindung Integration</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Pausch (04.05): 3 Faktoren — Anlagenmerkmale (60-90%), Dokumentation (8-15%), Ortskenntnis (2-25%).
+          Skaliert nicht-linear mit BGF (&le;2.500m&sup2;: 90/8/2, &ge;10.000m&sup2;: 60/15/25).
+          Einbauen als Confidence-Modifikatoren + R&uuml;ckfragen.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">6. Inspektionspflichten-Lookup</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          70 Eintr&auml;ge: Regelwerk &times; Geb&auml;udeart &rarr; Pr&uuml;fzyklus + Qualifikation.
+          Chat antwortet: "Ihre n&auml;chste Pr&uuml;fung ist in X Jahren f&auml;llig."
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">7. Textbausteine / Angebots-Export</span>
+          <span class="gap-item-effort">2-3 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Feith-Request: Output zum Kopieren in SAP/Angebot.
+          PDF- oder Textblock-Export mit Positionen.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">8. Volkswohlbund-Kalibrierung</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          Reale Rahmenvertrag-Preise: EP vs PLV Vergleich.
+          UV: PLV 270&euro; vs EP 101&euro; (-63%) — typischer Rahmenvertrag-Rabatt?
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">9. MA507 Versand-Daten</span>
+          <span class="gap-item-effort">1 Tag (wenn geliefert)</span>
+        </div>
+        <div class="gap-item-text">
+          DGUV V3 Golden Set aktuell nur Gersthofen (40 Anlagen).
+          Mit Versand: tausende Eintr&auml;ge f&uuml;r bessere Kalibrierung.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">10. Multi-Geb&auml;ude Support</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Feith: "Schule + Turnhalle = 2 separate Anlagen".
+          Aktuell: single-Anlage pro Anfrage.
+        </div>
+      </div>
+    </div>
+
+    <!-- P2 -->
+    <div class="priority-block p2">
+      <div class="priority-title">
+        <span class="badge badge-blue">P2</span>
+        Nice to have f&uuml;r MVP
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">11. Graph-Engine f&uuml;r RLT/DGUV</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          graph_schema.py existiert, GraphPricingEngine-Adapter fehlt.
+          PoC: Python-Engine funktioniert, Graph-Engine nur f&uuml;r Blitzschutz.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">12. Reisekosten-Widget mit Karte</span>
+          <span class="gap-item-effort">1-2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Visuelle Darstellung der Routenberechnung und Kostenaufschl&uuml;sselung.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">13. Kombi-Begehung Rabatt-Logik</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          Blitzschutz + RLT gleichzeitig &rarr; nur 1&times; Reisekosten.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">14. Gebaeudedaten_MA570 Integration</span>
+          <span class="gap-item-effort">1 Tag (wenn Datei geliefert)</span>
+        </div>
+        <div class="gap-item-text">
+          Erweiterte Geb&auml;udedaten f&uuml;r Blitzschutz — abh&auml;ngig von Datenlieferung.
+        </div>
+      </div>
+    </div>
+
+    <!-- Effort summary -->
+    <div style="background: #f8f9fc; border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-top: 20px;">
+      <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Aufwands-&Uuml;bersicht</div>
+      <div style="display: flex; gap: 24px; flex-wrap: wrap; font-size: 13px; color: var(--text-secondary);">
+        <span><strong style="color: var(--red);">P0:</strong> 8-11 Tage</span>
+        <span><strong style="color: var(--yellow);">P1:</strong> 9-10 Tage</span>
+        <span><strong style="color: var(--tuev-blue);">P2:</strong> 5-6 Tage</span>
+        <span><strong>Gesamt:</strong> 22-27 Tage</span>
+      </div>
+      <div class="progress-bar" style="margin-top: 12px;">
+        <div class="progress-fill green" style="width: 40%;"></div>
+      </div>
+      <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">PoC = 40% des MVP-Scopes abgedeckt</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 3: PRODUKT-ROADMAP -->
+  <!-- ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">3. Produkt-Roadmap</h2>
+    <p class="section-intro">
+      Alle 11 EG-Produkte. Architektur ist produktagnostisch (Gewerk Base Class). Jedes neue Produkt = ~7 Dateien, ~2 Tage mit Daten.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 40px;">#</th>
+            <th>Produkt</th>
+            <th style="width: 140px;">Status</th>
+            <th style="width: 100px;">Phase</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">1</td>
+            <td><strong>Blitzschutz</strong> (MA570)</td>
+            <td><span class="badge badge-green">&#10003; PoC shipped</span></td>
+            <td>Phase 1</td>
+          </tr>
+          <tr>
+            <td class="mono">2</td>
+            <td><strong>RLT + Garage</strong> (MA419)</td>
+            <td><span class="badge badge-green">&#10003; PoC shipped</span></td>
+            <td>Phase 1</td>
+          </tr>
+          <tr>
+            <td class="mono">3</td>
+            <td><strong>DGUV V3 ortsfest</strong> (MA507)</td>
+            <td><span class="badge badge-green">&#10003; PoC shipped</span></td>
+            <td>Phase 1</td>
+          </tr>
+          <tr>
+            <td class="mono">4</td>
+            <td>DGUV ortsver&auml;nderlich (MA560?)</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td class="mono">5</td>
+            <td>BMA Brandmeldeanlage</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td class="mono">6</td>
+            <td>SAA Sprachalarmierung</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td class="mono">7</td>
+            <td>PV-Anlagen</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td class="mono">8</td>
+            <td>SiBel + SSV</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td class="mono">9</td>
+            <td>RWA / NRA Rauchabzug (MA438)</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td class="mono">10</td>
+            <td>Wandhydranten</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td class="mono">11</td>
+            <td>L&ouml;schanlagen</td>
+            <td><span class="badge badge-red">&#10005; offen</span></td>
+            <td>Phase 2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background: var(--tuev-light); border: 1px solid #c4d7f5; border-radius: 8px; padding: 14px 18px; font-size: 13px; color: var(--tuev-dark); line-height: 1.6; margin-top: 14px;">
+      <strong>Hinweis:</strong> Versand-Daten f&uuml;r MA438 (NRA) bereits vorhanden (9.905 Zeilen). Sample-PDFs f&uuml;r alle MA-Codes verf&uuml;gbar.
+      Architektur ist produktagnostisch — jedes neue Produkt = ~7 Dateien, ~2 Tage mit Daten.
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 4: OFFENE FRAGEN -->
+  <!-- ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">4. Offene Fragen an T&Uuml;V</h2>
+    <p class="section-intro">
+      Kl&auml;rung dieser Punkte ist Voraussetzung f&uuml;r die MVP-Fertigstellung. Priorisiert nach Dringlichkeit.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 40px;">#</th>
+            <th>Frage</th>
+            <th style="width: 100px;">Priorit&auml;t</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">1</td>
+            <td><strong>Pricing-Schwellen:</strong> BSK 40&euro; oder 45,50&euro;? Garage &le;25 oder &le;30 Stellpl&auml;tze?</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr>
+            <td class="mono">2</td>
+            <td><strong>PLZ&rarr;NL Zuordnung:</strong> produktabh&auml;ngig oder shared?</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr>
+            <td class="mono">3</td>
+            <td><strong>MA507 Versand:</strong> Wann lieferbar?</td>
+            <td><span class="badge badge-yellow">P1</span></td>
+          </tr>
+          <tr>
+            <td class="mono">4</td>
+            <td><strong>Gebaeudedaten_MA570_alle_PDFs_erweitert_v4_mit_Summen_MB.xlsx:</strong> Was genau enth&auml;lt diese Datei?</td>
+            <td><span class="badge badge-yellow">P1</span></td>
+          </tr>
+          <tr>
+            <td class="mono">5</td>
+            <td><strong>Preisebene:</strong> Welche Preisebene soll der Kalkulator ausgeben? (LPV-Listenpreis vs. typischer Marktpreis vs. Ausschreibungspreis)</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr>
+            <td class="mono">6</td>
+            <td><strong>Referenz-Angebote:</strong> 3 reale Offers f&uuml;r End-to-End-Validierung?</td>
+            <td><span class="badge badge-yellow">P1</span></td>
+          </tr>
+          <tr>
+            <td class="mono">7</td>
+            <td><strong>T&Uuml;V Design System:</strong> Zugang (Figma)?</td>
+            <td><span class="badge badge-yellow">P1</span></td>
+          </tr>
+          <tr>
+            <td class="mono">8</td>
+            <td><strong>"Volkswohlbund-Effekt":</strong> Wie umgehen mit Rahmenvertrag-Rabatt -63% bei UVs?</td>
+            <td><span class="badge badge-blue">P2</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-main">Synapse OS &middot; Minglabs GmbH &middot; Stand 10.05.2026</div>
+  <div class="footer-sub">
+    PoC validiert gegen 10.345 RLT + 4.875 Blitzschutz + 40 DGUV V3 historische Datens&auml;tze
+  </div>
+</footer>
+
+</body>
+</html>

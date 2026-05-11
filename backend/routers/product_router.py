@@ -204,11 +204,6 @@ def make_product_router(gewerk: Gewerk) -> APIRouter:
                     calc_engine = GraphPricingEngine(gewerk.graph_name)
                     angebot = calc_engine.calculate(gewerk, merkmale)
 
-                    # Fallback: if graph returns 0 Prüfkosten, use Python engine
-                    if angebot.breakdown.pruef == 0:
-                        calc_engine_py = PricingEngine()
-                        angebot = calc_engine_py.calculate(gewerk, merkmale)
-
                     # Stream each provenance step as trace event
                     for prov in calc_engine.provenance:
                         step_name = prov["step"]
@@ -266,9 +261,17 @@ def make_product_router(gewerk: Gewerk) -> APIRouter:
                 # Feed back to coordinator dla podsumowania
                 chat_module.inject_kalkulation_result(session, angebot_dict)
                 summary = await chat_module.coordinator_summarize(session)
+                content = summary.get("message", "Kalkulation abgeschlossen.")
+                # LLM sometimes returns raw JSON string — extract message field
+                if isinstance(content, str) and content.strip().startswith("{"):
+                    try:
+                        parsed = json.loads(content)
+                        content = parsed.get("message", content)
+                    except (json.JSONDecodeError, AttributeError):
+                        pass
                 yield {"event": "message", "data": json.dumps({
                     "role": "assistant",
-                    "content": summary.get("message", "Kalkulation abgeschlossen."),
+                    "content": content,
                 }, ensure_ascii=False)}
 
             yield {"event": "done", "data": "{}"}
