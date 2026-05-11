@@ -535,161 +535,251 @@
   <section class="section">
     <h2 class="section-title">2. Was fehlt f&uuml;r MVP</h2>
     <p class="section-intro">
-      Geordnet nach Priorit&auml;t. Gesamtaufwand P0+P1: ca. 16-20 Tage Entwicklung. MVP-Scope muss bis KW22 fixiert sein.
+      20 Arbeitspakete in 4 Kategorien. Gesamtaufwand: ca. 30 Tage Entwicklung. MVP-Deadline: KW27 (06.07.2026, Abteilungsleitertagung).
     </p>
 
-    <!-- P0 -->
+    <!-- Pricing & Kalibrierung -->
     <div class="priority-block p0">
       <div class="priority-title">
-        <span class="badge badge-red">P0</span>
-        Blocker f&uuml;r Demo KW27
+        <span class="badge badge-red">Pricing &amp; Kalibrierung</span>
+        ~8 Tage
       </div>
 
       <div class="gap-item">
         <div class="gap-item-header">
-          <span class="gap-item-title">1. Pricing-Kalibrierung</span>
-          <span class="gap-item-effort">3-5 Tage</span>
+          <span class="gap-item-title">1. Schieberegler Listenpreis / Marktpreis / Ausschreibung</span>
+          <span class="gap-item-effort">3 Tage</span>
         </div>
         <div class="gap-item-text">
           PoC berechnet LPV-Listenpreise. Reale Faktura ist <strong>-46% bis -85% niedriger</strong> (aus Versand-Daten).
-          Ben&ouml;tigt: Schieberegler "Listenpreis / Marktpreis / Ausschreibung" mit Multiplikator aus Versand.
-          Kalkulationshilfen zeigt abweichende Schwellen: BSK 45,50&euro; (nicht 40&euro;), Garage &le;25 SP (nicht &le;30).
-          Kl&auml;ren mit Pausch: welche Preise sind korrekt?
+          Ohne Marktpreis-Faktor gibt das Tool Preise aus, die 2-3&times; h&ouml;her sind als der Markt. <strong>#1 Blocker f&uuml;r Nutzbarkeit.</strong>
         </div>
       </div>
 
       <div class="gap-item">
         <div class="gap-item-header">
-          <span class="gap-item-title">2. T&Uuml;V Corporate Design</span>
-          <span class="gap-item-effort">2-3 Tage</span>
-        </div>
-        <div class="gap-item-text">
-          PoC hat generisches Design (blau/wei&szlig;). T&Uuml;V hat Figma-basiertes Design System.
-          Farben, Fonts, Logo, Komponenten anpassen.
-        </div>
-      </div>
-
-      <div class="gap-item">
-        <div class="gap-item-header">
-          <span class="gap-item-title">4. Schieberegler grob/mittel/fein</span>
+          <span class="gap-item-title">2. Kriterien Preisfindung (Pausch 04.05)</span>
           <span class="gap-item-effort">2 Tage</span>
         </div>
         <div class="gap-item-text">
-          Feith-Request: grob = nur BGF + Sicherheitsfaktor, fein = alle Merkmale.
-          Chat-Flow unterst&uuml;tzt das schon implizit, UI-Toggle fehlt.
+          3 Faktoren: Anlagenmerkmale (60-90%), Dokumentation (8-15%), Ortskenntnis (2-25%).
+          Skaliert nicht-linear mit BGF. Einbauen als R&uuml;ckfragen + Confidence-Modifikatoren.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">3. Volkswohlbund-Kalibrierung / Rahmenvertrag-Modell</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          Reale Preise: UV PLV 270&euro; vs EP 101&euro; (-63%). Rahmenvertrag-Rabattmodell f&uuml;r wiederkehrende Kunden.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">4. Staffel-Kalibrierung Blitzschutz</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          57234_Versand Erl&ouml;s-h-Satz Distribution vs. aktuelle Staffeln (33/30/28/26/24&euro;).
+          Schwellen-Pr&uuml;fung: BSK 40&euro; vs 45,50&euro;, Garage &le;25 vs &le;30 SP (Kl&auml;rung mit Pausch).
         </div>
       </div>
     </div>
 
-    <!-- P1 -->
+    <!-- Workflow & Output -->
     <div class="priority-block p1">
       <div class="priority-title">
-        <span class="badge badge-yellow">P1</span>
-        Wichtig f&uuml;r MVP
+        <span class="badge badge-yellow">Workflow &amp; Output</span>
+        ~6 Tage
       </div>
 
       <div class="gap-item">
         <div class="gap-item-header">
-          <span class="gap-item-title">5. Kriterien Preisfindung Integration</span>
+          <span class="gap-item-title">5. Angebots-Export (PDF / Textbausteine)</span>
+          <span class="gap-item-effort">3 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Feith-Request: Output zum Kopieren in SAP/Angebot. PDF mit Positionen, Textbl&ouml;cke.
+          <strong>Ohne Export ist das Tool ein Kalkulator, kein Workflow-Tool.</strong>
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">6. Multi-Geb&auml;ude-Angebot</span>
           <span class="gap-item-effort">2 Tage</span>
         </div>
         <div class="gap-item-text">
-          Pausch (04.05): 3 Faktoren — Anlagenmerkmale (60-90%), Dokumentation (8-15%), Ortskenntnis (2-25%).
-          Skaliert nicht-linear mit BGF (&le;2.500m&sup2;: 90/8/2, &ge;10.000m&sup2;: 60/15/25).
-          Einbauen als Confidence-Modifikatoren + R&uuml;ckfragen.
+          Feith: &quot;Schule + Turnhalle + Sporthalle = 3 Anlagen, 1 Angebot.&quot;
+          Aktuell: Single-Anlage pro Anfrage. Ben&ouml;tigt: Anlagen-Liste &rarr; Gesamtangebot.
         </div>
       </div>
 
       <div class="gap-item">
         <div class="gap-item-header">
-          <span class="gap-item-title">6. Inspektionspflichten-Lookup</span>
+          <span class="gap-item-title">7. Strukturiertes Formular (Alternative zu Chat)</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Drop-downs, Slider, Eingabefelder. Sachverst&auml;ndiger wei&szlig; was er ausf&uuml;llen muss &mdash; Chat ist f&uuml;r Neukunden, Formular f&uuml;r Profis.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">8. Schieberegler grob/mittel/fein</span>
           <span class="gap-item-effort">1 Tag</span>
         </div>
         <div class="gap-item-text">
-          70 Eintr&auml;ge: Regelwerk &times; Geb&auml;udeart &rarr; Pr&uuml;fzyklus + Qualifikation.
-          Chat antwortet: "Ihre n&auml;chste Pr&uuml;fung ist in X Jahren f&auml;llig."
+          Feith-Request: grob = nur BGF + Sicherheitsfaktor, fein = alle Merkmale. Chat-Flow unterst&uuml;tzt das implizit, UI-Toggle fehlt.
         </div>
+      </div>
+    </div>
+
+    <!-- Daten & Qualität -->
+    <div class="priority-block p1">
+      <div class="priority-title">
+        <span class="badge badge-yellow">Daten &amp; Qualit&auml;t</span>
+        ~5 Tage
       </div>
 
       <div class="gap-item">
         <div class="gap-item-header">
-          <span class="gap-item-title">7. Textbausteine / Angebots-Export</span>
-          <span class="gap-item-effort">2-3 Tage</span>
-        </div>
-        <div class="gap-item-text">
-          Feith-Request: Output zum Kopieren in SAP/Angebot.
-          PDF- oder Textblock-Export mit Positionen.
-        </div>
-      </div>
-
-      <div class="gap-item">
-        <div class="gap-item-header">
-          <span class="gap-item-title">8. Volkswohlbund-Kalibrierung</span>
-          <span class="gap-item-effort">1 Tag</span>
-        </div>
-        <div class="gap-item-text">
-          Reale Rahmenvertrag-Preise: EP vs PLV Vergleich.
-          UV: PLV 270&euro; vs EP 101&euro; (-63%) — typischer Rahmenvertrag-Rabatt?
-        </div>
-      </div>
-
-      <div class="gap-item">
-        <div class="gap-item-header">
-          <span class="gap-item-title">9. MA507 Versand-Daten</span>
+          <span class="gap-item-title">9. MA507 Versand-Daten (DGUV V3)</span>
           <span class="gap-item-effort">1 Tag (wenn geliefert)</span>
         </div>
         <div class="gap-item-text">
-          DGUV V3 Golden Set aktuell nur Gersthofen (40 Anlagen).
-          Mit Versand: tausende Eintr&auml;ge f&uuml;r bessere Kalibrierung.
+          Golden Set aktuell nur Gersthofen (40 Anlagen). Mit Versand: tausende Eintr&auml;ge f&uuml;r echte Kalibrierung.
         </div>
       </div>
 
       <div class="gap-item">
         <div class="gap-item-header">
-          <span class="gap-item-title">10. Multi-Geb&auml;ude Support</span>
-          <span class="gap-item-effort">2 Tage</span>
+          <span class="gap-item-title">10. Inspektionspflichten-Lookup</span>
+          <span class="gap-item-effort">1 Tag</span>
         </div>
         <div class="gap-item-text">
-          Feith: "Schule + Turnhalle = 2 separate Anlagen".
-          Aktuell: single-Anlage pro Anfrage.
+          70 Eintr&auml;ge (netinformRE): Regelwerk &times; Geb&auml;udeart &rarr; Pr&uuml;fzyklus + Qualifikation.
+          Chat: &quot;Ihre n&auml;chste Pr&uuml;fung ist in X Jahren f&auml;llig.&quot;
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">11. Kombi-Begehung Rabatt</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          Blitzschutz + RLT gleichzeitig &rarr; nur 1&times; Reisekosten. Cross-Product-Rabattlogik.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">12. CO-Warnanlagen (Garage-Erg&auml;nzung)</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          Kalkulationshilfen hat eigene Sektion &quot;CO-Warnanlagen in Garagen&quot; (510&euro; + 242&euro; + 239&euro;). Garage-Kalkulation ist ohne das unvollst&auml;ndig.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">13. Conversation History / Session Persistence</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          Sessions sind aktuell in-memory (gehen bei Restart verloren). PostgreSQL-backed Sessions f&uuml;r &quot;gestern berechnetes Angebot nochmal &ouml;ffnen&quot;.
         </div>
       </div>
     </div>
 
-    <!-- P2 -->
+    <!-- UX & Design -->
     <div class="priority-block p2">
       <div class="priority-title">
-        <span class="badge badge-blue">P2</span>
-        Nice to have f&uuml;r MVP
+        <span class="badge badge-blue">UX &amp; Design</span>
+        ~6 Tage
       </div>
 
       <div class="gap-item">
         <div class="gap-item-header">
-          <span class="gap-item-title">12. Reisekosten-Widget mit Karte</span>
-          <span class="gap-item-effort">1-2 Tage</span>
+          <span class="gap-item-title">14. T&Uuml;V Corporate Design</span>
+          <span class="gap-item-effort">2-3 Tage</span>
         </div>
         <div class="gap-item-text">
-          Visuelle Darstellung der Routenberechnung und Kostenaufschl&uuml;sselung.
+          Figma-basiertes Design System: Farben, Fonts, Logo, Komponenten.
         </div>
       </div>
 
       <div class="gap-item">
         <div class="gap-item-header">
-          <span class="gap-item-title">13. Kombi-Begehung Rabatt-Logik</span>
+          <span class="gap-item-title">15. Responsive / Tablet</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Sachverst&auml;ndige sind im Au&szlig;endienst mit iPad. Aktuell Desktop-only.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">16. Vergleichsansicht / &Auml;hnliche Anlagen</span>
           <span class="gap-item-effort">1 Tag</span>
         </div>
         <div class="gap-item-text">
-          Blitzschutz + RLT gleichzeitig &rarr; nur 1&times; Reisekosten.
+          &quot;Letzte Woche hatte ich &auml;hnliches Geb&auml;ude — was war der Preis?&quot; Similar-Anlagen Lookup aus Golden Set.
+        </div>
+      </div>
+    </div>
+
+    <!-- Infra & Ops -->
+    <div class="priority-block p2">
+      <div class="priority-title">
+        <span class="badge badge-blue">Infrastruktur &amp; Betrieb</span>
+        ~5 Tage
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">17. User Auth / Rollen</span>
+          <span class="gap-item-effort">2 Tage</span>
+        </div>
+        <div class="gap-item-text">
+          Abteilungsleiter vs Sachverst&auml;ndiger vs Verwaltung. Unterschiedliche Sichten und Berechtigungen.
         </div>
       </div>
 
       <div class="gap-item">
         <div class="gap-item-header">
-          <span class="gap-item-title">14. Gebaeudedaten_MA570 Integration</span>
-          <span class="gap-item-effort">1 Tag (wenn Datei geliefert)</span>
+          <span class="gap-item-title">18. Admin-Panel (LPV-Pflege)</span>
+          <span class="gap-item-effort">2 Tage</span>
         </div>
         <div class="gap-item-text">
-          Erweiterte Geb&auml;udedaten f&uuml;r Blitzschutz — abh&auml;ngig von Datenlieferung.
+          T&Uuml;V aktualisiert Preise/Staffeln/LPV j&auml;hrlich. Ohne Admin-Panel: Code-&Auml;nderung n&ouml;tig. Mit: Self-Service.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">19. Monitoring / Analytics Dashboard</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          Wie viele Angebote generiert, welche Produkte am meisten genutzt, durchschnittlicher Angebotspreis. Dashboard f&uuml;r Feith.
+        </div>
+      </div>
+
+      <div class="gap-item">
+        <div class="gap-item-header">
+          <span class="gap-item-title">20. API f&uuml;r SAP-Anbindung (Dokumentation)</span>
+          <span class="gap-item-effort">1 Tag</span>
+        </div>
+        <div class="gap-item-text">
+          REST-Endpoints dokumentiert f&uuml;r zuk&uuml;nftige S4/HANA-Integration (2029). Swagger/OpenAPI Spec.
         </div>
       </div>
     </div>
@@ -698,15 +788,17 @@
     <div style="background: #f8f9fc; border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-top: 20px;">
       <div style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Aufwands-&Uuml;bersicht</div>
       <div style="display: flex; gap: 24px; flex-wrap: wrap; font-size: 13px; color: var(--text-secondary);">
-        <span><strong style="color: var(--red);">P0:</strong> 8-11 Tage</span>
-        <span><strong style="color: var(--yellow);">P1:</strong> 9-10 Tage</span>
-        <span><strong style="color: var(--tuev-blue);">P2:</strong> 5-6 Tage</span>
-        <span><strong>Gesamt:</strong> 22-27 Tage</span>
+        <span><strong style="color: var(--red);">Pricing:</strong> ~8 Tage</span>
+        <span><strong style="color: var(--yellow);">Workflow:</strong> ~6 Tage</span>
+        <span><strong style="color: var(--yellow);">Daten:</strong> ~5 Tage</span>
+        <span><strong style="color: var(--tuev-blue);">UX:</strong> ~6 Tage</span>
+        <span><strong style="color: var(--tuev-blue);">Infra:</strong> ~5 Tage</span>
+        <span><strong>Gesamt: ~30 Tage</strong></span>
       </div>
       <div class="progress-bar" style="margin-top: 12px;">
-        <div class="progress-fill green" style="width: 40%;"></div>
+        <div class="progress-fill green" style="width: 35%;"></div>
       </div>
-      <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">PoC = 40% des MVP-Scopes abgedeckt</div>
+      <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">PoC = ~35% des MVP-Scopes abgedeckt &middot; 20 Arbeitspakete &middot; ~30 Entwicklungstage bis KW27</div>
     </div>
   </section>
 
