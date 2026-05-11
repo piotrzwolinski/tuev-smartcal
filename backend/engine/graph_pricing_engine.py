@@ -82,25 +82,25 @@ class GraphPricingEngine:
 
     def _calc_grundkosten(self, merkmale: BaseModel) -> float:
         pauschale = self._q1("MATCH (g:Grundkosten {id: 'GRUND_PAUSCHALE'}) RETURN g.betrag") or 256
-        self._log("grundkosten", "Grundkosten.GRUND_PAUSCHALE", f"{pauschale}€", "GRUND_PAUSCHALE",
+        self._log("grundkosten", "Grundkosten.GRUND_PAUSCHALE", f"{pauschale}", "GRUND_PAUSCHALE",
                   ref="LPV Teil A §4: Pauschale Auftragsanlage 256€")
 
         ordnung = 0
         if getattr(merkmale, "baurechtlich", False):
             ordnung = self._q1("MATCH (g:Grundkosten {id: 'GRUND_ORDNUNG'}) RETURN g.betrag") or 242
-            self._log("grundkosten", "Grundkosten.GRUND_ORDNUNG (baurechtlich)", f"{ordnung}€", "GRUND_ORDNUNG",
+            self._log("grundkosten", "Grundkosten.GRUND_ORDNUNG (baurechtlich)", f"{ordnung}", "GRUND_ORDNUNG",
                       ref="LPV Teil A §4: Ordnungsprüfung 242€ (nur baurechtlich)")
 
         pruefmittel_tag = self._q1("MATCH (g:Grundkosten {id: 'GRUND_PRUEFMITTEL'}) RETURN g.betrag_pro_tag") or 49
         pruef_tage = self._get_pruef_tage(merkmale)
 
-        self._log("grundkosten", f"Prüfmittel {pruefmittel_tag}€ × {pruef_tage} Tage", f"{pruefmittel_tag * pruef_tage}€", "GRUND_PRUEFMITTEL",
+        self._log("grundkosten", f"Prüfmittel {pruefmittel_tag}€ × {pruef_tage} Tage", f"{pruefmittel_tag * pruef_tage}", "GRUND_PRUEFMITTEL",
                   ref="LPV Teil A §4: 49€ je Prüftag")
 
         hours = pruef_tage * 8
         tg_row = self._q("MATCH (t:Tagegeld) WHERE t.von_h <= $h AND t.bis_h > $h RETURN t.betrag, t.id", h=hours)
         tagegeld = tg_row[0][0] if tg_row else (0 if hours < 6 else 25)
-        self._log("tagegeld", f"Tagegeld ({hours}h Außendienst)", f"{tagegeld}€",
+        self._log("tagegeld", f"Tagegeld ({hours}h Außendienst)", f"{tagegeld}",
                   tg_row[0][1] if tg_row else "none",
                   ref="LPV Teil A §4.3: 0€ (<6h), 6€ (6-8h), 25€ (8-14h), 30€ (14-24h)")
 
@@ -166,7 +166,7 @@ class GraphPricingEngine:
             pruef += cost
             remaining -= in_band
             ref = "LPV B04 §8.1: 33€/Messstelle" if typ == "lpv_konform" else f"Heuristik: {preis}€/MS (validiert StV Augsburg)"
-            self._log("pruefkosten", f"Staffel {sid}: {in_band}×{preis}€", f"{cost}€", sid, ref=ref)
+            self._log("pruefkosten", f"Staffel {sid}: {in_band}×{preis}€", f"{cost}", sid, ref=ref)
         return pruef
 
     # ═══════════════════════════════════════════════════════════
@@ -185,7 +185,7 @@ class GraphPricingEngine:
         if std_row:
             stundensatz, stunden_pro_b, labor = std_row[0]
             cost = bereiche * (stunden_pro_b * stundensatz + labor)
-            self._log("pruefkosten", f"HYG: {bereiche} Bereiche × ({stunden_pro_b}h × {stundensatz}€ + {labor}€ Labor)", f"{cost}€", "RLT_HYG",
+            self._log("pruefkosten", f"HYG: {bereiche} Bereiche × ({stunden_pro_b}h × {stundensatz}€ + {labor}€ Labor)", f"{cost}", "RLT_HYG",
                       ref="LPV B05 Kap. 2.7: Stundensatz 208€ (schwierig), 2,5h/Bereich + Laborpauschale 180€")
             return cost
         return bereiche * (2.5 * 208 + 180)
@@ -201,11 +201,11 @@ class GraphPricingEngine:
                 "RETURN g.betrag, g.name, g.id", sp=sp)
             if rows:
                 grund = rows[0][0]
-                self._log("pruefkosten", f"Grundpreis Garage: {sp} SP → {rows[0][1]}", f"{grund}€", rows[0][2],
+                self._log("pruefkosten", f"Grundpreis Garage: {sp} SP → {rows[0][1]}", f"{grund}", rows[0][2],
                           ref="LPV B05 Kap. 2.2: Grundpreis per Stellplatz-Bereich")
             else:
                 grund = 450 if sp <= 30 else (690 if sp <= 100 else 1250)
-                self._log("pruefkosten", f"Grundpreis Garage fallback: {sp} SP", f"{grund}€")
+                self._log("pruefkosten", f"Grundpreis Garage fallback: {sp} SP", f"{grund}")
         elif vol is not None:
             rows = self._q(
                 "MATCH (p:Produkt {id: 'RLT_STANDARD'})-[:HAT_GRUNDPREIS]->(g:Grundpreis) "
@@ -213,14 +213,14 @@ class GraphPricingEngine:
                 "RETURN g.betrag, g.id", vol=vol)
             if rows:
                 grund = rows[0][0]
-                self._log("pruefkosten", f"Grundpreis RLT: {vol} m³/h", f"{grund}€", rows[0][1],
+                self._log("pruefkosten", f"Grundpreis RLT: {vol} m³/h", f"{grund}", rows[0][1],
                           ref="LPV B05 Kap. 2.1: Grundpreis per Volumenstrom")
             else:
                 grund = 600
-                self._log("pruefkosten", "Grundpreis RLT fallback", f"{grund}€")
+                self._log("pruefkosten", "Grundpreis RLT fallback", f"{grund}")
         else:
             grund = 600
-            self._log("pruefkosten", "Grundpreis RLT default (keine SP/Vol)", f"{grund}€")
+            self._log("pruefkosten", "Grundpreis RLT default (keine SP/Vol)", f"{grund}")
 
         vent = getattr(merkmale, "anzahl_ventilatoren", None) or 0
         bsk = getattr(merkmale, "anzahl_brandschutzklappen", None) or 0
@@ -228,13 +228,13 @@ class GraphPricingEngine:
             vent_row = self._q("MATCH (z:ZuschlagStueck {id: 'ZS_VENTILATOR'}) RETURN z.betrag_pro_stueck")
             vent_preis = vent_row[0][0] if vent_row else 170
             grund += vent * vent_preis
-            self._log("pruefkosten", f"Ventilatoren: {vent} × {vent_preis}€", f"{vent * vent_preis}€", "ZS_VENTILATOR",
+            self._log("pruefkosten", f"Ventilatoren: {vent} × {vent_preis}€", f"{vent * vent_preis}", "ZS_VENTILATOR",
                       ref="LPV B05 Kap. 2: 170€/Ventilator")
         if bsk > 0:
             bsk_row = self._q("MATCH (z:ZuschlagStueck {id: 'ZS_BSK'}) RETURN z.betrag_pro_stueck")
             bsk_preis = bsk_row[0][0] if bsk_row else 40
             grund += bsk * bsk_preis
-            self._log("pruefkosten", f"BSK: {bsk} × {bsk_preis}€", f"{bsk * bsk_preis}€", "ZS_BSK",
+            self._log("pruefkosten", f"BSK: {bsk} × {bsk_preis}€", f"{bsk * bsk_preis}", "ZS_BSK",
                       ref="LPV B05 Kap. 2: 40€/BSK")
         return grund
 
@@ -245,7 +245,7 @@ class GraphPricingEngine:
     def _pruef_dguv(self, merkmale: BaseModel) -> float:
         produkt = self._q("MATCH (p:Produkt {id: 'DGUV_V3_ORTSFEST'}) RETURN p.grundpreis")
         grundpreis = produkt[0][0] if produkt else 250
-        self._log("pruefkosten", "Grundpreis Anlage", f"{grundpreis}€", "DGUV_V3_ORTSFEST",
+        self._log("pruefkosten", "Grundpreis Anlage", f"{grundpreis}", "DGUV_V3_ORTSFEST",
                   ref="LPV B04 Kap. 2: Grundpreis 250€ pro Anlage")
 
         flaeche = getattr(merkmale, "gesamtflaeche_m2", 0)
@@ -257,7 +257,7 @@ class GraphPricingEngine:
         rate = kat_row[0][0] if kat_row else 1.0
         kat_name = kat_row[0][1] if kat_row else f"Kat {kat_val}"
         flaeche_cost = (flaeche / 10.0) * rate
-        self._log("pruefkosten", f"Fläche {flaeche}m² × {rate}€/10m² ({kat_name})", f"{flaeche_cost}€", kat_id,
+        self._log("pruefkosten", f"Fläche {flaeche}m² × {rate}€/10m² ({kat_name})", f"{flaeche_cost}", kat_id,
                   ref=f"LPV B04 Kap. 2: {rate}€ pro 10m² für {kat_name}")
 
         cost = grundpreis + flaeche_cost
@@ -273,7 +273,7 @@ class GraphPricingEngine:
                 preis = vrow[0][0] if vrow else 25
                 vert_cost = count * preis
                 cost += vert_cost
-                self._log("pruefkosten", f"{label}: {count} × {preis}€", f"{vert_cost}€", node_prefix,
+                self._log("pruefkosten", f"{label}: {count} × {preis}€", f"{vert_cost}", node_prefix,
                           ref=f"LPV B04 Kap. 2: {preis}€ pro {label}")
 
         for field, node_id, label in [
@@ -284,7 +284,7 @@ class GraphPricingEngine:
                 sz_row = self._q(f"MATCH (s:Sonderzuschlag {{id: '{node_id}'}}) RETURN s.betrag")
                 betrag = sz_row[0][0] if sz_row else 0
                 cost += betrag
-                self._log("pruefkosten", f"{label}: +{betrag}€", f"{betrag}€", node_id,
+                self._log("pruefkosten", f"{label}: +{betrag}€", f"{betrag}", node_id,
                           ref=f"LPV B04 Kap. 2: {label} {betrag}€")
 
         return cost
@@ -313,7 +313,7 @@ class GraphPricingEngine:
 
         zuordnung = standort.get("zuordnung", "nearest")
         label = "Zuständiger TÜV-Standort" if zuordnung == "crm" else "Nächster TÜV-Standort"
-        self._log("reisekosten", f"{label}: {standort['name']} ({standort['distance_km']:.0f}km)", f"{reise:.2f}€",
+        self._log("reisekosten", f"{label}: {standort['name']} ({standort['distance_km']:.0f}km)", f"{reise:.2f}",
                   f"STD_{standort.get('id','?')}", ref=f"LPV Teil A §4.3: {km_rate}€/km PKW, Reisezeit × {reise_std}€/h")
         self._log("reisekosten", "Regel: nur 1 Anfahrt bei mehrtägig (RK_MEHRTAEGIG)", "1× roundtrip", "RK_MEHRTAEGIG")
 
@@ -334,7 +334,7 @@ class GraphPricingEngine:
         typ_map = {"klein": ("BER_KLEIN", 119), "standard": ("BER_STANDARD", 380), "komplex": ("BER_KOMPLEX", 550)}
         bid, fallback = typ_map.get(typ, ("BER_STANDARD", 380))
         betrag = self._q1(f"MATCH (b:Berichtstyp {{id: '{bid}'}}) RETURN b.betrag") or fallback
-        self._log("bericht", f"Berichtstyp {bid} ({typ})", f"{betrag}€", bid,
+        self._log("bericht", f"Berichtstyp {bid} ({typ})", f"{betrag}", bid,
                   ref=f"LPV: Klein 119€ / Standard 380€ / Komplex 550€")
         return betrag
 
@@ -361,7 +361,7 @@ class GraphPricingEngine:
                 amount = total * pct
                 total += amount
                 applied.append(ZuschlagApplied(name=name, percent=pct, amount=amount))
-                self._log("zuschlag", f"{name}: +{pct*100:.0f}%", f"{amount:.2f}€", zid, ref=ref)
+                self._log("zuschlag", f"{name}: +{pct*100:.0f}%", f"{amount:.2f}", zid, ref=ref)
 
         return total, applied
 
