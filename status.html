@@ -411,42 +411,6 @@
   <!-- ============================================================ -->
   <section class="section">
     <h2 class="section-title">1. Was ist im PoC</h2>
-    <p class="section-intro">
-      Vollst&auml;ndiger Proof of Concept mit 3 Produkten, deterministischer Pricing-Engine, Knowledge Graph und Chat-Interface. Validiert gegen 15.220+ historische Datens&auml;tze.
-    </p>
-
-    <!-- Stats -->
-    <div class="stat-grid">
-      <div class="stat-box">
-        <div class="stat-value">3</div>
-        <div class="stat-label">Produkte shipped</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value">186</div>
-        <div class="stat-label">Regressionstests</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value">15.220+</div>
-        <div class="stat-label">Validierungsdaten</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-value">0</div>
-        <div class="stat-label">Halluzinationsrisiko</div>
-      </div>
-    </div>
-
-    <!-- Architecture -->
-    <div class="subsection">
-      <h3 class="subsection-title">Architektur</h3>
-      <ul class="detail-list">
-        <li><strong>Backend:</strong> FastAPI + FalkorDB (Knowledge Graph, 154 Nodes, 183 Edges) + Anthropic Claude (Haiku Coordinator, Sonnet Agent)</li>
-        <li><strong>Frontend:</strong> Next.js 15 + Tailwind, responsive, SSE Streaming, Multi-Produkt-Switching, Login</li>
-        <li><strong>Two-LLM Pattern:</strong> Coordinator (Chat/Parse) &rarr; PricingEngine (deterministisch) &rarr; Coordinator (Summarize)</li>
-        <li><strong>100% deterministische Preisberechnung</strong> — LLM nur f&uuml;r Natural Language Understanding, Zero Hallucination Risk bei Preisen</li>
-        <li><strong>14 Node-Labels, 17 Relationship-Types</strong> im Graph (Gebaeudetyp, Dienstleistung, Preisposition, Staffel, Merkmal, Stressor, Trait)</li>
-      </ul>
-    </div>
-
     <div class="divider" style="margin: 28px 0;"></div>
 
     <!-- Product 1 -->
@@ -500,8 +464,9 @@
     <div class="subsection">
       <h3 class="subsection-title">Shared Infrastructure</h3>
       <ul class="detail-list">
-        <li><strong>23 T&Uuml;V-Niederlassungen</strong> mit Geocoding (OSRM Routing)</li>
-        <li><strong>Reisekosten:</strong> Kilometergeld 1,10&euro;/km + Tagegeld (LPV Teil A &sect;4.3)</li>
+        <li><strong>PLZ&rarr;Niederlassung CRM-Mapping:</strong> 8.309 PLZ &rarr; 24 NL (offizielle CRM-Zuordnung). Fallback auf n&auml;chsten Standort mit Warnung bei nicht-TÜV-SÜD-Gebieten (z.B. TÜV Hessen). Offen: Ist Zuordnung produktabh&auml;ngig?</li>
+        <li><strong>23 T&Uuml;V-Niederlassungen</strong> mit OSRM Routing (Fahrstrecke, nicht Luftlinie)</li>
+        <li><strong>Reisekosten:</strong> Kilometergeld 1,10&euro;/km + Reisezeit &times; 180&euro;/h + Tagegeld (LPV Teil A &sect;4.3)</li>
         <li><strong>Grundkosten:</strong> 256&euro; Pauschale + 242&euro; Ordnungspr&uuml;fung (baurechtlich) + 49&euro;/Tag Pr&uuml;fmittel</li>
         <li><strong>Berichtstypen:</strong> klein 119&euro; / standard 380&euro; / komplex 550&euro;</li>
         <li><strong>Zuschl&auml;ge:</strong> Nicht-Vereinsmitglied +20%, Eilzuschlag +25%, Erstpr&uuml;fung +100%</li>
@@ -595,19 +560,7 @@
 
       <div class="gap-item">
         <div class="gap-item-header">
-          <span class="gap-item-title">2. PLZ&rarr;Niederlassung CRM-Mapping</span>
-          <span class="gap-item-effort">1 Tag</span>
-        </div>
-        <div class="gap-item-text">
-          PoC: "n&auml;chster Standort" per Luftlinie/OSRM. CRM PLZ NL: 8.309 PLZ &rarr; 24 NL (offizielle Zuordnung).
-          Frankfurt &rarr; T&Uuml;V Hessen (nicht Darmstadt!) — falsche Reisekosten ohne CRM-Mapping.
-          Offen: Ist Zuordnung produktabh&auml;ngig?
-        </div>
-      </div>
-
-      <div class="gap-item">
-        <div class="gap-item-header">
-          <span class="gap-item-title">3. T&Uuml;V Corporate Design</span>
+          <span class="gap-item-title">2. T&Uuml;V Corporate Design</span>
           <span class="gap-item-effort">2-3 Tage</span>
         </div>
         <div class="gap-item-text">
@@ -708,17 +661,6 @@
       <div class="priority-title">
         <span class="badge badge-blue">P2</span>
         Nice to have f&uuml;r MVP
-      </div>
-
-      <div class="gap-item">
-        <div class="gap-item-header">
-          <span class="gap-item-title">11. Graph-Engine f&uuml;r RLT/DGUV</span>
-          <span class="gap-item-effort">2 Tage</span>
-        </div>
-        <div class="gap-item-text">
-          graph_schema.py existiert, GraphPricingEngine-Adapter fehlt.
-          PoC: Python-Engine funktioniert, Graph-Engine nur f&uuml;r Blitzschutz.
-        </div>
       </div>
 
       <div class="gap-item">
