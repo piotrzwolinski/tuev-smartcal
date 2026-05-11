@@ -204,6 +204,11 @@ def make_product_router(gewerk: Gewerk) -> APIRouter:
                     calc_engine = GraphPricingEngine(gewerk.graph_name)
                     angebot = calc_engine.calculate(gewerk, merkmale)
 
+                    # Fallback: if graph returns 0 Prüfkosten, use Python engine
+                    if angebot.breakdown.pruef == 0:
+                        calc_engine_py = PricingEngine()
+                        angebot = calc_engine_py.calculate(gewerk, merkmale)
+
                     # Stream each provenance step as trace event
                     for prov in calc_engine.provenance:
                         step_name = prov["step"]

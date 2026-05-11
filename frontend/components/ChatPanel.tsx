@@ -182,7 +182,7 @@ export default function ChatPanel({ messages, onSend, loading, placeholder, sugg
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder ?? "Beschreiben Sie Ihr Gebäude..."}
-            rows={1}
+            rows={3}
             className="flex-1 px-4 py-3 text-sm bg-white border border-slate-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 placeholder:text-slate-400"
             disabled={loading}
           />

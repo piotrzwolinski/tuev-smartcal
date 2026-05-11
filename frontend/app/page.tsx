@@ -235,22 +235,9 @@ export default function Home() {
               <p className="text-xs text-slate-500">{activeProduct.subtitle}</p>
             </div>
             <div className="flex items-center gap-2 bg-slate-100 rounded-lg p-1">
-              <button
-                onClick={() => setPricingMode("graph")}
-                className={cn("px-3 py-1.5 rounded-md text-xs font-semibold transition",
-                  pricingMode === "graph" ? "bg-[#0046ad] text-white shadow" : "text-slate-500 hover:text-slate-700"
-                )}
-              >
+              <span className="px-3 py-1.5 rounded-md text-xs font-semibold bg-[#0046ad] text-white shadow">
                 Wissensgraph
-              </button>
-              <button
-                onClick={() => setPricingMode("python")}
-                className={cn("px-3 py-1.5 rounded-md text-xs font-semibold transition",
-                  pricingMode === "python" ? "bg-slate-700 text-white shadow" : "text-slate-500 hover:text-slate-700"
-                )}
-              >
-                Python Rules
-              </button>
+              </span>
             </div>
             <button
               onClick={handleNewSession}
