@@ -117,8 +117,16 @@ export default function Home() {
               case "session":
                 if (parsed.session_id) sessionRef.current = parsed.session_id;
                 break;
-              case "message":
-                setMessages((prev) => [...prev, { role: "assistant", content: parsed.content }]);
+              case "message": {
+                let content = parsed.content || "";
+                if (typeof content === "string" && content.trimStart().startsWith("{")) {
+                  try {
+                    const inner = JSON.parse(content);
+                    if (inner.message) content = inner.message;
+                  } catch { /* not JSON, keep as-is */ }
+                }
+                setMessages((prev) => [...prev, { role: "assistant", content }]);
+              }
                 break;
               case "trace": {
                 const traceStep: TraceStep = {
