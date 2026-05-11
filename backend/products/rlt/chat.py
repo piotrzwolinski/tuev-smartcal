@@ -238,10 +238,10 @@ def inject_kalkulation_result(session: RLTSession, angebot: dict):
 async def coordinator_summarize(session: RLTSession) -> dict:
     llm = ClaudeLLM(model=HAIKU_MODEL)
     messages = [
-        {"role": "system", "content": COORDINATOR_SYSTEM},
+        {"role": "system", "content": COORDINATOR_SYSTEM + chr(10) + chr(10) + "WICHTIG FÜR DIESE ANTWORT: Antworte NUR mit der Nachricht an den Kunden als reiner Text (KEIN JSON, KEINE params, KEINE action). Präsentiere das Ergebnis freundlich und professionell auf Deutsch."},
         *session.messages,
     ]
-    response = await llm.chat(messages=messages, max_tokens=512, temperature=0.3)
+    response = await llm.chat(messages=messages, max_tokens=1024, temperature=0.3)
 
     text = response.text.strip()
     result = _parse_llm_json(text)
