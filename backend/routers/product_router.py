@@ -166,6 +166,8 @@ def make_product_router(gewerk: Gewerk) -> APIRouter:
 
             coord = await chat_module.coordinator_respond(session, req.message)
             action = coord.get("action", "chat")
+            import logging
+            logging.getLogger(__name__).warning(f"[CHAT] Turn {session.turn_count}: action={action}, params_keys={list(coord.get('params', {}).keys())}")
 
             if action != "calculate":
                 yield {"event": "message", "data": json.dumps({
@@ -229,6 +231,8 @@ def make_product_router(gewerk: Gewerk) -> APIRouter:
                             label = f"Graph → {source} = {value}"
                         elif step_name == "confidence":
                             label = f"Graph → {source}"
+                        elif step_name == "kalibrierung":
+                            label = f"📊 {source}"
                         elif step_name == "cross_sell":
                             label = f"Graph → Empfehlung: {str(value)[:60]}"
                         else:

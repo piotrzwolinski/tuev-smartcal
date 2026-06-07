@@ -87,15 +87,15 @@ class TestDGUVPruefkosten:
             expected = DGUV_GRUNDPREIS_ANLAGE + 50 * PREIS_PER_10M2[kat]
             assert dguv_pruefkosten(m) == expected
 
-    def test_kat5_most_expensive(self):
+    def test_kat6_most_expensive(self):
         costs = {}
         for kat in Installationskategorie:
             costs[kat] = dguv_pruefkosten(_make(1000, primary_installationskategorie=kat))
-        assert costs[Installationskategorie.KAT_5] == max(costs.values())
+        assert costs[Installationskategorie.KAT_6] == max(costs.values())
 
     def test_linear_with_flaeche(self):
-        c1 = dguv_pruefkosten(_make(1000))
-        c2 = dguv_pruefkosten(_make(2000))
+        c1 = dguv_pruefkosten(_make(1000, primary_installationskategorie=Installationskategorie.KAT_1))
+        c2 = dguv_pruefkosten(_make(2000, primary_installationskategorie=Installationskategorie.KAT_1))
         diff = c2 - c1
         expected_diff = (1000 / 10) * PREIS_PER_10M2[Installationskategorie.KAT_1]
         assert abs(diff - expected_diff) < 0.01
@@ -273,7 +273,7 @@ class TestDGUVMerkmale:
         assert m.baurechtlich is False
         assert m.nea_vorhanden is False
         assert m.sv_nshv_vorhanden is False
-        assert m.primary_installationskategorie == Installationskategorie.KAT_1
+        assert m.primary_installationskategorie == Installationskategorie.KAT_2
 
     def test_verteilungen_default_zero(self):
         m = _make(100)
@@ -415,9 +415,9 @@ class TestDGUVGoldenReference:
 
         angebot = engine.calculate(gewerk, m)
 
-        # 250 + (5000/10)×2.00 + 15×25 + 3×85 + 1×145 + 320(NEA)
-        # = 250 + 1000 + 375 + 255 + 145 + 320 = 2345
-        assert angebot.breakdown.pruef == 2345.00
+        # 250 + (5000/10)×3.10 + 15×25 + 3×85 + 1×145 + 320(NEA) [KAT_2 calibrated to 3.10]
+        # = 250 + 1550 + 375 + 255 + 145 + 320 = 2895
+        assert angebot.breakdown.pruef == 2895.00
         # 5000m² + 19 total verteilungen (>15) → komplex
         assert angebot.breakdown.bericht == BERICHT_KOMPLEX
 
@@ -441,9 +441,9 @@ class TestDGUVGoldenReference:
 
         angebot = engine.calculate(gewerk, m)
 
-        # 250 + (20000/10)×5.00 + 30×25 + 5×85 + 2×145 + 320 + 180
-        # = 250 + 10000 + 750 + 425 + 290 + 320 + 180 = 12215
-        assert angebot.breakdown.pruef == 12215.00
+        # 250 + (20000/10)×5.40 + 30×25 + 5×85 + 2×145 + 320 + 180 [KAT_5 calibrated to 5.40]
+        # = 250 + 10800 + 750 + 425 + 290 + 320 + 180 = 13015
+        assert angebot.breakdown.pruef == 13015.00
         assert angebot.breakdown.bericht == BERICHT_KOMPLEX
 
 
@@ -505,7 +505,7 @@ class TestDGUVValidateRanges:
         conf, _ = dguv_validate_ranges(_make(
             20000,
             nutzung=GebaeudeNutzungDGUV.INDUSTRIE,
-            primary_installationskategorie=Installationskategorie.KAT_2,
+            primary_installationskategorie=Installationskategorie.KAT_3,
             anzahl_verteilungen_uv=10,
         ))
         assert conf == 1.0
@@ -517,8 +517,8 @@ class TestDGUVConstants:
 
     def test_kat_rates_ordering(self):
         rates = [PREIS_PER_10M2[kat] for kat in sorted(Installationskategorie, key=lambda k: k.value)]
-        # Kat 1: 1.00, Kat 2: 2.00, Kat 3: 1.50, Kat 4: 3.00, Kat 5: 5.00
-        assert rates == [1.00, 2.00, 1.50, 3.00, 5.00]
+        # Kat 1: 1.00, Kat 2: 3.10, Kat 3: 5.00, Kat 4: 5.40, Kat 5: 5.40, Kat 6: 6.00
+        assert rates == [1.00, 3.10, 5.00, 5.40, 5.40, 6.00]
 
     def test_zuschlag_nea(self):
         assert ZUSCHLAG_NEA == 320.00

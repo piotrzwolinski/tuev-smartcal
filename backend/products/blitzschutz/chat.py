@@ -28,11 +28,13 @@ Du sammelst Anlagendaten vom Kunden in einem natürlichen Gespräch auf Deutsch.
 
 ## MERKMALE DIE DU EXTRAHIERST
 
-**Minimum für Kalkulation:** nutzung + anzahl_ableitungen
-(Schutzklasse kann fehlen — wir haben Fallback basiert auf Gebäudenutzung)
+**Minimum für Kalkulation:** nutzung + (anzahl_ableitungen ODER gesamtflaeche_m2)
+Wenn der Kunde m² angibt aber keine Ableitungen kennt → action=calculate SOFORT. Das System schätzt die Ableitungen aus der Gebäudefläche.
+Wenn der Kunde NUR den Gebäudetyp nennt (ohne m² UND ohne Ableitungen) → frage nach m² ODER Ableitungen.
 
 Pflichtfelder:
 - `nutzung`: schule | buero | industrie | wohnung | hotel | museum | krankenhaus | lager | garage | sonstige
+- `gesamtflaeche_m2`: Gebäudefläche in m² (alternativ zu anzahl_ableitungen)
   Hinweise: "Kita"/"Kindergarten"/"Gymnasium"/"Turnhalle" → schule ; "Kirche"/"Burg"/"Schloss" → museum ; "Altenheim"/"Pflegeheim" → krankenhaus
 - `anzahl_ableitungen`: Anzahl Trennstellen / Messstellen (1-500, Primary Cost-Driver)
 
@@ -84,9 +86,9 @@ Empfehlungen / Cross-Sell:
 - "Hat das Gebäude eine **Brandmeldeanlage**? Dann können wir eine Kombi-Begehung anbieten (Reisekostenvorteil)."
 
 ## REGELN
-- Wenn der Kunde ALLE Details gibt → action="calculate" ABER in message die 2-3 relevantesten Rückfragen anfügen.
-- Wenn nur "Gebäude mit Blitzschutz" → action="chat", frage nach nutzung + anzahl_ableitungen + standort.
-- Wenn Schutzklasse fehlt → calculate mit Fallback, aber FRAGE danach in der message ("Welche Schutzklasse?").
+- Wenn nutzung + (anzahl_ableitungen ODER gesamtflaeche_m2) vorhanden → SOFORT action="calculate". IMMER kalkulieren, auch grob!
+- Wenn nur "Gebäude mit Blitzschutz" ohne m² UND ohne Ableitungen → action="chat", frage nach m² ODER Ableitungen.
+- Wenn Schutzklasse fehlt → calculate mit Fallback, aber FRAGE danach in der message.
 - Wenn Kunde auf Rückfragen antwortet → params aktualisieren + NEU berechnen.
 - GIB IMMER alle bisher gesammelten params mit — nicht nur neue!
 - Antworte FREUNDLICH aber PROFESSIONELL. 3-5 Sätze + Rückfragen als Bullet-Liste.
@@ -96,20 +98,17 @@ Empfehlungen / Cross-Sell:
 User: "ich brauch ein Angebot für ne Schule, 35 Messstellen, Würzburg, Klasse III"
 → {"message":"Sehr gerne — Schule in Würzburg, 35 Messstellen, Schutzklasse III. Ich starte die Kalkulation.\n\nEin paar Rückfragen für die Präzisierung:\n• Handelt es sich um eine **Erstprüfung** oder eine **wiederkehrende Prüfung**?\n• Umfasst die Schule **mehrere Gebäude** (z.B. Hauptgebäude + Turnhalle)?\n• Sollen wir den **inneren Blitzschutz** (Überspannungsschutz) mit anbieten?","action":"calculate","params":{"nutzung":"schule","anzahl_ableitungen":35,"schutzklasse":"III","adresse_ort":"Würzburg"},"missing":[]}
 
+User: "Lagerhalle in Nürnberg, 2.500 m², Blitzschutzklasse 3"
+→ {"message":"Lagerhalle in Nürnberg, 2.500 m², Schutzklasse III. Ich schätze die Ableitungen aus der Gebäudefläche und starte eine Grobkalkulation.\n\nFür eine präzisere Kalkulation:\n• **Wie viele Ableitungen/Messstellen** hat die Anlage?\n• Handelt es sich um eine **Erstprüfung** oder **wiederkehrende Prüfung**?\n• Welches **Material** haben die Ableitungen?","action":"calculate","params":{"nutzung":"lager","gesamtflaeche_m2":2500,"schutzklasse":"III","adresse_ort":"Nürnberg"},"missing":[]}
+
 User: "ich hab ne Halle"
-→ {"message":"Eine Halle — gerne! Damit ich Ihnen ein Angebot erstellen kann, brauche ich noch:\n\n• **Wie viele Blitzschutz-Messstellen** (Trennstellen/Ableitungen) hat die Anlage?\n• In **welcher Stadt** befindet sich das Gebäude?\n• Wissen Sie die **Schutzklasse** (I–IV nach DIN EN 62305)?","action":"chat","params":{"nutzung":"lager"},"missing":["anzahl_ableitungen","adresse_ort"]}
+→ {"message":"Eine Halle — gerne! Damit ich Ihnen ein Angebot erstellen kann:\n\n• **Wie groß ist die Halle** (m² oder Länge × Breite)?\n• Alternativ: **Wie viele Messstellen/Ableitungen** hat die Blitzschutzanlage?\n• In **welcher Stadt** befindet sich das Gebäude?","action":"chat","params":{"nutzung":"lager"},"missing":["gesamtflaeche_m2 oder anzahl_ableitungen"]}
 
 User: "Kindergarten in München, 8 Ableitungen"
 → {"message":"Kindergarten in München, 8 Ableitungen — ich berechne das Angebot. Die Schutzklasse nehme ich mit **III** (Standard für Schulen/Kindergärten) an.\n\nRückfragen:\n• Stimmt die Schutzklasse III, oder liegt eine andere Einstufung vor?\n• Ist es eine **Erst-** oder **Wiederholungsprüfung**?\n• Besteht ein **Rahmenvertrag** mit TÜV SÜD?","action":"calculate","params":{"nutzung":"schule","anzahl_ableitungen":8,"adresse_ort":"München"},"missing":[]}
 
 User: "ja, Erstprüfung, kein Rahmenvertrag"
 → {"message":"Danke — ich aktualisiere: **Erstprüfung** (+100% Zuschlag) und **kein Vereinsmitglied** (+20%). Neue Kalkulation wird erstellt.","action":"calculate","params":{"nutzung":"schule","anzahl_ableitungen":8,"adresse_ort":"München","erstpruefung":true,"vereinsmitglied":false},"missing":[]}
-
-User: "Einkaufsmarkt 97234 Reichenberg, 60 Messpunkte"
-→ {"message":"Einkaufsmarkt in Reichenberg (PLZ 97234), 60 Messpunkte. Ich starte die Kalkulation.\n\nRückfragen:\n• Welche **Schutzklasse** hat die Anlage?\n• Handelt es sich um eine **Erstprüfung** oder eine **wiederkehrende Prüfung**?","action":"calculate","params":{"nutzung":"sonstige","anzahl_ableitungen":60,"adresse_ort":"Reichenberg","adresse_plz":"97234"},"missing":[]}
-
-User: "Büro in der Edisonstraße 15, 90431 Nürnberg, 12 Ableitungen"
-→ {"message":"Bürogebäude in Nürnberg (Edisonstraße 15, 90431), 12 Ableitungen. Kalkulation läuft.\n\nRückfragen:\n• Welche **Schutzklasse**?\n• **Erst-** oder **wiederkehrende Prüfung**?","action":"calculate","params":{"nutzung":"buero","anzahl_ableitungen":12,"adresse_ort":"Nürnberg","adresse_plz":"90431","adresse_strasse":"Edisonstraße 15"},"missing":[]}
 """
 
 
@@ -144,6 +143,7 @@ class BlitzschutzSession:
     messages: list[dict] = field(default_factory=list)
     extracted_params: dict = field(default_factory=dict)
     last_kalkulation: dict | None = None
+    last_calc_params: dict = field(default_factory=dict)
     turn_count: int = 0
 
 
@@ -192,7 +192,11 @@ async def coordinator_respond(session: BlitzschutzSession, user_message: str) ->
             session.extracted_params["adresse_lon"] = coords[1]
 
     # Jeśli calculate, przekaż wszystkie accumulated params
+    has_minimum = session.extracted_params.get("nutzung") and (session.extracted_params.get("anzahl_ableitungen") or session.extracted_params.get("gesamtflaeche_m2"))
     if result.get("action") == "calculate":
+        result["params"] = dict(session.extracted_params)
+    elif session.last_kalkulation and has_minimum:
+        result["action"] = "calculate"
         result["params"] = dict(session.extracted_params)
 
     return result
@@ -233,7 +237,7 @@ def inject_kalkulation_result(session: BlitzschutzSession, angebot: dict):
             "2) Stelle 2-3 relevante RÜCKFRAGEN aus der Liste oben (die noch nicht beantwortet sind). "
             "3) Falls passend, erwähne 1 EMPFEHLUNG (innerer Blitzschutz, RLT, Kombi-Begehung). "
             "Formatiere Rückfragen als Bullet-Liste mit **Fettdruck** für Schlüsselwörter. "
-            "Antworte als JSON mit action='chat'.]"
+            "Antworte als JSON. Wenn der Kunde danach neue Details liefert, verwende action='calculate' mit aktualisierten params.]"
         ),
     })
 

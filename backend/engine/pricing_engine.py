@@ -57,8 +57,7 @@ class PricingEngine:
         breakdown.pruef = gewerk.pruefkosten(merkmale)
 
         # 3. Reisekosten (jeśli mamy adres Anlage)
-        # Veit-Spec: "Bei mehrtägigen Prüfungen ist von maximalen Anfahrten auszugehen"
-        # → NUR 1 Hin-/Rückfahrt, egal wie viele Prüftage
+        # Veit 30.05: >9h = 2 Anfahrten, >18h = 3 Anfahrten
         adresse_lat = getattr(merkmale, "adresse_lat", None)
         adresse_lon = getattr(merkmale, "adresse_lon", None)
         if adresse_lat is not None and adresse_lon is not None:
@@ -66,22 +65,29 @@ class PricingEngine:
             standort = find_nearest_standort(adresse_lat, adresse_lon, plz=adresse_plz)
             km_one_way = standort["distance_km"]
             km_roundtrip = km_one_way * 2
-            # Reisezeit: OSRM liefert echte Fahrzeit, sonst km/80 fallback
             duration_min = standort.get("duration_min", km_one_way / 80 * 60)
-            reisezeit_h = (duration_min * 2) / 60  # roundtrip
+            reisezeit_h = (duration_min * 2) / 60  # roundtrip single trip
             routing = standort.get("routing", "unknown")
+            pruef_stunden = pruef_tage * 8
+            if pruef_stunden > 18:
+                anzahl_anfahrten = 3
+            elif pruef_stunden > 9:
+                anzahl_anfahrten = 2
+            else:
+                anzahl_anfahrten = 1
             breakdown.reise = (
-                kilometergeld(km_roundtrip, vehicle="pkw")
-                + reisezeit_h * stundensatz(self.default_reisezeit_stundensatz)
+                kilometergeld(km_roundtrip * anzahl_anfahrten, vehicle="pkw")
+                + reisezeit_h * anzahl_anfahrten * stundensatz(self.default_reisezeit_stundensatz)
             )
             zuordnung = standort.get("zuordnung", "nearest")
             if km_one_way > 0:
                 label = "Zuständiger TÜV-Standort" if zuordnung == "crm" else "Nächster TÜV-Standort"
+                anfahrt_info = f" · {anzahl_anfahrten} Anfahrt(en)" if anzahl_anfahrten > 1 else ""
                 warnings.append(
                     f"{label}: {standort['name']} "
                     f"({standort.get('adresse', '')}, {standort['plz']}) — "
                     f"{km_one_way:.0f} km / {duration_min:.0f} min einfach "
-                    f"[{routing}]"
+                    f"[{routing}]{anfahrt_info}"
                 )
             zuordnung_warnung = standort.get("zuordnung_warnung")
             if zuordnung_warnung:

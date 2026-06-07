@@ -61,20 +61,58 @@ class GraphPricingEngine:
         # ─── 4. BERICHTERSTELLUNG (per product) ──────────────
         breakdown.bericht = self._calc_bericht(gewerk, merkmale)
 
-        # ─── 5. ZUSCHLÄGE (shared) ───────────────────────────
-        total, zuschlaege = self._calc_zuschlaege(merkmale, breakdown.subtotal)
+        # ─── 5. REIFEGRAD + VOLLERFASSUNG (DGUV only) ────────
+        referenzpreis = None
+        zusatzleistungen = []
+        if self.graph_name == "dguv_v3":
+            breakdown.pruef, referenzpreis = self._apply_dguv_modifiers(merkmale, breakdown.pruef, warnings)
+            zusatzleistungen = self._calc_dguv_addons(merkmale, breakdown)
 
-        # ─── 6. CONFIDENCE (per product) ─────────────────────
+        # ─── 6. ZUSCHLÄGE (shared) ───────────────────────────
+        addon_total = sum(z["preis"] for z in zusatzleistungen)
+        total, zuschlaege = self._calc_zuschlaege(merkmale, breakdown.subtotal + addon_total)
+
+        # ─── 7. CONFIDENCE (per product) ─────────────────────
         confidence, conf_reason = self._calc_confidence(gewerk, merkmale)
 
-        # ─── 7. CROSS-SELL (from graph) ──────────────────────
+        # ─── 7b. KALIBRIERUNG confidence adjustment (DGUV Büro only) ─
+        nutzung_for_kal = getattr(merkmale, "nutzung", None)
+        nutzung_val_kal = nutzung_for_kal.value if nutzung_for_kal else ""
+        if self.graph_name == "dguv_v3" and nutzung_val_kal in ("buerogebaeude", "service_center"):
+            try:
+                from products.dguv_v3.kalibrierung import get_kalibrierung_for_trace
+                nutzung = nutzung_for_kal
+                gt_name = nutzung.value.replace("_", " ").title() if nutzung else None
+                vds = getattr(merkmale, "vds_pruefung", False)
+                kal = get_kalibrierung_for_trace(
+                    3.10, gebaeudetyp=gt_name, pruefgrundlage="VdS" if vds else "DGUV"
+                )
+                if kal.kalibriert_rate != kal.basis_rate:
+                    gap = kal.range_max / max(kal.range_min, 0.01)
+                    if gap > 2.0:
+                        confidence *= 0.85
+                        n_src = len(kal.quellen) - 1
+                        conf_reason += f" · Kalibrierungsdaten ({n_src} Quellen) zeigen Preisspanne ×{gap:.1f}"
+                        warnings.append(
+                            f"Kalibrierung: Kalkulationshilfen {kal.basis_rate}€/10m² vs. "
+                            f"Marktdaten {kal.kalibriert_rate:.1f}€/10m² "
+                            f"(Range {kal.range_min}–{kal.range_max}€/10m²)"
+                        )
+            except Exception:
+                pass
+
+        # ─── 8. CROSS-SELL (from graph) ──────────────────────
         self._add_cross_sell(warnings)
 
-        return Angebot(
+        angebot = Angebot(
             gewerk=gewerk.name, total=total, breakdown=breakdown,
             zuschlaege=zuschlaege, confidence=confidence, confidence_reason=conf_reason,
             similar=[], lpv_referenz=gewerk.lpv_referenz, warnings=warnings,
+            zusatzleistungen=zusatzleistungen,
         )
+        if referenzpreis:
+            angebot.referenzpreis = referenzpreis
+        return angebot
 
     # ═══════════════════════════════════════════════════════════
     # SHARED: Grundkosten
@@ -108,7 +146,7 @@ class GraphPricingEngine:
 
     def _get_pruef_tage(self, merkmale: BaseModel) -> float:
         if self.graph_name == "blitzschutz":
-            ms = getattr(merkmale, "anzahl_ableitungen", 0)
+            ms = self._resolve_blitz_ms(merkmale)
             row = self._q("MATCH (p:Prueftagschaetzung) WHERE p.von_ms <= $ms AND p.bis_ms >= $ms RETURN p.tage, p.formel, p.id", ms=ms)
             if row:
                 tage, formel = row[0][0], row[0][1]
@@ -149,8 +187,16 @@ class GraphPricingEngine:
     # PRÜFKOSTEN: Blitzschutz (Staffeln × Messstellen)
     # ═══════════════════════════════════════════════════════════
 
+    def _resolve_blitz_ms(self, merkmale: BaseModel) -> int:
+        ms = getattr(merkmale, "anzahl_ableitungen", None)
+        if ms is not None:
+            return ms
+        from products.blitzschutz.pricing_rules import estimate_ableitungen
+        estimated, _ = estimate_ableitungen(merkmale)
+        return estimated
+
     def _pruef_blitzschutz(self, merkmale: BaseModel) -> float:
-        ms = getattr(merkmale, "anzahl_ableitungen", 0)
+        ms = self._resolve_blitz_ms(merkmale)
         staffeln = self._q(
             "MATCH (p:Produkt {id: 'BLITZ_AUSSEN'})-[:HAT_STAFFEL]->(s:Staffel) "
             "RETURN s.von, s.bis, s.preis_pro_ms, s.id, s.typ ORDER BY s.von"
@@ -249,16 +295,59 @@ class GraphPricingEngine:
                   ref="LPV B04 Kap. 2: Grundpreis 250€ pro Anlage")
 
         flaeche = getattr(merkmale, "gesamtflaeche_m2", 0)
-        kat = getattr(merkmale, "primary_installationskategorie", None)
-        kat_val = kat.value if kat else 1
-        kat_id = f"KAT_{kat_val}"
+        mix = getattr(merkmale, "nutzungs_mix", None)
 
-        kat_row = self._q("MATCH (k:Installationskategorie {id: $kid}) RETURN k.preis_per_10m2, k.name", kid=kat_id)
-        rate = kat_row[0][0] if kat_row else 1.0
-        kat_name = kat_row[0][1] if kat_row else f"Kat {kat_val}"
-        flaeche_cost = (flaeche / 10.0) * rate
-        self._log("pruefkosten", f"Fläche {flaeche}m² × {rate}€/10m² ({kat_name})", f"{flaeche_cost}", kat_id,
-                  ref=f"LPV B04 Kap. 2: {rate}€ pro 10m² für {kat_name}")
+        if mix and len(mix) > 0:
+            flaeche_cost = 0.0
+            for eintrag in mix:
+                e_kat = getattr(eintrag, "kategorie", None)
+                if e_kat is None:
+                    from products.dguv_v3.pricing_rules import resolve_mix_kategorie
+                    e_kat = resolve_mix_kategorie(eintrag.nutzung)
+                e_kat_val = e_kat.value if hasattr(e_kat, "value") else int(e_kat)
+                e_kat_id = f"KAT_{e_kat_val}"
+                e_row = self._q("MATCH (k:Installationskategorie {id: $kid}) RETURN k.preis_per_10m2, k.name", kid=e_kat_id)
+                e_rate = e_row[0][0] if e_row else 1.0
+                e_name = e_row[0][1] if e_row else f"Kat {e_kat_val}"
+                zone_m2 = flaeche * eintrag.anteil
+                zone_cost = (zone_m2 / 10.0) * e_rate
+                flaeche_cost += zone_cost
+                self._log("pruefkosten",
+                          f"Mix {eintrag.nutzung}: {zone_m2:.0f}m² × {e_rate}€/10m² ({e_name})",
+                          f"{zone_cost:.2f}", e_kat_id,
+                          ref=f"Kalkulationshilfen NBG: {e_rate}€/10m² für {e_name}")
+        else:
+            kat = getattr(merkmale, "primary_installationskategorie", None)
+            kat_val = kat.value if kat else 1
+            kat_id = f"KAT_{kat_val}"
+
+            kat_row = self._q("MATCH (k:Installationskategorie {id: $kid}) RETURN k.preis_per_10m2, k.name", kid=kat_id)
+            rate = kat_row[0][0] if kat_row else 1.0
+            kat_name = kat_row[0][1] if kat_row else f"Kat {kat_val}"
+            flaeche_cost = (flaeche / 10.0) * rate
+            self._log("pruefkosten", f"Fläche {flaeche}m² × {rate}€/10m² ({kat_name})", f"{flaeche_cost}", kat_id,
+                      ref=f"Kalkulationshilfen NBG: {rate}€/10m² für {kat_name}")
+
+        # Kalibrierung: compare with real-world data sources (only for Büro — DEKA data is Büro-specific)
+        nutzung = getattr(merkmale, "nutzung", None)
+        nutzung_val = nutzung.value if nutzung else ""
+        if nutzung_val in ("buerogebaeude", "service_center"):
+            gt_name = nutzung_val.replace("_", " ").title()
+            vds = getattr(merkmale, "vds_pruefung", False)
+            pg = "VdS" if vds else "DGUV"
+            try:
+                from products.dguv_v3.kalibrierung import get_kalibrierung_for_trace
+                kal = get_kalibrierung_for_trace(rate, gebaeudetyp=gt_name, pruefgrundlage=pg)
+                if kal.kalibriert_rate != kal.basis_rate:
+                    kal_cost = (flaeche / 10.0) * kal.kalibriert_rate
+                    n_sources = len(kal.quellen) - 1
+                    self._log("kalibrierung",
+                              f"Kalibrierung ({n_sources} Quellen): {kal.kalibriert_rate}€/10m² → {kal_cost:.0f}€ "
+                              f"[Range {kal.range_min}–{kal.range_max}€/10m²]",
+                              f"{kal_cost:.2f}",
+                              ref=", ".join(q["name"] for q in kal.quellen if q["typ"] != "regel"))
+            except Exception:
+                pass
 
         cost = grundpreis + flaeche_cost
 
@@ -287,7 +376,136 @@ class GraphPricingEngine:
                 self._log("pruefkosten", f"{label}: +{betrag}€", f"{betrag}", node_id,
                           ref=f"LPV B04 Kap. 2: {label} {betrag}€")
 
+        # Branchenvergleich: avg Prüftage from 10k Berichte
+        branche_map = {
+            "buerogebaeude": "Öffentliche Verwaltung", "service_center": "Öffentliche Verwaltung",
+            "hotel": "Gastgewerbe", "krankenhaus": "Gesundheitswesen",
+            "schule": "Bildungseinrichtung", "industrie": "Automobilzulieferer",
+            "verkaufsstaette": "Lebensmittelhandel", "moebelhaus": "Lebensmittelhandel",
+            "gartenmarkt": "Lebensmittelhandel", "tiefgarage": "Öffentliche Verwaltung",
+            "versammlungsstaette": "Öffentliche Verwaltung", "seniorentreff": "Gesundheitswesen",
+            "sonstige": "Religionsgemeinschaft",
+        }
+        branche_key = branche_map.get(nutzung_val, "")
+        if branche_key:
+            bp = self._q(
+                "MATCH (b:BranchenProfil) WHERE b.branche = $br RETURN b.n_berichte, b.avg_prueftage, b.median_prueftage",
+                br=branche_key
+            )
+            if bp:
+                n_ber, avg_t, med_t = bp[0]
+                est_tage = max(1, round(cost / 1200))
+                self._log("branchenvergleich",
+                          f"Branchenvergleich: {n_ber} {branche_key}-Berichte im Archiv, Ø {avg_t:.1f} Prüftage (Median {med_t:.1f})",
+                          f"Schätzung {est_tage} Tage",
+                          ref=f"Batch Extraction 10.096 MA507 Prüfberichte")
+
         return cost
+
+    # ═══════════════════════════════════════════════════════════
+    # DGUV V3: Zusatzleistungen (VdS, PV, Ladesäulen)
+    # ═══════════════════════════════════════════════════════════
+
+    def _calc_dguv_addons(self, merkmale: BaseModel, breakdown) -> list[dict]:
+        addons = []
+
+        if getattr(merkmale, "vds_pruefung", False):
+            from products.dguv_v3.pricing_rules import dguv_plus_vds_pruefkosten
+            kombi = dguv_plus_vds_pruefkosten(merkmale)
+            vds_addon = kombi["dguv_zuschlag"]
+            einzeln = kombi["vds_preis"] * 2
+            ersparnis = einzeln - kombi["gesamt"]
+            self._log("zusatzleistung",
+                      f"VdS 2871 Synergie: +{vds_addon:.0f}€ (statt {kombi['vds_preis']:.0f}€ einzeln, Ersparnis {ersparnis:.0f}€)",
+                      f"{vds_addon:.2f}", "VDS_SYNERGIE",
+                      ref="S. Pausch: VdS-Preis + 50% Zuschlag bei gemeinsamer Durchführung")
+            addons.append({
+                "name": "VdS 2871 Prüfung (Synergie-Preis)",
+                "positionen": [
+                    {"name": f"VdS bei Kombi-Begehung (+50% auf DGUV)", "betrag": round(vds_addon, 2)},
+                    {"name": f"Ersparnis ggü. Einzelbeauftragung", "betrag": round(-ersparnis, 2)},
+                ],
+                "preis": round(vds_addon, 2),
+                "quelle": kombi["_quelle"],
+            })
+
+        pv_kwp = getattr(merkmale, "pv_kwp", None)
+        if pv_kwp and pv_kwp > 0:
+            from products.dguv_v3.zusatzleistungen import pv_preis_vds, pv_preis_din
+            pv_norm = getattr(merkmale, "pv_norm", "din")
+            pv = pv_preis_vds(pv_kwp) if pv_norm == "vds" else pv_preis_din(pv_kwp)
+            addons.append({
+                "name": f"PV-Anlage ({pv_kwp:.0f} kWp, {pv_norm.upper()})",
+                "positionen": pv["positionen"],
+                "preis": round(pv["preis"], 2),
+                "quelle": pv["_quelle"],
+            })
+            self._log("zusatzleistung", f"PV {pv_norm.upper()} {pv_kwp} kWp", f"{pv['preis']:.2f}€",
+                      "PV_ADDON", ref=pv["_quelle"])
+
+        for ls in (getattr(merkmale, "ladesaeulen", None) or []):
+            if isinstance(ls, dict) and ls.get("anzahl", 0) > 0:
+                from products.dguv_v3.zusatzleistungen import ladesaeulen_preis
+                r = ladesaeulen_preis(ls.get("typ", "wallbox"), ls.get("anschluesse", 1), ls["anzahl"])
+                addons.append({
+                    "name": f"Ladesäulen ({ls['anzahl']}× {ls.get('typ', 'wallbox').upper()})",
+                    "positionen": r["positionen"],
+                    "preis": round(r["preis"], 2),
+                    "quelle": r["_quelle"],
+                })
+                self._log("zusatzleistung", f"Ladesäulen {ls['anzahl']}× {ls.get('typ', 'wallbox')}",
+                          f"{r['preis']:.2f}€", "LS_ADDON", ref=r["_quelle"])
+
+        return addons
+
+    # ═══════════════════════════════════════════════════════════
+    # DGUV V3: Reifegrad + Vollerfassung + Referenzpreis
+    # ═══════════════════════════════════════════════════════════
+
+    def _apply_dguv_modifiers(self, merkmale: BaseModel, pruef: float, warnings: list) -> tuple[float, dict | None]:
+        rg = getattr(merkmale, "reifegrad", None)
+        if rg is not None:
+            rg_val = rg.value if hasattr(rg, "value") else rg
+            rg_id = f"RG_{rg_val}"
+            faktor = self._q1("MATCH (r:Reifegrad {id: $rid}) RETURN r.faktor", rid=rg_id)
+            if faktor is None:
+                from products.dguv_v3.pricing_rules import REIFEGRAD_FAKTOR
+                from products.dguv_v3.merkmale import Reifegrad
+                faktor = REIFEGRAD_FAKTOR.get(rg if isinstance(rg, Reifegrad) else Reifegrad(rg_val), 1.0)
+            if faktor != 1.0:
+                old = pruef
+                pruef = pruef * faktor
+                self._log("reifegrad", f"Reifegrad {rg_val}: ×{faktor:.2f}", f"{pruef:.2f} (war {old:.2f})", rg_id,
+                          ref=f"Veit P7: RG{rg_val} Faktor {faktor}")
+
+        voll = getattr(merkmale, "vollerfassung", False)
+        if voll:
+            faktor_v = self._q1("MATCH (d:Dokumentationszuschlag {id: 'DOK_VOLL'}) RETURN d.faktor") or 1.30
+            old = pruef
+            pruef = pruef * faktor_v
+            self._log("vollerfassung", f"Vollerfassung Messdaten: ×{faktor_v:.2f}", f"{pruef:.2f} (war {old:.2f})", "DOK_VOLL",
+                      ref="Veit P6: +30% bei 100% Messdatenerfassung")
+
+        referenzpreis = None
+        ref_jahr = getattr(merkmale, "referenzpreis_jahr", None)
+        ref_betrag = getattr(merkmale, "referenzpreis_betrag", None)
+        if ref_jahr and ref_betrag:
+            steigerung = self._q1("MATCH (p:Preissteigerung {jahr: $j}) RETURN p.steigerung_vs_2026", j=ref_jahr)
+            if steigerung is None:
+                from products.dguv_v3.pricing_rules import PREISSTEIGERUNG
+                steigerung = PREISSTEIGERUNG.get(ref_jahr, 0)
+            fortgeschrieben = ref_betrag * (1 + steigerung)
+            referenzpreis = {
+                "original_jahr": ref_jahr,
+                "original_betrag": ref_betrag,
+                "steigerung_pct": steigerung * 100,
+                "fortgeschrieben_2026": round(fortgeschrieben, 2),
+            }
+            self._log("referenzpreis", f"Referenz {ref_jahr}: {ref_betrag}€ → 2026: {fortgeschrieben:.0f}€ (+{steigerung*100:.1f}%)",
+                      f"{fortgeschrieben:.2f}", f"PS_{ref_jahr}",
+                      ref=f"Veit P9: Preissteigerung {ref_jahr}→2026 = +{steigerung*100:.1f}%")
+
+        return pruef, referenzpreis
 
     # ═══════════════════════════════════════════════════════════
     # SHARED: Reisekosten
@@ -309,13 +527,24 @@ class GraphPricingEngine:
         km_rate = self._q1("MATCH (r:Reisekostenregel {id: 'RK_PKW'}) RETURN r.betrag_pro_km") or 1.10
         reise_std = self._q1("MATCH (s:Stundensatz {id: 'STD_EINFACH'}) RETURN s.betrag") or 180.0
 
-        reise = km_rt * km_rate + (dur_min * 2 / 60) * reise_std
+        reise_single = km_rt * km_rate + (dur_min * 2 / 60) * reise_std
+
+        pruef_tage = self._get_pruef_tage(merkmale)
+        pruef_stunden = pruef_tage * 8
+        if pruef_stunden > 18:
+            anzahl_anfahrten = 3
+        elif pruef_stunden > 9:
+            anzahl_anfahrten = 2
+        else:
+            anzahl_anfahrten = 1
+        reise = reise_single * anzahl_anfahrten
 
         zuordnung = standort.get("zuordnung", "nearest")
         label = "Zuständiger TÜV-Standort" if zuordnung == "crm" else "Nächster TÜV-Standort"
         self._log("reisekosten", f"{label}: {standort['name']} ({standort['distance_km']:.0f}km)", f"{reise:.2f}",
                   f"STD_{standort.get('id','?')}", ref=f"LPV Teil A §4.3: {km_rate}€/km PKW, Reisezeit × {reise_std}€/h")
-        self._log("reisekosten", "Regel: nur 1 Anfahrt bei mehrtägig (RK_MEHRTAEGIG)", "1× roundtrip", "RK_MEHRTAEGIG")
+        anfahrt_label = f"{anzahl_anfahrten} Anfahrt{'en' if anzahl_anfahrten > 1 else ''} ({pruef_stunden:.0f}h Prüfzeit)"
+        self._log("reisekosten", f"Regel: {anfahrt_label} (Veit: >9h=2, >18h=3)", f"{anzahl_anfahrten}× roundtrip", "RK_MEHRTAEGIG")
 
         zuordnung_warnung = standort.get("zuordnung_warnung")
         if zuordnung_warnung:

@@ -69,6 +69,8 @@ class Angebot:
     similar: list[SimilarAnlage] = field(default_factory=list)
     lpv_referenz: str = ""
     warnings: list[str] = field(default_factory=list)
+    referenzpreis: dict | None = None
+    zusatzleistungen: list[dict] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -88,6 +90,8 @@ class Angebot:
             ],
             "lpv_referenz": self.lpv_referenz,
             "warnings": self.warnings,
+            "referenzpreis": self.referenzpreis,
+            "zusatzleistungen": self.zusatzleistungen,
         }
 
 

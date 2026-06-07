@@ -1,12 +1,13 @@
 "use client";
 
-import { Calculator, AlertTriangle, CheckCircle, Lightbulb, Shield, Database, Code, FileText } from "lucide-react";
+import { Calculator, AlertTriangle, CheckCircle, Lightbulb, Shield, Database, Code } from "lucide-react";
 
 export interface ProvenanceStep {
   step: string;
   source: string;
   value: unknown;
   node_id: string;
+  ref?: string;
 }
 
 export interface BlitzschutzAngebot {
@@ -14,6 +15,7 @@ export interface BlitzschutzAngebot {
   total: number;
   breakdown: { grund: number; pruef: number; reise: number; bericht: number; subtotal: number };
   zuschlaege: { name: string; percent: number; amount: number }[];
+  zusatzleistungen?: { name: string; preis: number; positionen: { name: string; betrag: number }[]; quelle: string }[];
   confidence: number;
   confidence_reason: string;
   similar: unknown[];
@@ -44,7 +46,7 @@ export default function BlitzschutzAngebotPanel({ angebot }: Props) {
             <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#0046ad] to-[#003890] flex items-center justify-center">
               <Calculator className="w-3.5 h-3.5 text-white" />
             </div>
-            <h3 className="font-semibold text-sm text-slate-900">Blitzschutz-Kalkulation</h3>
+            <h3 className="font-semibold text-sm text-slate-900">{angebot.gewerk?.split(" ")[0] || "Kalkulation"}-Kalkulation</h3>
           </div>
           <ConfidencePill level={confLevel} value={angebot.confidence} />
         </div>
@@ -70,6 +72,25 @@ export default function BlitzschutzAngebotPanel({ angebot }: Props) {
                 <td className="px-4 py-2 text-right font-semibold text-red-700 tabular-nums">{formatEuro(z.amount)}</td>
               </tr>
             ))}
+
+            {angebot.zusatzleistungen && angebot.zusatzleistungen.length > 0 && (
+              <>
+                <tr className="border-t-2 border-blue-200">
+                  <td colSpan={3} className="px-4 py-2 text-[11px] font-semibold text-blue-600 uppercase tracking-wider bg-blue-50/40">
+                    Zusatzleistungen
+                  </td>
+                </tr>
+                {angebot.zusatzleistungen.map((zl, i) =>
+                  zl.positionen.map((pos, j) => (
+                    <tr key={`zl-${i}-${j}`} className="border-t border-blue-100 bg-blue-50/20">
+                      <td className="px-4 py-2 font-medium text-blue-800 text-[13px]">{j === 0 ? zl.name : ""}</td>
+                      <td className="px-4 py-2 text-blue-500 text-xs">{pos.name}</td>
+                      <td className="px-4 py-2 text-right font-semibold text-blue-800 tabular-nums">{j === 0 && zl.preis > 0 ? formatEuro(zl.preis) : ""}</td>
+                    </tr>
+                  ))
+                )}
+              </>
+            )}
           </tbody>
           <tfoot>
             <tr className="border-t-2 border-slate-200 bg-slate-50/80">
@@ -132,32 +153,9 @@ export default function BlitzschutzAngebotPanel({ angebot }: Props) {
         </p>
       </div>
 
-      {/* Provenance (only graph mode) */}
+      {/* Quellennachweis */}
       {angebot.provenance && angebot.provenance.length > 0 && (
-        <details className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden animate-fade-in">
-          <summary className="px-4 py-3 cursor-pointer text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition flex items-center gap-2">
-            <FileText className="w-4 h-4" />
-            Herkunft der Werte — {angebot.provenance.length} Graph-Abfragen
-          </summary>
-          <div className="px-4 pb-4 space-y-1.5 border-t border-slate-100">
-            {angebot.provenance.map((p, i) => (
-              <div key={i} className="text-xs flex items-start gap-2 mt-1.5">
-                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-medium flex-shrink-0 border ${
-                  p.step === "pruefkosten" ? "bg-blue-50 text-blue-700 border-blue-200" :
-                  p.step === "grundkosten" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
-                  p.step === "zuschlag" ? "bg-red-50 text-red-700 border-red-200" :
-                  p.step === "cross_sell" ? "bg-purple-50 text-purple-700 border-purple-200" :
-                  "bg-amber-50 text-amber-700 border-amber-200"
-                }`}>
-                  {p.step.toUpperCase().slice(0,8)}
-                </span>
-                <span className="text-slate-500">{p.source}</span>
-                <span className="text-slate-400 ml-auto font-mono">{typeof p.value === 'number' ? `${p.value}€` : String(p.value).slice(0,25)}</span>
-                {p.node_id && <span className="text-[10px] text-slate-300 font-mono">{p.node_id}</span>}
-              </div>
-            ))}
-          </div>
-        </details>
+        <Quellennachweis provenance={angebot.provenance} />
       )}
     </div>
   );
@@ -172,6 +170,112 @@ function Row({ label, sub, amount, highlight }: { label: string; sub: string; am
         {formatEuro(amount)}
       </td>
     </tr>
+  );
+}
+
+type SourceType = "regel" | "fachexperte" | "heuristik" | "statistik";
+
+function classifySource(ref: string | undefined): SourceType {
+  if (!ref) return "heuristik";
+  const r = ref.toLowerCase();
+  if (r.startsWith("lpv") || r.startsWith("kalkulationshilfen")) return "regel";
+  if (r.includes("veit") || r.includes("pausch")) return "fachexperte";
+  if (r.includes("batch") || r.includes("statistik")) return "statistik";
+  if (r.includes("heuristik")) return "heuristik";
+  return "regel";
+}
+
+function extractQuelle(ref: string | undefined): string {
+  if (!ref) return "—";
+  const colon = ref.indexOf(":");
+  if (colon > 0 && colon < 40) return ref.slice(0, colon);
+  return ref.length > 45 ? ref.slice(0, 42) + "…" : ref;
+}
+
+const SOURCE_BADGE: Record<SourceType, { label: string; cls: string }> = {
+  regel:        { label: "REGEL",        cls: "bg-emerald-50 text-emerald-700 border-emerald-300" },
+  fachexperte:  { label: "EXPERTE",      cls: "bg-blue-50 text-blue-700 border-blue-300" },
+  heuristik:    { label: "HEURISTIK",    cls: "bg-amber-50 text-amber-700 border-amber-300" },
+  statistik:    { label: "STATISTIK",    cls: "bg-purple-50 text-purple-700 border-purple-300" },
+};
+
+const SKIP_STEPS = new Set(["confidence", "cross_sell"]);
+
+function formatProvValue(v: unknown): string {
+  const s = String(v);
+  if (s.includes("roundtrip")) return s;
+  if (s.includes("Tage")) return s;
+  if (s.includes("km")) return s;
+  const m = s.match(/([\d.,]+)\s*\(war\s*([\d.,]+)\)/);
+  if (m) return `${parseFloat(m[1]).toLocaleString("de-DE")}€`;
+  const m2 = s.match(/^([\d.,]+)$/);
+  if (m2) {
+    const n = parseFloat(m2[1].replace(",", ""));
+    if (!isNaN(n) && n >= 1) return `${n.toLocaleString("de-DE")}€`;
+  }
+  return s.length > 35 ? s.slice(0, 32) + "…" : s;
+}
+
+function deduplicateProvenance(entries: ProvenanceStep[]): ProvenanceStep[] {
+  const seen = new Set<string>();
+  return entries.filter(p => {
+    const key = `${p.step}:${p.source}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function Quellennachweis({ provenance }: { provenance: ProvenanceStep[] }) {
+  const entries = deduplicateProvenance(provenance.filter(p => !SKIP_STEPS.has(p.step)));
+  if (entries.length === 0) return null;
+
+  const regelCount = entries.filter(p => classifySource(p.ref) === "regel").length;
+  const experteCount = entries.filter(p => classifySource(p.ref) === "fachexperte").length;
+  const heuristikCount = entries.filter(p => classifySource(p.ref) === "heuristik").length;
+
+  return (
+    <details className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden animate-fade-in">
+      <summary className="px-4 py-3 cursor-pointer text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-50 transition flex items-center gap-2">
+        <Shield className="w-4 h-4 text-[#0046ad]" />
+        <span>Quellennachweis</span>
+        <span className="ml-auto flex items-center gap-1.5 text-[10px]">
+          {regelCount > 0 && <span className="px-1.5 py-0.5 rounded border bg-emerald-50 text-emerald-700 border-emerald-300 font-semibold">{regelCount} Regel</span>}
+          {experteCount > 0 && <span className="px-1.5 py-0.5 rounded border bg-blue-50 text-blue-700 border-blue-300 font-semibold">{experteCount} Experte</span>}
+          {heuristikCount > 0 && <span className="px-1.5 py-0.5 rounded border bg-amber-50 text-amber-700 border-amber-300 font-semibold">{heuristikCount} Heuristik</span>}
+        </span>
+      </summary>
+      <div className="border-t border-slate-100">
+        <table className="w-full text-[12px]">
+          <thead>
+            <tr className="bg-slate-50/80">
+              <th className="text-left px-4 py-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Position</th>
+              <th className="text-right px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Wert</th>
+              <th className="text-left px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Quelle</th>
+              <th className="text-center px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Typ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {entries.map((p, i) => {
+              const typ = classifySource(p.ref);
+              const badge = SOURCE_BADGE[typ];
+              return (
+                <tr key={i} className="border-t border-slate-50 hover:bg-slate-50/50 transition">
+                  <td className="px-4 py-1.5 text-slate-700 font-medium">{p.source}</td>
+                  <td className="px-3 py-1.5 text-right text-slate-500 font-mono tabular-nums">{formatProvValue(p.value)}</td>
+                  <td className="px-3 py-1.5 text-slate-400" title={p.ref}>{extractQuelle(p.ref)}</td>
+                  <td className="px-3 py-1.5 text-center">
+                    <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold border ${badge.cls}`}>
+                      {badge.label}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </details>
   );
 }
 

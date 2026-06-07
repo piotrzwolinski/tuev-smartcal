@@ -18,6 +18,8 @@ from products.dguv_v3.pricing_rules import (
     dguv_choose_bericht_typ,
     dguv_zuschlaege,
     dguv_validate_ranges,
+    dguv_referenzpreis,
+    dguv_referenzpreis_vergleich,
 )
 from products.dguv_v3.golden_set import load_dguv_golden_set
 

@@ -115,7 +115,7 @@
 ## Phase 4: Launch-Vorbereitung (KW24–KW25) — 2 Wochen
 
 ### KW24 — Abnahme & Demo-Prep
-- [ ] Finale Abnahme mit Feith / Pausch / Pfeiffer
+- [ ] Finale Abnahme mit Veit / Pausch / Pfeiffer
 - [ ] Demo-Skript für Abteilungsleitertagung vorbereiten
 - [ ] Demo-Daten aufbereiten (repräsentative Szenarien)
 - [ ] Fallback-Szenarien testen
@@ -140,10 +140,10 @@
 | Dokumente: Inspektionsberichte, Anfragen, Angebote, LPV (Rohdaten, kein Aufbereiten nötig) | KW14 | Pausch / Pfeiffer |
 | Fachlicher Ansprechpartner für Validierung der extrahierten Regeln | KW15–16 | Pausch |
 | Styleguide / Brand Assets | KW17 | Digital Team / Marco Schäfer |
-| Benutzerrollen-Definition | KW17 | Feith |
+| Benutzerrollen-Definition | KW17 | Veit |
 | 2–3 Tester (Sachverständige) | KW21 | Pausch |
 | Hosting-Entscheidung | KW22 | IT / Marco Schäfer |
-| Demo-Abnahme & Skript-Review | KW24 | Feith |
+| Demo-Abnahme & Skript-Review | KW24 | Veit |
 
 ---
 

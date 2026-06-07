@@ -307,7 +307,6 @@ export default function DemoPage() {
               {/* Right: Kalkulation + Trace — independent scroll */}
               {(kalkulation || trace.length > 0) && (
                 <div className="w-1/2 overflow-y-auto min-h-0 space-y-4 animate-slide-in-right">
-                  {trace.length > 0 && <AgentTrace steps={trace} loading={loading} />}
                   {kalkulation && <KalkulationPanel kalkulation={kalkulation} />}
                 </div>
               )}

@@ -35,9 +35,38 @@ STAFFEL = [
 ]
 
 
+BSK_ABSTAND = {
+    Schutzklasse.I: 10,
+    Schutzklasse.II: 10,
+    Schutzklasse.III: 15,
+    Schutzklasse.IV: 20,
+}
+
+
+def estimate_ableitungen(m: BlitzschutzMerkmale) -> tuple[int, bool]:
+    """Estimate Ableitungen from m² + Schutzklasse when not provided.
+
+    Returns (anzahl, was_estimated).
+    """
+    if m.anzahl_ableitungen is not None:
+        return m.anzahl_ableitungen, False
+
+    if m.gesamtflaeche_m2:
+        import math
+        side = math.sqrt(m.gesamtflaeche_m2)
+        umfang = side * 4
+        abstand = BSK_ABSTAND.get(m.schutzklasse, 15)
+        estimated = max(4, int(round(umfang / abstand)))
+    else:
+        lo, hi = TYPICAL_RANGES.get(m.nutzung, (3, 60))
+        estimated = (lo + hi) // 2
+
+    return estimated, True
+
+
 def blitz_pruefkosten(m: BlitzschutzMerkmale) -> float:
     """Prüfkosten = sum(MS × preis_pro_ms) wg Staffeln."""
-    n = m.anzahl_ableitungen
+    n, _ = estimate_ableitungen(m)
 
     if n <= SCHWELLE_VEREINBARUNG:
         return n * PREIS_PRO_MESSSTELLE
@@ -63,7 +92,7 @@ def blitz_estimate_pruef_tage(m: BlitzschutzMerkmale) -> float:
     Heurystyka z 99 Berichte EG Nürnberg Q1/2025:
     ~15 Messstellen/dzień dla średniego obiektu.
     """
-    n = m.anzahl_ableitungen
+    n, _ = estimate_ableitungen(m)
     if n <= 10:
         return 0.5
     if n <= 30:
@@ -77,7 +106,7 @@ def blitz_estimate_pruef_tage(m: BlitzschutzMerkmale) -> float:
 
 def blitz_choose_bericht_typ(m: BlitzschutzMerkmale) -> str:
     """LPV Teil A §5: klein (≤10 MS) / standard (≤40 MS) / komplex (>40 MS)."""
-    n = m.anzahl_ableitungen
+    n, _ = estimate_ableitungen(m)
     if n <= 10:
         return "klein"
     if n <= 40:
@@ -139,25 +168,32 @@ def blitz_validate_ranges(m: BlitzschutzMerkmale) -> tuple[float, str]:
     reasons = []
     confidence = 1.0
 
+    n, was_estimated = estimate_ableitungen(m)
+
+    if was_estimated:
+        confidence *= 0.65
+        reasons.append(
+            f"Ableitungen geschätzt ({n}) aus Gebäudefläche/Typ — bitte Anzahl Messstellen angeben für präzisere Kalkulation"
+        )
+
     # Check Anzahl Ableitungen vs typical range
     lo, hi = TYPICAL_RANGES.get(m.nutzung, (3, 200))
-    if m.anzahl_ableitungen < lo:
+    if n < lo:
         confidence *= 0.8
         reasons.append(
-            f"Anzahl Ableitungen ({m.anzahl_ableitungen}) niższa niż typowa "
+            f"Anzahl Ableitungen ({n}) niższa niż typowa "
             f"dla {m.nutzung.value} (typisch {lo}-{hi})"
         )
-    elif m.anzahl_ableitungen > hi * 1.5:
+    elif n > hi * 1.5:
         confidence *= 0.7
         reasons.append(
-            f"Anzahl Ableitungen ({m.anzahl_ableitungen}) znacznie wyższa niż typowa "
+            f"Anzahl Ableitungen ({n}) znacznie wyższa niż typowa "
             f"dla {m.nutzung.value} (typisch {lo}-{hi}) — edge case?"
         )
 
     # Check Schutzklasse vs typical
     typical_sk = TYPICAL_SCHUTZKLASSE.get(m.nutzung)
     if m.schutzklasse is None:
-        # Sachverständiger nie wypełnił / PDF nie zawiera — fallback do typowej dla Nutzung
         confidence *= 0.75
         fallback = typical_sk.value if typical_sk else "III"
         reasons.append(
@@ -171,10 +207,10 @@ def blitz_validate_ranges(m: BlitzschutzMerkmale) -> tuple[float, str]:
         )
 
     # Ausschreibung-discount warning (LPV-validated 2026-04-16, n=316 Anlagen Augsburg)
-    if m.anzahl_ableitungen > 25:
+    if n > 25:
         confidence *= 0.85
         reasons.append(
-            f"⚠ {m.anzahl_ableitungen} Trennstellen >25 — w realnych Ausschreibungen "
+            f"⚠ {n} Trennstellen >25 — w realnych Ausschreibungen "
             f"(Bieter-Wettbewerb) może obowiązywać rabatt 30-50% vs LPV nominal "
             f"(z Augsburg-StV: ~12-22€/TS zamiast 33€/TS dla dużych obiektów)"
         )

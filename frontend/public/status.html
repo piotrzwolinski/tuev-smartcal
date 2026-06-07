@@ -360,6 +360,208 @@
     line-height: 1.6;
   }
 
+  /* GANTT / PROJECT PLAN */
+  .gantt-grid {
+    display: grid;
+    grid-template-columns: 140px repeat(7, 1fr);
+    gap: 0;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 12px;
+  }
+  .gantt-header {
+    background: #f1f4f9;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 10px;
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .gantt-header:first-child { text-align: left; padding-left: 14px; }
+  .gantt-header.kw-now { background: var(--tuev-light); color: var(--tuev-blue); }
+  .gantt-header.kw-deadline { background: var(--red-bg); color: var(--red); }
+  .gantt-stream-label {
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--text);
+    padding: 10px 14px;
+    background: #f8f9fc;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gantt-stream-label .stream-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .gantt-cell {
+    padding: 6px 4px;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid #f0f2f5;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    position: relative;
+  }
+  .gantt-cell .task-chip {
+    display: block;
+    padding: 3px 6px;
+    border-radius: 4px;
+    margin-bottom: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .chip-red { background: var(--red-bg); color: var(--red); }
+  .chip-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .chip-blue { background: var(--tuev-light); color: var(--tuev-blue); }
+  .chip-green { background: var(--green-bg); color: var(--green); }
+  .chip-gray { background: #e8ecf4; color: var(--text-secondary); }
+
+  .stream-card {
+    background: #f8f9fc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .stream-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .stream-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .stream-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .stream-card ul li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 3px 0 3px 18px;
+    position: relative;
+    line-height: 1.6;
+  }
+  .stream-card ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    opacity: 0.7;
+  }
+  .stream-a ul li::before { background: var(--red); }
+  .stream-b ul li::before { background: var(--yellow); }
+  .stream-c ul li::before { background: var(--tuev-blue); }
+
+  .milestone-bar {
+    background: linear-gradient(135deg, var(--tuev-blue), var(--tuev-dark));
+    color: white;
+    padding: 14px 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .milestone-bar .ms-date {
+    font-size: 11px;
+    opacity: 0.8;
+    font-weight: 400;
+  }
+
+  /* WP LINKS in stream cards */
+  .stream-card a.wp-link {
+    color: var(--tuev-blue);
+    text-decoration: none;
+    font-weight: 700;
+    border-bottom: 1px dotted var(--tuev-blue);
+  }
+  .stream-card a.wp-link:hover {
+    color: var(--tuev-dark);
+    border-bottom-style: solid;
+  }
+
+  /* CHEAT SHEET (details/summary) */
+  .gap-item details {
+    margin-top: 10px;
+    border-top: 1px dashed var(--border);
+    padding-top: 8px;
+  }
+  .gap-item details summary {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tuev-blue);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+  }
+  .gap-item details summary::-webkit-details-marker { display: none; }
+  .gap-item details summary::before {
+    content: '\25B6\00a0';
+    font-size: 9px;
+    transition: transform 0.15s;
+    display: inline-block;
+  }
+  .gap-item details[open] summary::before {
+    transform: rotate(90deg);
+  }
+  .gap-item details .cheat {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    background: #f0f3f8;
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .gap-item details .cheat strong { color: var(--text); }
+  .gap-item details .cheat ul {
+    list-style: disc;
+    padding-left: 18px;
+    margin: 4px 0;
+  }
+  .gap-item details .cheat ul li {
+    padding: 2px 0;
+  }
+  .gap-item details .cheat .cheat-table {
+    width: 100%;
+    margin: 6px 0;
+    font-size: 12px;
+    border-collapse: collapse;
+  }
+  .gap-item details .cheat .cheat-table td,
+  .gap-item details .cheat .cheat-table th {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    text-align: left;
+    font-size: 12px;
+  }
+  .gap-item details .cheat .cheat-table th {
+    background: #e8ecf4;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
   /* RESPONSIVE */
   @media (max-width: 860px) {
     .header { padding: 32px 24px; }
@@ -535,7 +737,7 @@
   <section class="section">
     <h2 class="section-title">2. Was fehlt f&uuml;r MVP</h2>
     <p class="section-intro">
-      20 Arbeitspakete in 4 Kategorien. MVP-Deadline: KW27 (06.07.2026, Abteilungsleitertagung).
+      18 Arbeitspakete in 4 Kategorien. MVP-Deadline: KW27 (06.07.2026, Abteilungsleitertagung).
     </p>
 
     <!-- Pricing & Kalibrierung -->
@@ -545,47 +747,93 @@
 
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp1">
         <div class="gap-item-header">
           <span class="gap-item-title">1. Schieberegler Listenpreis / Marktpreis / Ausschreibung</span>
-          
+
         </div>
         <div class="gap-item-text">
           PoC berechnet LPV-Listenpreise. Reale Faktura ist <strong>-46% bis -85% niedriger</strong> (aus Versand-Daten).
           Ohne Marktpreis-Faktor gibt das Tool Preise aus, die 2-3&times; h&ouml;her sind als der Markt. <strong>#1 Blocker f&uuml;r Nutzbarkeit.</strong>
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Problem:</strong> PoC rechnet mit PLV (offizieller Listenpreis). Der Markt zahlt deutlich weniger.<br>
+          <strong>Datenquelle:</strong> Versand-Daten (441_419 RLT, 57234 Blitz) &mdash; reale Faktura vs. LPV.<br>
+          <table class="cheat-table">
+            <tr><th>Produkt</th><th>LPV</th><th>Faktura</th><th>Delta</th></tr>
+            <tr><td>Blitzschutz</td><td>100%</td><td>~15%</td><td><strong>-85%</strong></td></tr>
+            <tr><td>RLT HYG</td><td>100%</td><td>~54%</td><td><strong>-46%</strong></td></tr>
+            <tr><td>RLT Garage</td><td>100%</td><td>~127%</td><td>+27% (Anomalie)</td></tr>
+          </table>
+          <strong>MVP-L&ouml;sung:</strong> Slider mit 3 Modi: Listenpreis / Marktpreis / Ausschreibung. Marktpreis-Faktor pro Produkt aus Versand-Medianen.
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp2">
         <div class="gap-item-header">
           <span class="gap-item-title">2. Kriterien Preisfindung (S. Pausch)</span>
-          
+
         </div>
         <div class="gap-item-text">
           3 Faktoren: Anlagenmerkmale (60-90%), Dokumentation (8-15%), Ortskenntnis (2-25%).
           Skaliert nicht-linear mit BGF. Einbauen als R&uuml;ckfragen + Confidence-Modifikatoren.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Quelle:</strong> Kriterien Preisfindung_EG.docx (Stefan Pausch)<br>
+          <strong>3 Faktoren der Preisbildung:</strong>
+          <table class="cheat-table">
+            <tr><th>Geb&auml;udegr&ouml;&szlig;e</th><th>Anlagenmerkmale</th><th>Dokumentation</th><th>Ortskenntnis</th></tr>
+            <tr><td>bis 2.500 m&sup2; BGF</td><td><strong>90%</strong></td><td>8%</td><td>2%</td></tr>
+            <tr><td>einfach, bis 10.000 m&sup2;</td><td><strong>75%</strong></td><td>10%</td><td>15%</td></tr>
+            <tr><td>&gt;10.000 m&sup2; + komplex</td><td><strong>60%</strong></td><td>15%</td><td><strong>25%</strong></td></tr>
+          </table>
+          <strong>Nicht-linear:</strong> Skalierung ist exponentiell &mdash; gro&szlig;e, komplexe Geb&auml;ude (Krankenh&auml;user, Einkaufszentren) haben +40% Aufschlag aus &ldquo;weichen&rdquo; Faktoren.<br>
+          <strong>MVP:</strong> R&uuml;ckfragen zu Doku-Zustand + Betreiber-Kenntnis &rarr; Confidence-Modifikator auf Preis.
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp3">
         <div class="gap-item-header">
           <span class="gap-item-title">3. Volkswohlbund-Kalibrierung / Rahmenvertrag-Modell</span>
-          
+
         </div>
         <div class="gap-item-text">
           Reale Preise: UV PLV 270&euro; vs EP 101&euro; (-63%). Rahmenvertrag-Rabattmodell f&uuml;r wiederkehrende Kunden.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Quelle:</strong> Kalkulation INTERN Volkswohlbund Preisliste (Stand 1.7.2025, 3J Preisbindung). 340 Positionen, 2 Sheets.<br>
+          <strong>Beispiel UV &le;15 Stromkreise (DGUV A3):</strong>
+          <table class="cheat-table">
+            <tr><th>Preis-Typ</th><th>Betrag</th></tr>
+            <tr><td>PLV (Listenpreis f&uuml;r Kunden)</td><td><strong>270&euro;</strong></td></tr>
+            <tr><td>EP (interne Kalkulation)</td><td><strong>101&euro;</strong></td></tr>
+            <tr><td>Delta</td><td><strong>-63%</strong></td></tr>
+          </table>
+          <strong>Kalkulationsschichten:</strong> Basispreis &times; Eskalation (+21,5% kumulativ 2022-2025) + Zuschlag Projektleitung (10%) + Risiko (5%) + Festpreisbindung (10%) + Verhandlungszuschlag (5%) - Synergieeffekte (-2%).<br>
+          <strong>MVP:</strong> Rahmenvertrag-Modus &mdash; wiederkehrende Kunden bekommen kalkulierten EP statt PLV. Slider zwischen PLV / EP / Verhandlungspreis.
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp4">
         <div class="gap-item-header">
           <span class="gap-item-title">4. Staffel-Kalibrierung Blitzschutz</span>
-          
+
         </div>
         <div class="gap-item-text">
           57234_Versand Erl&ouml;s-h-Satz Distribution vs. aktuelle Staffeln (33/30/28/26/24&euro;).
           Schwellen-Pr&uuml;fung: BSK 40&euro; vs 45,50&euro;, Garage &le;25 vs &le;30 SP (Kl&auml;rung mit S. Pausch).
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Quelle:</strong> 57234_Versand (4.875 Blitzschutz-Datens&auml;tze) + Kalkulationshilfen Angebote v2.xlsx<br>
+          <strong>Aktuelle Staffeln im PoC:</strong> 33/30/28/26/24&euro; pro Messpunkt (fallend mit Menge).<br>
+          <strong>Diskrepanzen:</strong>
+          <ul>
+            <li>BSK (Blitzschutzkomponente): PoC = 40&euro;, Kalkulationshilfen = <strong>45,50&euro;</strong></li>
+            <li>Garage-Schwelle: PoC = &le;30 SP, Kalkulationshilfen = <strong>&le;25 SP</strong></li>
+          </ul>
+          <strong>Versand-Erl&ouml;s-h-Satz:</strong> zeigt reale &euro;/h pro Auftrag &mdash; Distribution validiert oder widerlegt die Staffel-Breakpoints.<br>
+          <strong>Kl&auml;rung mit S. Pausch n&ouml;tig</strong> &mdash; welche Schwellen gelten aktuell?
+        </div></details>
       </div>
     </div>
 
@@ -596,46 +844,81 @@
 
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp5">
         <div class="gap-item-header">
           <span class="gap-item-title">5. Angebots-Export (PDF / Textbausteine)</span>
-          
+
         </div>
         <div class="gap-item-text">
-          S. Feith-Request: Output zum Kopieren in SAP/Angebot. PDF mit Positionen, Textbl&ouml;cke.
+          S. Veit-Request: Output zum Kopieren in SAP/Angebot. PDF mit Positionen, Textbl&ouml;cke.
           <strong>Ohne Export ist das Tool ein Kalkulator, kein Workflow-Tool.</strong>
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Request von S. Veit:</strong> Sachverst&auml;ndiger berechnet Preis &rarr; braucht Output f&uuml;r SAP-Angebot.<br>
+          <strong>2 Export-Formate:</strong>
+          <ul>
+            <li><strong>PDF:</strong> Angebot mit Positionen, Einzelpreise, Gesamtsumme, Textbl&ouml;cke &mdash; druckfertig</li>
+            <li><strong>Textbausteine:</strong> Copy-Paste-Bl&ouml;cke f&uuml;r SAP &mdash; Position, Menge, EP, Gesamt</li>
+          </ul>
+          <strong>Warum kritisch:</strong> Ohne Export muss SV Preise manuell abtippen &rarr; kein Zeitgewinn gegen&uuml;ber Excel.<br>
+          <strong>Sp&auml;ter (2029):</strong> Direkte SAP S4/HANA API-Integration (siehe Punkt 20).
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp6">
         <div class="gap-item-header">
           <span class="gap-item-title">6. Multi-Geb&auml;ude-Angebot</span>
-          
+
         </div>
         <div class="gap-item-text">
-          S. Feith: &quot;Schule + Turnhalle + Sporthalle = 3 Anlagen, 1 Angebot.&quot;
+          S. Veit: &quot;Schule + Turnhalle + Sporthalle = 3 Anlagen, 1 Angebot.&quot;
           Aktuell: Single-Anlage pro Anfrage. Ben&ouml;tigt: Anlagen-Liste &rarr; Gesamtangebot.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Use Case (S. Veit):</strong> Schulkomplex = Schule + Turnhalle + Sporthalle &rarr; 3 verschiedene Anlagen, <strong>1 Gesamtangebot</strong>.<br>
+          <strong>Aktuell:</strong> Jede Anlage einzeln berechnen, manuell zusammenf&uuml;hren.<br>
+          <strong>MVP:</strong> Anlagen-Warenkorb &mdash; mehrere Anlagen hinzuf&uuml;gen, Reisekosten nur 1&times;, Gesamtsumme mit B&uuml;ndelrabatt.<br>
+          <strong>Verbindung zu Punkt 11:</strong> Kombi-Begehung = mehrere Produkte + mehrere Geb&auml;ude gleichzeitig.
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp7">
         <div class="gap-item-header">
           <span class="gap-item-title">7. Strukturiertes Formular (Alternative zu Chat)</span>
-          
+
         </div>
         <div class="gap-item-text">
           Drop-downs, Slider, Eingabefelder. Sachverst&auml;ndiger wei&szlig; was er ausf&uuml;llen muss &mdash; Chat ist f&uuml;r Neukunden, Formular f&uuml;r Profis.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>2 Modi f&uuml;r 2 User-Typen:</strong>
+          <ul>
+            <li><strong>Chat:</strong> f&uuml;r Neukunden/Vertrieb &mdash; nat&uuml;rliche Sprache, System stellt R&uuml;ckfragen</li>
+            <li><strong>Formular:</strong> f&uuml;r erfahrene SV &mdash; kennt alle Parameter, will schnell ausf&uuml;llen</li>
+          </ul>
+          <strong>Formular-Felder pro Produkt:</strong> z.B. Blitzschutz = Schutzklasse, Messpunkte, Fangeinrichtung, Geb&auml;udefl&auml;che, PLZ.<br>
+          <strong>Beide Modi f&uuml;hren zur selben Engine</strong> &mdash; Formular-Eingabe = gleiche Parameter wie Chat-Extraktion.
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp8">
         <div class="gap-item-header">
           <span class="gap-item-title">8. Schieberegler grob/mittel/fein</span>
-          
+
         </div>
         <div class="gap-item-text">
-          S. Feith-Request: grob = nur BGF + Sicherheitsfaktor, fein = alle Merkmale. Chat-Flow unterst&uuml;tzt das implizit, UI-Toggle fehlt.
+          S. Veit-Request: grob = nur BGF + Sicherheitsfaktor, fein = alle Merkmale. Chat-Flow unterst&uuml;tzt das implizit, UI-Toggle fehlt.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>3 Genauigkeitsstufen:</strong>
+          <table class="cheat-table">
+            <tr><th>Stufe</th><th>Input</th><th>Genauigkeit</th><th>Use Case</th></tr>
+            <tr><td><strong>Grob</strong></td><td>nur BGF + Geb&auml;udeart</td><td>&plusmn;30%</td><td>Erstgespr&auml;ch, Budgetsch&auml;tzung</td></tr>
+            <tr><td><strong>Mittel</strong></td><td>+ Schutzklasse, Stockwerke</td><td>&plusmn;15%</td><td>Angebot f&uuml;r Bestandskunde</td></tr>
+            <tr><td><strong>Fein</strong></td><td>alle Merkmale detailliert</td><td>&plusmn;5%</td><td>Verbindliches Angebot</td></tr>
+          </table>
+          <strong>PoC-Status:</strong> Chat-Flow macht das implizit (fragt nach bis alle Parameter da sind). Fehlt: <strong>expliziter UI-Toggle</strong> + Anzeige &ldquo;Genauigkeit: &plusmn;X%&rdquo;.
+        </div></details>
       </div>
     </div>
 
@@ -646,55 +929,96 @@
 
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp9">
         <div class="gap-item-header">
           <span class="gap-item-title">9. MA507 Versand-Daten (DGUV V3)</span>
-          
+
         </div>
         <div class="gap-item-text">
           Golden Set aktuell nur Gersthofen (40 Anlagen). Mit Versand: tausende Eintr&auml;ge f&uuml;r echte Kalibrierung.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Aktuell:</strong> DGUV V3 Golden Set = 40 Anlagen aus Gersthofen-Ausschreibung (1.393 LV-Positionen).<br>
+          <strong>Fehlt:</strong> Versand-Daten f&uuml;r MA507 (analog zu 441_419 f&uuml;r RLT und 57234 f&uuml;r Blitz).<br>
+          <strong>Erwartung:</strong> Tausende historische DGUV-V3-Auftr&auml;ge mit realen Preisen, Fl&auml;chen, Kategorien.<br>
+          <strong>Warum wichtig:</strong> Ohne Versand kann DGUV V3 nicht gegen Marktpreise kalibriert werden &mdash; Staffeln sind nur aus LPV abgeleitet, nicht validiert.
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp10">
         <div class="gap-item-header">
           <span class="gap-item-title">10. Inspektionspflichten-Lookup</span>
-          
+
         </div>
         <div class="gap-item-text">
           70 Eintr&auml;ge (netinformRE): Regelwerk &times; Geb&auml;udeart &rarr; Pr&uuml;fzyklus + Qualifikation.
           Chat: &quot;Ihre n&auml;chste Pr&uuml;fung ist in X Jahren f&auml;llig.&quot;
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Quelle:</strong> Inspektionspflichten.xlsx (netinformRE), 69 Eintr&auml;ge.<br>
+          <strong>Struktur:</strong> Rechtsgebiet &times; Regelwerk &times; Geb&auml;udeart &rarr; Pr&uuml;fobjekt + Zyklus + Qualifikation.<br>
+          <strong>Beispiele:</strong>
+          <ul>
+            <li>DGUV-V 3 + Arbeitsst&auml;tte &rarr; ortsfeste Betriebsmittel &rarr; <strong>alle 4 Jahre</strong> &rarr; Elektrofachkraft</li>
+            <li>DIN EN 62305-3 + LPS Klasse I/II (kritisch) &rarr; <strong>jedes Jahr</strong> &rarr; Blitzschutz-Fachkraft</li>
+            <li>VDI 6022 + K&uuml;che &rarr; Hygienekontrolle &rarr; <strong>alle 3 Monate</strong> &rarr; Fachpersonal Kat.B</li>
+          </ul>
+          <strong>4 Rechtsgebiete:</strong> Arbeitsrecht, Baurecht, Hygiene, Sachversicherungswesen.<br>
+          <strong>MVP-Nutzen:</strong> Cross-Selling &mdash; Kunde fragt nach Blitzschutz-Preis, SmartCal sagt: &ldquo;Sie brauchen auch RLT-Pr&uuml;fung alle 3 Jahre.&rdquo;
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp11">
         <div class="gap-item-header">
           <span class="gap-item-title">11. Kombi-Begehung Rabatt</span>
-          
+
         </div>
         <div class="gap-item-text">
           Blitzschutz + RLT gleichzeitig &rarr; nur 1&times; Reisekosten. Cross-Product-Rabattlogik.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Szenario:</strong> Kunde bucht Blitzschutz + RLT + DGUV V3 f&uuml;r selbes Geb&auml;ude &rarr; Pr&uuml;fer f&auml;hrt 1&times; hin.<br>
+          <strong>Aktuell:</strong> Jedes Produkt berechnet eigene Reisekosten (Grundpauschale 256&euro; + km).<br>
+          <strong>MVP:</strong> Reisekosten nur 1&times; berechnen, auf Produkte aufteilen. Evtl. B&uuml;ndelrabatt auf Pr&uuml;fkosten.<br>
+          <strong>Verbindung:</strong> Punkt 6 (Multi-Geb&auml;ude) + Punkt 10 (Inspektionspflichten) &mdash; System empfiehlt Kombi automatisch.
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp12">
         <div class="gap-item-header">
           <span class="gap-item-title">12. CO-Warnanlagen (Garage-Erg&auml;nzung)</span>
-          
+
         </div>
         <div class="gap-item-text">
           Kalkulationshilfen hat eigene Sektion &quot;CO-Warnanlagen in Garagen&quot; (510&euro; + 242&euro; + 239&euro;). Garage-Kalkulation ist ohne das unvollst&auml;ndig.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Quelle:</strong> Kalkulationshilfen Angebote v2.xlsx &mdash; Sektion &ldquo;CO-Warnanlagen in Garagen&rdquo;.<br>
+          <strong>Positionen:</strong>
+          <ul>
+            <li>Grundpr&uuml;fung CO-Warnanlage: <strong>510&euro;</strong></li>
+            <li>Ordnungspr&uuml;fung: <strong>242&euro;</strong></li>
+            <li>Funktionspr&uuml;fung: <strong>239&euro;</strong></li>
+          </ul>
+          <strong>Kontext:</strong> Geschlossene Garagen haben h&auml;ufig CO-Warnanlagen. Wenn Kunde RLT-Garage bucht, fehlt aktuell die CO-Komponente &rarr; Angebot ist unvollst&auml;ndig.<br>
+          <strong>MVP:</strong> Automatische R&uuml;ckfrage: &ldquo;Hat die Garage eine CO-Warnanlage?&rdquo; &rarr; Positionen hinzuf&uuml;gen.
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp13">
         <div class="gap-item-header">
           <span class="gap-item-title">13. Conversation History / Session Persistence</span>
-          
+
         </div>
         <div class="gap-item-text">
           Sessions sind aktuell in-memory (gehen bei Restart verloren). PostgreSQL-backed Sessions f&uuml;r &quot;gestern berechnetes Angebot nochmal &ouml;ffnen&quot;.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Aktuell:</strong> Session-State lebt im RAM &mdash; bei Fly.io-Restart oder Redeploy ist alles weg.<br>
+          <strong>Problem:</strong> SV berechnet am Montag ein Angebot, will am Dienstag nochmal nachschauen &rarr; weg.<br>
+          <strong>MVP:</strong> PostgreSQL f&uuml;r Sessions + Berechnungshistorie. User sieht: &ldquo;Letzte Angebote&rdquo; mit Datum, Kunde, Produkt, Summe.<br>
+          <strong>Bonus:</strong> Historische Berechnungen = Trainingsdaten f&uuml;r Kalibrierung.
+        </div></details>
       </div>
     </div>
 
@@ -705,34 +1029,35 @@
 
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp14">
         <div class="gap-item-header">
           <span class="gap-item-title">14. T&Uuml;V Corporate Design</span>
-          
+
         </div>
         <div class="gap-item-text">
           Figma-basiertes Design System: Farben, Fonts, Logo, Komponenten.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Aktuell:</strong> Generic blau (#0046ad) + Inter Font &mdash; sieht &ldquo;nah dran&rdquo; aus, ist aber nicht offiziell.<br>
+          <strong>Ben&ouml;tigt von T&Uuml;V:</strong> Figma-Datei oder Styleguide mit offiziellen Farben, T&Uuml;V-Font, Logo-Platzierung, Komponentenbibliothek.<br>
+          <strong>MVP:</strong> Re-Skin der gesamten App. Header mit T&Uuml;V-Logo, offizielle Farben, Schriften.
+        </div></details>
       </div>
 
-      <div class="gap-item">
-        <div class="gap-item-header">
-          <span class="gap-item-title">15. Responsive / Tablet</span>
-          
-        </div>
-        <div class="gap-item-text">
-          Sachverst&auml;ndige sind im Au&szlig;endienst mit iPad. Aktuell Desktop-only.
-        </div>
-      </div>
-
-      <div class="gap-item">
+      <div class="gap-item" id="wp16">
         <div class="gap-item-header">
           <span class="gap-item-title">16. Vergleichsansicht / &Auml;hnliche Anlagen</span>
-          
+
         </div>
         <div class="gap-item-text">
           &quot;Letzte Woche hatte ich &auml;hnliches Geb&auml;ude — was war der Preis?&quot; Similar-Anlagen Lookup aus Golden Set.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Use Case:</strong> SV berechnet Preis f&uuml;r B&uuml;rogeb&auml;ude 3.000m&sup2; &rarr; will sehen: &ldquo;Was haben wir f&uuml;r &auml;hnliche Geb&auml;ude berechnet?&rdquo;<br>
+          <strong>Datenquelle:</strong> Golden Sets (10.345 RLT + 4.875 Blitz + Versand) &mdash; &auml;hnliche BGF, gleiche Geb&auml;udeart, gleiche Region.<br>
+          <strong>MVP:</strong> Nach Berechnung: &ldquo;3 &auml;hnliche Anlagen gefunden&rdquo; mit Preisspanne. Validiert das eigene Ergebnis.<br>
+          <strong>Wert:</strong> Erfahrungswissen digitalisiert &mdash; neuer SV profitiert vom Wissen der erfahrenen Kollegen.
+        </div></details>
       </div>
     </div>
 
@@ -743,54 +1068,213 @@
 
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp17">
         <div class="gap-item-header">
           <span class="gap-item-title">17. User Auth / Rollen</span>
-          
+
         </div>
         <div class="gap-item-text">
           Abteilungsleiter vs Sachverst&auml;ndiger vs Verwaltung. Unterschiedliche Sichten und Berechtigungen.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>3 Rollen (S. Veit):</strong>
+          <table class="cheat-table">
+            <tr><th>Rolle</th><th>Sieht</th><th>Kann</th></tr>
+            <tr><td><strong>Sachverst&auml;ndiger</strong></td><td>Eigene Berechnungen, Chat</td><td>Angebote kalkulieren</td></tr>
+            <tr><td><strong>Abteilungsleiter</strong></td><td>Alle Berechnungen, Analytics</td><td>Preisparameter anpassen</td></tr>
+            <tr><td><strong>Verwaltung</strong></td><td>Export-Queue, PDF-Archiv</td><td>Angebote versenden</td></tr>
+          </table>
+          <strong>Aktuell:</strong> Kein Login, jeder sieht alles.<br>
+          <strong>MVP:</strong> Einfaches Login (T&Uuml;V-SSO oder Email+Password) + rollenbasierte Views.
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp18">
         <div class="gap-item-header">
           <span class="gap-item-title">18. Admin-Panel (LPV-Pflege)</span>
-          
+
         </div>
         <div class="gap-item-text">
           T&Uuml;V aktualisiert Preise/Staffeln/LPV j&auml;hrlich. Ohne Admin-Panel: Code-&Auml;nderung n&ouml;tig. Mit: Self-Service.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Problem:</strong> LPV (Leistungs- und Preisverzeichnis) wird j&auml;hrlich aktualisiert. Aktuell = Code-&Auml;nderung n&ouml;tig f&uuml;r jede Preisanpassung.<br>
+          <strong>Betroffene Daten:</strong> Preispositionen, Staffel-Schwellen, Grundpauschalen, Zuschl&auml;ge, Reisekostens&auml;tze.<br>
+          <strong>MVP:</strong> Web-UI f&uuml;r Abteilungsleiter: Preis-Tabellen bearbeiten, neue Staffeln anlegen, &Auml;nderungen sofort live.<br>
+          <strong>Technisch:</strong> Graph-Daten in FalkorDB &mdash; Admin-Panel schreibt direkt in den Graphen, kein Redeploy n&ouml;tig.
+        </div></details>
       </div>
 
-      <div class="gap-item">
+      <div class="gap-item" id="wp19">
         <div class="gap-item-header">
           <span class="gap-item-title">19. Monitoring / Analytics Dashboard</span>
-          
+
         </div>
         <div class="gap-item-text">
-          Wie viele Angebote generiert, welche Produkte am meisten genutzt, durchschnittlicher Angebotspreis. Dashboard f&uuml;r S. Feith.
+          Wie viele Angebote generiert, welche Produkte am meisten genutzt, durchschnittlicher Angebotspreis. Dashboard f&uuml;r S. Veit.
         </div>
+        <details><summary>Kurzinfo</summary><div class="cheat">
+          <strong>Zielgruppe:</strong> Abteilungsleiter (S. Veit) &mdash; will wissen ob das Tool genutzt wird und wie.<br>
+          <strong>KPIs:</strong>
+          <ul>
+            <li>Angebote pro Woche/Monat</li>
+            <li>Meistgenutzte Produkte (Blitz vs RLT vs DGUV)</li>
+            <li>Durchschnittlicher Angebotspreis pro Produkt</li>
+            <li>Grob vs. Fein-Anteil (wie genau kalkulieren die SV?)</li>
+            <li>Abbruchrate (Chat angefangen, nicht zu Ende kalkuliert)</li>
+          </ul>
+          <strong>Technisch:</strong> Event-Logging in PostgreSQL + einfaches Dashboard (oder Export nach Excel f&uuml;r T&Uuml;V-BI).
+        </div></details>
       </div>
 
-      <div class="gap-item">
-        <div class="gap-item-header">
-          <span class="gap-item-title">20. API f&uuml;r SAP-Anbindung (Dokumentation)</span>
-          
-        </div>
-        <div class="gap-item-text">
-          REST-Endpoints dokumentiert f&uuml;r zuk&uuml;nftige S4/HANA-Integration (2029). Swagger/OpenAPI Spec.
-        </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SECTION 3: PROJEKTPLAN BIS TAGUNG -->
+  <!-- ============================================================ -->
+  <section class="section">
+    <h2 class="section-title">3. Projektplan bis Abteilungsleitertagung</h2>
+    <p class="section-intro">
+      3 parallele Streams &mdash; KW21 (19.05.) bis KW27 (06.07.2026). Jeder Stream hat einen Verantwortlichen und liefert unabh&auml;ngig.
+    </p>
+
+    <!-- STREAM CARDS -->
+    <div class="stream-card stream-a">
+      <div class="stream-card-header">
+        <span class="stream-dot" style="background:var(--red)"></span>
+        <span class="stream-card-title">Stream A: Fachliches Hardening</span>
+        <span class="badge badge-red">Kritisch</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;">
+        Pricing-Kalibrierung + Datenqualit&auml;t &mdash; ohne das ist das Tool nicht nutzbar.
+      </p>
+      <ul>
+        <li><strong>KW21-22:</strong> <a class="wp-link" href="#wp1">#1 Schieberegler Listenpreis/Marktpreis</a> (<strong>Blocker</strong>), <a class="wp-link" href="#wp4">#4 Staffel-Kalibrierung Blitzschutz</a></li>
+        <li><strong>KW23:</strong> <a class="wp-link" href="#wp2">#2 Kriterien Preisfindung</a> (3 Faktoren einbauen), <a class="wp-link" href="#wp3">#3 Volkswohlbund Rahmenvertrag-Modell</a></li>
+        <li><strong>KW24:</strong> <a class="wp-link" href="#wp9">#9 MA507 Versand-Daten</a> integrieren (abh. von Datenlieferung T&Uuml;V), <a class="wp-link" href="#wp10">#10 Inspektionspflichten-Lookup</a></li>
+        <li><strong>KW25:</strong> <a class="wp-link" href="#wp12">#12 CO-Warnanlagen</a> (Garage), Gesamt-Kalibrierung aller 3 Produkte gegen Versand</li>
+        <li><strong>KW26:</strong> Regressionstests, Fein-Tuning Schwellen + Staffeln, Validierung mit S. Pausch</li>
+      </ul>
+    </div>
+
+    <div class="stream-card stream-b">
+      <div class="stream-card-header">
+        <span class="stream-dot" style="background:var(--yellow)"></span>
+        <span class="stream-card-title">Stream B: Feature-Development</span>
+        <span class="badge badge-yellow">Workflow</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;">
+        Vom Kalkulator zum Workflow-Tool &mdash; Export, Formular, Multi-Geb&auml;ude.
+      </p>
+      <ul>
+        <li><strong>KW21-22:</strong> <a class="wp-link" href="#wp5">#5 Angebots-Export PDF + Textbausteine</a>, <a class="wp-link" href="#wp8">#8 Schieberegler grob/mittel/fein</a> UI-Toggle</li>
+        <li><strong>KW23-24:</strong> <a class="wp-link" href="#wp7">#7 Strukturiertes Formular</a> (Profi-Modus), <a class="wp-link" href="#wp6">#6 Multi-Geb&auml;ude-Angebot</a> (Warenkorb)</li>
+        <li><strong>KW25:</strong> <a class="wp-link" href="#wp11">#11 Kombi-Begehung Rabattlogik</a>, <a class="wp-link" href="#wp16">#16 Vergleichsansicht / &Auml;hnliche Anlagen</a></li>
+        <li><strong>KW26:</strong> End-to-End Workflow testen: Chat/Formular &rarr; Berechnung &rarr; Export &rarr; PDF</li>
+      </ul>
+    </div>
+
+    <div class="stream-card stream-c">
+      <div class="stream-card-header">
+        <span class="stream-dot" style="background:var(--tuev-blue)"></span>
+        <span class="stream-card-title">Stream C: Infrastruktur &amp; UX</span>
+        <span class="badge badge-blue">Plattform</span>
+      </div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;">
+        Produktionsreife &mdash; Auth, Design, Persistence, Monitoring.
+      </p>
+      <ul>
+        <li><strong>KW21-22:</strong> <a class="wp-link" href="#wp13">#13 Session Persistence</a> (PostgreSQL), <a class="wp-link" href="#wp14">#14 T&Uuml;V Corporate Design</a> (Re-Skin)</li>
+        <li><strong>KW23-24:</strong> <a class="wp-link" href="#wp17">#17 User Auth + Rollen</a></li>
+        <li><strong>KW25:</strong> <a class="wp-link" href="#wp18">#18 Admin-Panel</a> (LPV-Pflege), <a class="wp-link" href="#wp19">#19 Analytics Dashboard</a></li>
+        <li><strong>KW26:</strong> Deployment-Hardening, Load-Tests</li>
+      </ul>
+    </div>
+
+    <!-- GANTT CHART -->
+    <div class="gantt-grid">
+      <div class="gantt-header">Stream</div>
+      <div class="gantt-header kw-now">KW21</div>
+      <div class="gantt-header">KW22</div>
+      <div class="gantt-header">KW23</div>
+      <div class="gantt-header">KW24</div>
+      <div class="gantt-header">KW25</div>
+      <div class="gantt-header">KW26</div>
+      <div class="gantt-header kw-deadline">KW27</div>
+
+      <!-- Stream A -->
+      <div class="gantt-stream-label"><span class="stream-dot" style="background:var(--red)"></span> A &middot; Fachlich</div>
+      <div class="gantt-cell"><a href="#wp1" style="text-decoration:none"><span class="task-chip chip-red">#1 Schieberegler</span></a></div>
+      <div class="gantt-cell"><a href="#wp4" style="text-decoration:none"><span class="task-chip chip-red">#4 Staffeln</span></a></div>
+      <div class="gantt-cell"><a href="#wp2" style="text-decoration:none"><span class="task-chip chip-red">#2 Preisfindung</span></a><a href="#wp3" style="text-decoration:none"><span class="task-chip chip-red">#3 VWB</span></a></div>
+      <div class="gantt-cell"><a href="#wp9" style="text-decoration:none"><span class="task-chip chip-yellow">#9 MA507</span></a><a href="#wp10" style="text-decoration:none"><span class="task-chip chip-yellow">#10 Inspekt.</span></a></div>
+      <div class="gantt-cell"><a href="#wp12" style="text-decoration:none"><span class="task-chip chip-yellow">#12 CO-Warn</span></a><span class="task-chip chip-gray">Kalibrier.</span></div>
+      <div class="gantt-cell"><span class="task-chip chip-gray">Regression</span><span class="task-chip chip-gray">Validierung</span></div>
+      <div class="gantt-cell"><span class="task-chip chip-green">Demo-ready</span></div>
+
+      <!-- Stream B -->
+      <div class="gantt-stream-label"><span class="stream-dot" style="background:var(--yellow)"></span> B &middot; Features</div>
+      <div class="gantt-cell"><a href="#wp5" style="text-decoration:none"><span class="task-chip chip-red">#5 PDF-Export</span></a></div>
+      <div class="gantt-cell"><a href="#wp8" style="text-decoration:none"><span class="task-chip chip-yellow">#8 grob/fein</span></a></div>
+      <div class="gantt-cell"><a href="#wp7" style="text-decoration:none"><span class="task-chip chip-yellow">#7 Formular</span></a></div>
+      <div class="gantt-cell"><a href="#wp6" style="text-decoration:none"><span class="task-chip chip-yellow">#6 Multi-Geb.</span></a></div>
+      <div class="gantt-cell"><a href="#wp11" style="text-decoration:none"><span class="task-chip chip-blue">#11 Kombi</span></a><a href="#wp16" style="text-decoration:none"><span class="task-chip chip-blue">#16 Vergleich</span></a></div>
+      <div class="gantt-cell"><span class="task-chip chip-gray">E2E Tests</span></div>
+      <div class="gantt-cell"><span class="task-chip chip-green">Demo-ready</span></div>
+
+      <!-- Stream C -->
+      <div class="gantt-stream-label"><span class="stream-dot" style="background:var(--tuev-blue)"></span> C &middot; Infra</div>
+      <div class="gantt-cell"><a href="#wp13" style="text-decoration:none"><span class="task-chip chip-blue">#13 Sessions</span></a></div>
+      <div class="gantt-cell"><a href="#wp14" style="text-decoration:none"><span class="task-chip chip-blue">#14 TÜV Design</span></a></div>
+      <div class="gantt-cell"><a href="#wp17" style="text-decoration:none"><span class="task-chip chip-blue">#17 Auth</span></a></div>
+      <div class="gantt-cell"><a href="#wp17" style="text-decoration:none"><span class="task-chip chip-gray">Auth+Rollen</span></a></div>
+      <div class="gantt-cell"><a href="#wp18" style="text-decoration:none"><span class="task-chip chip-blue">#18 Admin</span></a><a href="#wp19" style="text-decoration:none"><span class="task-chip chip-blue">#19 Analytics</span></a></div>
+      <div class="gantt-cell"><span class="task-chip chip-gray">Hardening</span><span class="task-chip chip-gray">Load-Tests</span></div>
+      <div class="gantt-cell"><span class="task-chip chip-green">Demo-ready</span></div>
+
+      <!-- Milestones row -->
+      <div class="gantt-stream-label" style="background:#f1f4f9;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-secondary);">Meilensteine</div>
+      <div class="gantt-cell" style="background:#f1f4f9;text-align:center;font-size:10px;font-weight:600;color:var(--tuev-blue);">Start</div>
+      <div class="gantt-cell" style="background:#f1f4f9;"></div>
+      <div class="gantt-cell" style="background:#f1f4f9;text-align:center;font-size:10px;font-weight:600;color:var(--yellow);">Review S. Pausch</div>
+      <div class="gantt-cell" style="background:#f1f4f9;"></div>
+      <div class="gantt-cell" style="background:#f1f4f9;text-align:center;font-size:10px;font-weight:600;color:var(--yellow);">Feature Freeze</div>
+      <div class="gantt-cell" style="background:#f1f4f9;text-align:center;font-size:10px;font-weight:600;color:var(--text-secondary);">Bug Fixes</div>
+      <div class="gantt-cell" style="background:var(--red-bg);text-align:center;font-size:10px;font-weight:700;color:var(--red);">TAGUNG</div>
+    </div>
+
+    <!-- KEY DEPENDENCIES -->
+    <div style="margin-top:20px;">
+      <h3 class="subsection-title">Abh&auml;ngigkeiten &amp; Risiken</h3>
+      <ul class="detail-list">
+        <li><strong>Blocker:</strong> #1 Schieberegler muss KW22 fertig sein &mdash; alle anderen Pricing-Features bauen darauf auf</li>
+        <li><strong>Externe Abh&auml;ngigkeit:</strong> #9 MA507 Versand-Daten &mdash; Lieferung durch T&Uuml;V, Termin noch offen</li>
+        <li><strong>Externe Abh&auml;ngigkeit:</strong> #14 TÜV Corporate Design &mdash; Styleguide/Figma von T&Uuml;V ben&ouml;tigt</li>
+        <li><strong>Feature Freeze:</strong> KW25 &mdash; ab dann nur Bug Fixes und Demo-Vorbereitung</li>
+        <li><strong>Validierung:</strong> KW23 Review mit S. Pausch (Staffeln, Schwellen, Kriterien Preisfindung)</li>
+      </ul>
+    </div>
+
+    <div class="milestone-bar">
+      <div>
+        <strong>Abteilungsleitertagung &mdash; Live-Demo</strong><br>
+        <span class="ms-date">KW27 &middot; 06.07.2026</span>
+      </div>
+      <div style="text-align:right;">
+        <strong>7 Wochen</strong><br>
+        <span class="ms-date">18 Arbeitspakete &middot; 3 Streams</span>
       </div>
     </div>
 
   </section>
 
   <!-- ============================================================ -->
-  <!-- SECTION 3: PRODUKT-ROADMAP -->
+  <!-- SECTION 4: PRODUKT-ROADMAP -->
   <!-- ============================================================ -->
   <section class="section">
-    <h2 class="section-title">3. Produkt-Roadmap</h2>
+    <h2 class="section-title">4. Produkt-Roadmap</h2>
     <p class="section-intro">
       Alle 11 EG-Produkte. Architektur ist produktagnostisch (Gewerk Base Class). Jedes neue Produkt = ~7 Dateien.
     </p>

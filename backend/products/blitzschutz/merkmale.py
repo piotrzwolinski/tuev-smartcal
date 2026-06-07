@@ -111,9 +111,13 @@ class BlitzschutzMerkmale(BaseModel):
             "Dla Kalkulatora (user-input) wymagane — walidacja w pipeline."
         ),
     )
-    anzahl_ableitungen: int = Field(
-        ge=1, le=500,
-        description="Anzahl Ableitungen / Messstellen — PRIMARY cost driver (33€/Stück LPV B04 §8.1)",
+    anzahl_ableitungen: Optional[int] = Field(
+        None, ge=1, le=500,
+        description="Anzahl Ableitungen / Messstellen — PRIMARY cost driver (33€/Stück LPV B04 §8.1). None = estimate from m².",
+    )
+    gesamtflaeche_m2: Optional[float] = Field(
+        None, ge=1, le=100_000,
+        description="Gebäudefläche in m² — used to estimate Ableitungen when not provided.",
     )
     material_ableitung: Optional[MaterialAbleitung] = None
     typ_erdungsanlage: Optional[TypErdungsanlage] = None

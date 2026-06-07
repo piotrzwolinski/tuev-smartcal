@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ChatPanel from "@/components/ChatPanel";
-import AgentTrace from "@/components/AgentTrace";
 import BlitzschutzAngebotPanel from "@/components/BlitzschutzAngebotPanel";
 import type { BlitzschutzAngebot } from "@/components/BlitzschutzAngebotPanel";
 import LoginScreen from "@/components/LoginScreen";
@@ -145,6 +144,7 @@ export default function Home() {
                 break;
               }
               case "angebot":
+                console.log("[ANGEBOT] Received:", parsed.total, parsed.breakdown);
                 setAngebot(parsed);
                 setProvenance(parsed.provenance || []);
                 setMessages((prev) => {
@@ -283,7 +283,6 @@ export default function Home() {
               {/* Angebot + Trace */}
               {(angebot || trace.length > 0) && (
                 <div className="w-1/2 overflow-y-auto min-h-0 space-y-4 animate-slide-in-right">
-                  {trace.length > 0 && <AgentTrace steps={trace} loading={loading} />}
                   {angebot && <BlitzschutzAngebotPanel angebot={angebot} />}
                 </div>
               )}
