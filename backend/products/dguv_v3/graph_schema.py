@@ -53,13 +53,13 @@ def load_dguv_graph() -> dict:
         ('VERT_NSHV', 'Niederspannungshauptverteilung (NSHV)', 145.00),
     ]:
         statements.append(f"""
-        CREATE (:Verteilung {{id: '{vid}', name: '{name}', preis_pro_einheit: {preis}, _quelle: 'LPV B04 Kap. 2', _typ: 'regel', _stand: '{STAND}'}})
+        CREATE (:Verteilung {{id: '{vid}', name: '{name}', preis_pro_einheit: {preis}, _quelle: 'Schätzung intern — Rückfrage TÜV', _typ: 'heuristik', _stand: '{STAND}'}})
         """)
     statements.append("MATCH (p:Produkt {id: 'DGUV_V3_ORTSFEST'}), (v:Verteilung) CREATE (p)-[:HAT_VERTEILUNG]->(v)")
 
     # ── 4. SONDERZUSCHLÄGE ──────────────────────────────────
-    statements.append(f"CREATE (:Sonderzuschlag {{id: 'SZ_NEA', name: 'Netzersatzanlage (NEA)', betrag: 320.00, _quelle: 'LPV B04 Kap. 2', _typ: 'regel', _stand: '{STAND}'}})")
-    statements.append(f"CREATE (:Sonderzuschlag {{id: 'SZ_SV_NSHV', name: 'Sicherheitsstromversorgung NSHV', betrag: 180.00, _quelle: 'LPV B04 Kap. 2', _typ: 'regel', _stand: '{STAND}'}})")
+    statements.append(f"CREATE (:Sonderzuschlag {{id: 'SZ_NEA', name: 'Netzersatzanlage (NEA)', betrag: 320.00, _quelle: 'Schätzung intern — Rückfrage TÜV', _typ: 'heuristik', _stand: '{STAND}'}})")
+    statements.append(f"CREATE (:Sonderzuschlag {{id: 'SZ_SV_NSHV', name: 'Sicherheitsstromversorgung NSHV', betrag: 180.00, _quelle: 'Schätzung intern — Rückfrage TÜV', _typ: 'heuristik', _stand: '{STAND}'}})")
     statements.append("MATCH (p:Produkt {id: 'DGUV_V3_ORTSFEST'}), (s:Sonderzuschlag) CREATE (p)-[:HAT_SONDERZUSCHLAG]->(s)")
 
     # ── 5. GRUNDKOSTEN (shared) ──────────────────────────────

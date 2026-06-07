@@ -135,10 +135,12 @@ class GraphPricingEngine:
         self._log("grundkosten", f"Prüfmittel {pruefmittel_tag}€ × {pruef_tage} Tage", f"{pruefmittel_tag * pruef_tage}", "GRUND_PRUEFMITTEL",
                   ref="LPV Teil A §4: 49€ je Prüftag")
 
-        hours = pruef_tage * 8
-        tg_row = self._q("MATCH (t:Tagegeld) WHERE t.von_h <= $h AND t.bis_h > $h RETURN t.betrag, t.id", h=hours)
-        tagegeld = tg_row[0][0] if tg_row else (0 if hours < 6 else 25)
-        self._log("tagegeld", f"Tagegeld ({hours}h Außendienst)", f"{tagegeld}",
+        hours_per_day = 8
+        days = max(1, int(pruef_tage))
+        tg_row = self._q("MATCH (t:Tagegeld) WHERE t.von_h <= $h AND t.bis_h > $h RETURN t.betrag, t.id", h=hours_per_day)
+        tg_per_day = tg_row[0][0] if tg_row else (0 if hours_per_day < 6 else 25)
+        tagegeld = tg_per_day * days
+        self._log("tagegeld", f"Tagegeld ({hours_per_day}h/Tag × {days} Tage)", f"{tagegeld}",
                   tg_row[0][1] if tg_row else "none",
                   ref="LPV Teil A §4.3: 0€ (<6h), 6€ (6-8h), 25€ (8-14h), 30€ (14-24h)")
 
@@ -363,7 +365,7 @@ class GraphPricingEngine:
                 vert_cost = count * preis
                 cost += vert_cost
                 self._log("pruefkosten", f"{label}: {count} × {preis}€", f"{vert_cost}", node_prefix,
-                          ref=f"LPV B04 Kap. 2: {preis}€ pro {label}")
+                          ref=f"Schätzung intern: {preis}€ pro {label} — Rückfrage TÜV")
 
         for field, node_id, label in [
             ("nea_vorhanden", "SZ_NEA", "Netzersatzanlage"),
@@ -374,7 +376,7 @@ class GraphPricingEngine:
                 betrag = sz_row[0][0] if sz_row else 0
                 cost += betrag
                 self._log("pruefkosten", f"{label}: +{betrag}€", f"{betrag}", node_id,
-                          ref=f"LPV B04 Kap. 2: {label} {betrag}€")
+                          ref=f"Schätzung intern: {label} {betrag}€ — Rückfrage TÜV")
 
         # Branchenvergleich: avg Prüftage from 10k Berichte
         branche_map = {
