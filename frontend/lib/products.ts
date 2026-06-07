@@ -42,37 +42,6 @@ export const PRODUCTS: ProductConfig[] = [
     ],
   },
   {
-    id: "rlt",
-    name: "RLT-Anlage",
-    subtitle: "Lüftung · VDI 6022 Hygiene + Garagenlüftung · LPV B05 Kap. 2",
-    shortLabel: "RLT",
-    apiPrefix: "/api/rlt",
-    lpvRef: "MA419",
-    placeholder: "Beschreiben Sie Ihre RLT-/Lüftungsanlage...",
-    suggestions: [
-      {
-        label: "🏢 Hygiene Büro München — VDI 6022",
-        text: "Wir brauchen eine Hygieneinspektion nach VDI 6022 für unser Bürogebäude in der Brienner Straße, 80333 München. 2 RLT-Geräte, Baujahr 2012, Hersteller Huber & Ranner, Nennvolumenstrom 9.000 m³/h, Kreuzstromwärmetauscher.",
-        auditAnchor: "s5",
-      },
-      {
-        label: "🅿️ Tiefgarage Nürnberg — Baurecht",
-        text: "Tiefgarage in Nürnberg, 90431, Anton-Pichler-Straße. 600 m², 24 Stellplätze, Mittelgarage, 2 Abluftventilatoren, 4 Brandschutzklappen. Wiederkehrende Prüfung gemäß SPrüfV.",
-        auditAnchor: "s6",
-      },
-      {
-        label: "🏨 Hotel Lüftung — vage Anfrage",
-        text: "Ich brauche ein Angebot für die Lüftungsprüfung in unserem Hotel. Großes Gebäude, mehrere Etagen.",
-        auditAnchor: "s7",
-      },
-      {
-        label: "🏬 Großgarage 200 Stellplätze",
-        text: "Großgarage Einkaufszentrum Stuttgart, 200 Stellplätze, 6 Ventilatoren, 12 BSK, Eilzuschlag wegen Fristablauf nächste Woche.",
-        auditAnchor: "s8",
-      },
-    ],
-  },
-  {
     id: "dguv_v3",
     name: "DGUV V3",
     subtitle: "Ortsfeste elektrische Anlage · LPV B04 Kap. 2 · 250€ + m²×Kat",
