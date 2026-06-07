@@ -217,21 +217,17 @@ def _load_plz_nl():
         return
     _PLZ_NL_LOADED = True
     from pathlib import Path
-    path = Path.home() / "Downloads" / "CRM PLZ NL (1).xlsx"
-    if not path.exists():
+    import json as _json
+
+    json_path = Path(__file__).parent.parent / "data" / "plz_nl_crm.json"
+    if not json_path.exists():
         return
     try:
-        from openpyxl import load_workbook
-        wb = load_workbook(path, data_only=True, read_only=True)
-        ws = wb["Zuordnung"]
-        for row in ws.iter_rows(min_row=2, values_only=True):
-            cells = list(row)
-            if len(cells) >= 2 and cells[0] and cells[1]:
-                plz = str(cells[0]).strip().zfill(5)
-                crm_nl = str(cells[1]).strip()
-                standort_id = _CRM_TO_STANDORT_ID.get(crm_nl)
-                _PLZ_NL_CACHE[plz] = standort_id  # None for HESE etc.
-        wb.close()
+        with open(json_path) as f:
+            plz_nl_raw = _json.load(f)
+        for plz, crm_nl in plz_nl_raw.items():
+            standort_id = _CRM_TO_STANDORT_ID.get(crm_nl)
+            _PLZ_NL_CACHE[plz] = standort_id  # None for HESE etc.
     except Exception:
         pass
 
