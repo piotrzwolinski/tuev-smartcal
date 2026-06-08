@@ -517,8 +517,15 @@ class GraphPricingEngine:
         lat = getattr(merkmale, "adresse_lat", None)
         lon = getattr(merkmale, "adresse_lon", None)
         if not lat or not lon:
-            warnings.append("Adresse ohne Koordinaten — Reisekosten nicht berechnet")
-            return 0
+            plz = getattr(merkmale, "adresse_plz", None)
+            if plz:
+                from common.geocode import geocode
+                coords = geocode(ort=None, plz=plz)
+                if coords:
+                    lat, lon = coords
+            if not lat or not lon:
+                warnings.append("Adresse ohne Koordinaten — Reisekosten nicht berechnet")
+                return 0
 
         from common.pricing_primitives import find_nearest_standort
         plz = getattr(merkmale, "adresse_plz", None)

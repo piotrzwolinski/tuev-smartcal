@@ -2,10 +2,10 @@
 
 Natural-language Anfrage → Merkmale extraction → Kalkulation → natural-language summary.
 
-Analogicznie do chat.py w rootcie (smartcal), ale specjalizowany dla Blitzschutz:
-- LPV-based pricing (nie graph-ReAct)
+Analog to root chat.py (smartcal), but specialized for Blitzschutz:
+- LPV-based pricing (not graph-ReAct)
 - Deterministic calculation via PricingEngine + BLITZSCHUTZ
-- Coordinator prompts są po niemiecku dla TÜV-Nutzer
+- Coordinator prompts in German for TÜV users
 """
 
 import json
@@ -181,17 +181,18 @@ async def coordinator_respond(session: BlitzschutzSession, user_message: str) ->
 
     # Auto-geokoduj adresse_ort/plz/strasse → adresse_lat/lon
     ort = session.extracted_params.get("adresse_ort")
-    if ort and session.extracted_params.get("adresse_lat") is None:
+    plz = session.extracted_params.get("adresse_plz")
+    if (ort or plz) and session.extracted_params.get("adresse_lat") is None:
         coords = geocode(
             ort=ort,
-            plz=session.extracted_params.get("adresse_plz"),
+            plz=plz,
             strasse=session.extracted_params.get("adresse_strasse"),
         )
         if coords:
             session.extracted_params["adresse_lat"] = coords[0]
             session.extracted_params["adresse_lon"] = coords[1]
 
-    # Jeśli calculate, przekaż wszystkie accumulated params
+    # If calculate, pass all accumulated params
     has_minimum = session.extracted_params.get("nutzung") and (session.extracted_params.get("anzahl_ableitungen") or session.extracted_params.get("gesamtflaeche_m2"))
     if result.get("action") == "calculate":
         result["params"] = dict(session.extracted_params)

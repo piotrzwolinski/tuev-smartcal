@@ -1,7 +1,7 @@
-"""Geocoding via Nominatim (OSM) z dwupoziomowym cache.
+"""Geocoding via Nominatim (OSM) with two-level cache.
 
-Dla każdego adresu (ort + plz + strasse) zwraca (lat, lon) lub None.
-Cache: in-memory + disk (JSON) — Nominatim ma rate-limit 1 req/s i wymaga User-Agent.
+For each address (ort + plz + strasse) returns (lat, lon) or None.
+Cache: in-memory + disk (JSON) — Nominatim has rate-limit 1 req/s and requires User-Agent.
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ _LOCK = threading.Lock()
 _LAST_CALL = 0.0
 _MIN_INTERVAL = 1.1  # Nominatim ToS: max 1 req/s
 
-# Warm cache dla najczęstszych miast TÜV SÜD IS Süd (natychmiastowa odpowiedź, bez HTTP).
+# Warm cache for most common TÜV SÜD IS Süd cities (instant response, no HTTP).
 _WARM_CACHE: dict[str, tuple[float, float]] = {
     "muenchen": (48.1351, 11.5075), "münchen": (48.1351, 11.5075), "munich": (48.1351, 11.5075),
     "nuernberg": (49.4521, 11.0767), "nürnberg": (49.4521, 11.0767),
@@ -101,10 +101,10 @@ def _nominatim_request(params: dict) -> Optional[tuple[float, float]]:
 
 
 def _nominatim_lookup(ort: str, plz: Optional[str], strasse: Optional[str]) -> Optional[tuple[float, float]]:
-    """Szuka na Nominatim: najpierw structured bez country (globalnie), potem freeform fallback.
+    """Nominatim lookup: structured without country (global), then freeform fallback.
 
-    Bez hard-coded country — TÜV obsługuje także klientów w PL/AT/CH/NL.
-    Nominatim ranking daje top-result zwykle poprawnie (największe miasto o tej nazwie).
+    No hard-coded country — TÜV also serves clients in PL/AT/CH/NL.
+    Nominatim ranking typically returns the correct top-result (largest city with that name).
     """
     structured = {"city": ort}
     if plz:
@@ -132,11 +132,13 @@ def geocode(
     plz: Optional[str] = None,
     strasse: Optional[str] = None,
 ) -> Optional[tuple[float, float]]:
-    """Zwróć (lat, lon) dla adresu lub None.
+    """Return (lat, lon) for address or None.
 
-    Kolejność: warm cache (miasto) → disk cache → Nominatim → disk fallback.
+    Order: warm cache (city) → disk cache → Nominatim → disk fallback.
     """
     if not ort or not ort.strip():
+        if plz and plz.strip():
+            return _nominatim_lookup(plz.strip(), plz, None)
         return None
 
     ort_key = ort.strip().lower()

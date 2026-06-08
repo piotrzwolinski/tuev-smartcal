@@ -199,10 +199,11 @@ async def coordinator_respond(session: DGUVSession, user_message: str) -> dict:
         session.extracted_params.update(new_params)
 
     ort = session.extracted_params.get("adresse_ort")
-    if ort and session.extracted_params.get("adresse_lat") is None:
+    plz = session.extracted_params.get("adresse_plz")
+    if (ort or plz) and session.extracted_params.get("adresse_lat") is None:
         coords = geocode(
             ort=ort,
-            plz=session.extracted_params.get("adresse_plz"),
+            plz=plz,
             strasse=session.extracted_params.get("adresse_strasse"),
         )
         if coords:
