@@ -136,6 +136,19 @@ def load_dguv_graph() -> dict:
     for pid, von, bis, tage in [('PT_1', 1, 500, 0.5), ('PT_2', 501, 2000, 1.0), ('PT_3', 2001, 5000, 2.0), ('PT_4', 5001, 999999, -1)]:
         statements.append(f"CREATE (:Prueftagschaetzung {{id: '{pid}', von_m2: {von}, bis_m2: {bis}, tage: {tage}, formel: '{'flaeche/2500' if tage == -1 else ''}', _quelle: 'Heuristik', _typ: 'statistik', _stand: '{STAND}'}})")
 
+    # ── 13b. BRANCHENPROFIL (aus 10.063 MA507 Prüfberichten) ─
+    branchenprofile = [
+        ('BP_VERW', 'Öffentliche Verwaltung', 481, 1.9, 1.0, 1.0, 1.0, 9.9),
+        ('BP_GAST', 'Gastgewerbe', 145, 2.4, 2.0, 1.0, 3.0, 13.5),
+        ('BP_GESU', 'Gesundheitswesen', 134, 5.3, 3.0, 1.0, 6.0, 8.7),
+        ('BP_BILD', 'Bildungseinrichtung', 1559, 2.4, 1.0, 1.0, 2.0, 10.5),
+        ('BP_AUTO', 'Automobilzulieferer', 161, 11.4, 2.0, 1.0, 30.0, 5.0),
+        ('BP_LEBE', 'Lebensmittelhandel', 370, 1.1, 1.0, 1.0, 1.0, 6.2),
+        ('BP_RELI', 'Religionsgemeinschaft', 57, 1.0, 1.0, 1.0, 1.0, 5.5),
+    ]
+    for bpid, branche, n, avg_pt, med_pt, p25_pt, p75_pt, avg_m in branchenprofile:
+        statements.append(f"CREATE (:BranchenProfil {{id: '{bpid}', branche: '{branche}', n_berichte: {n}, avg_prueftage: {avg_pt}, median_prueftage: {med_pt}, p25_prueftage: {p25_pt}, p75_prueftage: {p75_pt}, avg_maengel: {avg_m}, _quelle: 'Batch Extraction 10.063 MA507 Prüfberichte', _typ: 'statistik', _stand: '{STAND}'}})")
+
     # ── 14. CROSS-SELL ───────────────────────────────────────
     statements.append(f"CREATE (:CrossSell {{id: 'CS_BLITZ', empfehlung: 'Blitzschutzprüfung — Kombi-Begehung spart Reisekosten', produkt: 'blitzschutz', prioritaet: 'hoch', _quelle: 'S. Veit erster Call', _typ: 'fachexperte', _stand: '{STAND}'}})")
     statements.append(f"CREATE (:CrossSell {{id: 'CS_RLT', empfehlung: 'RLT-Hygieneinspektion (VDI 6022) — gleiche Begehung möglich', produkt: 'rlt', prioritaet: 'mittel', _quelle: 'S. Veit erster Call', _typ: 'fachexperte', _stand: '{STAND}'}})")

@@ -523,13 +523,37 @@ class GraphPricingEngine:
         from common.pricing_primitives import find_nearest_standort
         plz = getattr(merkmale, "adresse_plz", None)
         standort = find_nearest_standort(lat, lon, plz=plz)
-        km_rt = standort["distance_km"] * 2
-        dur_min = standort.get("duration_min", standort["distance_km"] / 80 * 60)
+
+        zuordnung = standort.get("zuordnung", "nearest")
+        if zuordnung == "crm":
+            self._log("reisekosten", f"PLZ {plz} → CRM-Zuordnung NL {standort.get('crm_nl', '?')} → {standort['name']}",
+                      f"CRM PLZ→NL Mapping", f"STD_{standort.get('id','?')}",
+                      ref="CRM-Daten: 8.309 PLZ→Niederlassung (TÜV SÜD intern)")
+        else:
+            self._log("reisekosten", f"PLZ {plz} nicht in CRM → nächster Standort: {standort['name']} (Luftlinie)",
+                      f"Nearest Fallback", f"STD_{standort.get('id','?')}",
+                      ref="Fallback: Haversine-Distanz zu 20 TÜV-Standorten")
+
+        km_ow = standort["distance_km"]
+        km_rt = km_ow * 2
+        dur_min_ow = standort.get("duration_min", km_ow / 80 * 60)
+        dur_min_rt = dur_min_ow * 2
+        routing = standort.get("routing", "Haversine")
+        self._log("reisekosten", f"Entfernung: {km_ow:.0f}km one-way × 2 = {km_rt:.0f}km roundtrip ({routing})",
+                  f"{km_rt:.0f}km RT", f"STD_{standort.get('id','?')}",
+                  ref=f"Routing: {standort['name']} → {getattr(merkmale, 'adresse_ort', 'Objekt')} ({routing})")
 
         km_rate = self._q1("MATCH (r:Reisekostenregel {id: 'RK_PKW'}) RETURN r.betrag_pro_km") or 1.10
         reise_std = self._q1("MATCH (s:Stundensatz {id: 'STD_EINFACH'}) RETURN s.betrag") or 180.0
 
-        reise_single = km_rt * km_rate + (dur_min * 2 / 60) * reise_std
+        fahrtkosten = km_rt * km_rate
+        reisezeit_h = dur_min_rt / 60
+        reisezeit_kosten = reisezeit_h * reise_std
+        reise_single = fahrtkosten + reisezeit_kosten
+        self._log("reisekosten",
+                  f"Einzelanfahrt: {km_rt:.0f}km × {km_rate}€/km = {fahrtkosten:.0f}€ + {reisezeit_h:.1f}h × {reise_std:.0f}€/h = {reisezeit_kosten:.0f}€",
+                  f"{reise_single:.0f}€", "RK_PKW",
+                  ref=f"LPV Teil A §4.3: PKW {km_rate}€/km + Reisezeit {reise_std}€/h")
 
         pruef_tage = self._get_pruef_tage(merkmale)
         pruef_stunden = pruef_tage * 8
@@ -541,12 +565,10 @@ class GraphPricingEngine:
             anzahl_anfahrten = 1
         reise = reise_single * anzahl_anfahrten
 
-        zuordnung = standort.get("zuordnung", "nearest")
-        label = "Zuständiger TÜV-Standort" if zuordnung == "crm" else "Nächster TÜV-Standort"
-        self._log("reisekosten", f"{label}: {standort['name']} ({standort['distance_km']:.0f}km)", f"{reise:.2f}",
-                  f"STD_{standort.get('id','?')}", ref=f"LPV Teil A §4.3: {km_rate}€/km PKW, Reisezeit × {reise_std}€/h")
-        anfahrt_label = f"{anzahl_anfahrten} Anfahrt{'en' if anzahl_anfahrten > 1 else ''} ({pruef_stunden:.0f}h Prüfzeit)"
-        self._log("reisekosten", f"Regel: {anfahrt_label} (Veit: >9h=2, >18h=3)", f"{anzahl_anfahrten}× roundtrip", "RK_MEHRTAEGIG")
+        self._log("reisekosten",
+                  f"{anzahl_anfahrten} Anfahrt{'en' if anzahl_anfahrten > 1 else ''} × {reise_single:.0f}€ = {reise:.0f}€ ({pruef_stunden:.0f}h Prüfzeit → Regel: ≤9h=1, >9h=2, >18h=3)",
+                  f"{reise:.0f}€", "RK_MEHRTAEGIG",
+                  ref="S. Veit: Mehrtägig >9h=2 Anfahrten, >18h=3 Anfahrten")
 
         zuordnung_warnung = standort.get("zuordnung_warnung")
         if zuordnung_warnung:

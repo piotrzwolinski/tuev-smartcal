@@ -208,6 +208,7 @@ _CRM_TO_STANDORT_ID = {
 _STANDORT_BY_ID = {s["id"]: s for s in TUEV_NIEDERLASSUNGEN}
 
 _PLZ_NL_CACHE: dict[str, str | None] = {}
+_PLZ_NL_RAW: dict[str, str] = {}
 _PLZ_NL_LOADED = False
 
 
@@ -228,6 +229,7 @@ def _load_plz_nl():
         for plz, crm_nl in plz_nl_raw.items():
             standort_id = _CRM_TO_STANDORT_ID.get(crm_nl)
             _PLZ_NL_CACHE[plz] = standort_id  # None for HESE etc.
+            _PLZ_NL_RAW[plz] = crm_nl
     except Exception:
         pass
 
@@ -267,6 +269,7 @@ def find_nearest_standort(lat: float, lon: float, plz: str | None = None) -> dic
         if crm_standort:
             result = _route_to_standort(lat, lon, crm_standort)
             result["zuordnung"] = "crm"
+            result["crm_nl"] = _PLZ_NL_RAW.get(plz.strip().zfill(5), "?")
             return result
 
         # PLZ exists in CRM but maps to non-TÜV-SÜD NL
