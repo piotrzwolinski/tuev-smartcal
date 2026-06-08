@@ -573,9 +573,10 @@ class GraphPricingEngine:
         zuordnung_warnung = standort.get("zuordnung_warnung")
         if zuordnung_warnung:
             warnings.append(f"⚠ {zuordnung_warnung}")
+        label = "Zuständiger TÜV-Standort" if zuordnung == "crm" else "Nächster TÜV-Standort"
         if standort["distance_km"] > 0:
             warnings.append(f"{label}: {standort['name']} ({standort.get('adresse','')}, {standort['plz']}) — "
-                          f"{standort['distance_km']:.0f} km / {dur_min:.0f} min [{standort.get('routing','')}]")
+                          f"{standort['distance_km']:.0f} km / {dur_min_ow:.0f} min [{standort.get('routing','')}]")
         return reise
 
     # ═══════════════════════════════════════════════════════════
