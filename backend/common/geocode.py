@@ -138,7 +138,9 @@ def geocode(
     """
     if not ort or not ort.strip():
         if plz and plz.strip():
-            return _nominatim_lookup(plz.strip(), plz, None)
+            hit = _nominatim_request({"postalcode": plz.strip(), "country": "de"})
+            if hit:
+                return hit
         return None
 
     ort_key = ort.strip().lower()
