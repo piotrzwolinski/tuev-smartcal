@@ -39,6 +39,12 @@ class DGUVV3Gewerk(Gewerk):
     def pruefkosten(self, merkmale):
         return dispatch_pruefkosten(merkmale)
 
+    def grundkosten_override(self, merkmale):
+        from products.dguv_v3.merkmale import Pruefart
+        if getattr(merkmale, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH:
+            return 0.0
+        return None
+
     def estimate_pruef_tage(self, merkmale):
         return dguv_estimate_pruef_tage(merkmale)
 

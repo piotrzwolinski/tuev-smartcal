@@ -351,6 +351,10 @@ def dguv_pruefkosten(m: DGUVMerkmale) -> float:
 
 
 def dguv_estimate_pruef_tage(m: DGUVMerkmale) -> float:
+    from products.dguv_v3.merkmale import Pruefart
+    if getattr(m, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH:
+        n = m.anzahl_betriebsmittel or 0
+        return max(0.5, n / 200)
     flaeche = _flaeche(m)
     if flaeche <= 500:
         return 0.5
@@ -362,6 +366,9 @@ def dguv_estimate_pruef_tage(m: DGUVMerkmale) -> float:
 
 
 def dguv_choose_bericht_typ(m: DGUVMerkmale) -> str:
+    from products.dguv_v3.merkmale import Pruefart
+    if getattr(m, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH:
+        return "inklusive"
     flaeche = _flaeche(m)
     total_verteilungen = (
         m.anzahl_verteilungen_uv + m.anzahl_verteilungen_hv + m.anzahl_verteilungen_nshv
@@ -465,6 +472,34 @@ def dguv_plus_vds_pruefkosten(m: DGUVMerkmale) -> float:
     return round(vds * (1 + DGUV_VDS_SYNERGIE_ZUSCHLAG), 2)
 
 
+BM_GRUNDPAUSCHALE = 200.00
+BM_SATZ_PRO_BM = 9.50
+BM_STAFFEL_AB = 500
+BM_STAFFEL_FAKTOR = 1.00
+
+
+def _g_bm_params() -> tuple[float, float, int, float]:
+    r = get_reader()
+    row = r.get_row(
+        "MATCH (b:BMPreis {id: 'BM_SATZ'}) RETURN b.grundpauschale, b.satz_pro_bm, b.staffel_ab_bm, b.staffel_faktor",
+        cache_key="bm_params",
+    )
+    if row and row[0] is not None:
+        return (float(row[0]), float(row[1]), int(row[2]), float(row[3]))
+    return (BM_GRUNDPAUSCHALE, BM_SATZ_PRO_BM, BM_STAFFEL_AB, BM_STAFFEL_FAKTOR)
+
+
+def bm_pruefkosten(m: DGUVMerkmale) -> float:
+    """MA560 ortsveränderlich: Grundpauschale + n × Satz (all-inclusive, Grund+Bericht=0)."""
+    n = m.anzahl_betriebsmittel or 0
+    pauschale, satz, staffel_ab, staffel_f = _g_bm_params()
+    cost = pauschale + n * satz
+    if n > staffel_ab and staffel_f != 1.0:
+        over = n - staffel_ab
+        cost = pauschale + staffel_ab * satz + over * satz * staffel_f
+    return round(cost, 2)
+
+
 def dispatch_pruefkosten(m: DGUVMerkmale) -> float:
     """Route Prüfkosten by Pruefart."""
     from products.dguv_v3.merkmale import Pruefart
@@ -473,6 +508,8 @@ def dispatch_pruefkosten(m: DGUVMerkmale) -> float:
         return vds_pruefkosten(m)
     if pa == Pruefart.DGUV_PLUS_VDS:
         return dguv_plus_vds_pruefkosten(m)
+    if pa == Pruefart.DGUV_ORTSVERAENDERLICH:
+        return bm_pruefkosten(m)
     return dguv_pruefkosten(m)
 
 

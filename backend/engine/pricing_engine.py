@@ -46,12 +46,16 @@ class PricingEngine:
 
         # 1. Grundkosten (Pauschale + Prüfmittel × Prüftage + Tagegeld)
         pruef_tage = gewerk.estimate_pruef_tage(merkmale)
-        include_ordnung = getattr(merkmale, "baurechtlich", False)
-        breakdown.grund = (
-            grundkosten_pauschal(include_ordnungspruefung=include_ordnung)
-            + PRUEFMITTEL_PRO_TAG_SV * pruef_tage
-            + tagegeld(pruef_tage * 8)  # 8h per Prüftag jako upraszczenie
-        )
+        g_override = getattr(gewerk, "grundkosten_override", lambda m: None)(merkmale)
+        if g_override is not None:
+            breakdown.grund = g_override
+        else:
+            include_ordnung = getattr(merkmale, "baurechtlich", False)
+            breakdown.grund = (
+                grundkosten_pauschal(include_ordnungspruefung=include_ordnung)
+                + PRUEFMITTEL_PRO_TAG_SV * pruef_tage
+                + tagegeld(pruef_tage * 8)  # 8h per Prüftag jako upraszczenie
+            )
 
         # 2. Prüfkosten (per-Gewerk logic)
         breakdown.pruef = gewerk.pruefkosten(merkmale)
@@ -97,8 +101,11 @@ class PricingEngine:
 
         # 4. Berichterstellung
         bericht_typ_str = gewerk.choose_bericht_typ(merkmale)
-        bericht_typ = BerichtTyp(bericht_typ_str)
-        breakdown.bericht = berichtskosten(bericht_typ)
+        if bericht_typ_str == "inklusive":
+            breakdown.bericht = 0
+        else:
+            bericht_typ = BerichtTyp(bericht_typ_str)
+            breakdown.bericht = berichtskosten(bericht_typ)
 
         # 5. Zuschläge (per-Gewerk + shared)
         subtotal = breakdown.subtotal
