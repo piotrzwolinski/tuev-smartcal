@@ -15,7 +15,7 @@ Scope (DACH-specific):
 - Numery: Auftrags-Nr, Equipment-Nr, Material-Nr, Fabriknummer, Prüfbuchnummer
 - Kontakty: Telefon, Telefax, E-Mail
 - Secrets: Passwörter, Access-Codes (Netinform etc.)
-- Infrastruktur TÜV: explicite nazwy Abteilung/Niederlassung — zostają (nie PII)
+- TÜV-Infrastruktur: explizite Abteilung/Niederlassung-Namen — bleiben (kein PII)
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ class AnonymizationResult:
 # Regex patterns
 # ───────────────────────────────────────────────────
 
-# TÜV-owned (NIE są PII — zostają):
+# TÜV-owned (kein PII — bleiben):
 TUEV_WHITELIST = {
     "TÜV SÜD Industrie Service GmbH",
     "TÜV SÜD", "TÜV-Daten", "Netinform",
@@ -87,7 +87,7 @@ _ORG_RE = re.compile(
 )
 
 # Building names ending in "-schule/klinik/stadion/heim" etc.
-# Captures: group 1 = pełna nazwa, group 2 = typ (schule/klinik/...)
+# Captures: group 1 = full name, group 2 = type (schule/klinik/...)
 _BUILDING_RE = re.compile(
     r"\b([A-ZÄÖÜ][A-Za-zäöüß-]{3,30}-?(schule|gymnasium|kindergarten|kita|klinik|krankenhaus|stadion|heim|kirche|halle|werk|zentrum|depot|bibliothek|museum|turnhalle))\b",
     re.IGNORECASE,
@@ -217,7 +217,7 @@ def anonymize_pdf_text(text: str) -> AnonymizationResult:
         return pseudo
     out = _ORG_RE.sub(sub_org, out)
 
-    # 9. Building names — TYPE-PRESERVING (LLM nadal widzi kategorię)
+    # 9. Building names — TYPE-PRESERVING (LLM still sees category)
     def sub_building(m):
         original = m.group(0)
         type_suffix = m.group(2).lower()
@@ -228,10 +228,10 @@ def anonymize_pdf_text(text: str) -> AnonymizationResult:
         return pseudo
     out = _BUILDING_RE.sub(sub_building, out)
 
-    # 10. Second-pass: wyciągnij unique City-names z mapping (z PLZ+Ort matches)
-    # i zamaskuj wszystkie inne wystąpienia tej nazwy miasta.
-    # Rationale: "94118 Jandelsbrunn" złapane w pass 1, ale samo "Jandelsbrunn"
-    # w innych miejscach (np. "Mittelschule Jandelsbrunn") nie było zamaskowane.
+    # 10. Second-pass: extract unique city names from mapping (from PLZ+Ort matches)
+    # and mask all other occurrences of that city name.
+    # Rationale: "94118 Jandelsbrunn" caught in pass 1, but standalone "Jandelsbrunn"
+    # elsewhere (e.g. "Mittelschule Jandelsbrunn") was not masked.
     cities_in_mapping = set()
     for pseudo, orig in list(mapping.items()):
         if pseudo.startswith("<CITY_"):
@@ -241,7 +241,7 @@ def anonymize_pdf_text(text: str) -> AnonymizationResult:
                 cities_in_mapping.add(m.group(1).strip())
 
     for city_name in sorted(cities_in_mapping, key=len, reverse=True):  # longest first
-        # Replace samotne wystąpienia nazwy miasta (not already in pseudo)
+        # Replace standalone occurrences of city name (not already in pseudo)
         pseudo = _pseudo(city_name, "CITY2")
         pattern = rf"\b{re.escape(city_name)}\b"
         count_before = len(re.findall(pattern, out))

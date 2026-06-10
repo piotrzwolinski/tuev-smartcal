@@ -1,6 +1,6 @@
 """Post-processing normalization of LLM-extracted Merkmale → Pydantic enum values.
 
-Problem: Haiku zwraca valid semantyczne wartości które są slightly off naszych enum values:
+Problem: Haiku returns semantically valid values that are slightly off our enum values:
 - "kindergarten" → should map to "schule"
 - "aluminium" → "alulegierung"
 - "verzinkter Stahl" → "stahl_verzinkt"
@@ -8,7 +8,7 @@ Problem: Haiku zwraca valid semantyczne wartości które są slightly off naszyc
 - "3" → "III"
 - "unbekannt" → null
 
-Ten moduł wykonuje deterministic mapping PRZED Pydantic validation.
+This module performs deterministic mapping BEFORE Pydantic validation.
 """
 
 import re
@@ -127,10 +127,10 @@ def _normalize_via_map(value: Any, mapping: dict, fallback_to_gemischt: bool = F
 
 
 def normalize_blitzschutz_extracted(extracted: dict) -> dict:
-    """Przyjmuje raw dict z LLM, zwraca normalized dict gotowy do Pydantic.
+    """Takes raw dict from LLM, returns normalized dict ready for Pydantic.
 
-    Fields NOT in extracted lub null → zostają null.
-    Fields nieparseowalne → null (lepiej null niż bad data).
+    Fields NOT in extracted or null → stay null.
+    Unparseable fields → null (better null than bad data).
     """
     out = dict(extracted)  # shallow copy
 
@@ -139,7 +139,7 @@ def normalize_blitzschutz_extracted(extracted: dict) -> dict:
 
     # Schutzklasse (CRITICAL)
     sk = _normalize_via_map(out.get("schutzklasse"), SCHUTZKLASSE_MAP)
-    out["schutzklasse"] = sk  # None jeśli nie zidentyfikowano — wtedy Pydantic throw → retry
+    out["schutzklasse"] = sk  # None if not identified — Pydantic throws → retry
 
     # Bauart
     out["bauart"] = _normalize_via_map(out.get("bauart"), BAUART_MAP, fallback_to_gemischt=True)
@@ -164,7 +164,7 @@ def normalize_blitzschutz_extracted(extracted: dict) -> dict:
         if isinstance(v, str):
             out[bool_field] = v.strip().lower() in ("true", "ja", "yes", "vorhanden", "1")
         elif v is None and bool_field == "vereinsmitglied":
-            out[bool_field] = True  # default: większość klientów TÜV to Vereinsmitglieder
+            out[bool_field] = True  # default: most TÜV clients are Vereinsmitglieder
 
     # Clean numeric fields
     for num_field in ("anzahl_ableitungen", "laenge_m", "breite_m", "hoehe_m", "gebaeudeumfang_m"):

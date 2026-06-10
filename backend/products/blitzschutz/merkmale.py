@@ -1,6 +1,6 @@
-"""Blitzschutz Merkmale — 17 Merkmale z analizy 30 sample PDFów MA570.
+"""Blitzschutz Merkmale — 17 Merkmale aus Analyse von 30 Sample-PDFs MA570.
 
-Wszystkie pola mają przykłady z realnych raportów (patrz ~/Desktop/TUEV/dashboard.html → sekcja Blitzschutz).
+Alle Felder haben Beispiele aus realen Berichten (siehe ~/Desktop/TUEV/dashboard.html → Sektion Blitzschutz).
 """
 
 from enum import Enum
@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field, field_validator
 class Schutzklasse(str, Enum):
     I = "I"     # Höchste (Ex-Bereich, Munition)
     II = "II"   # Krankenhaus, Museum, Versammlungsstätten
-    III = "III" # Standard (Büro, Industrie, Wohnung) — najczęstsza
+    III = "III" # Standard (Büro, Industrie, Wohnung) — häufigste
     IV = "IV"   # Niedrigste (einfache Wohngebäude, Lager)
 
 
@@ -78,12 +78,12 @@ class ArtPruefung(str, Enum):
 # ──────────────────────────────────────────────────────────────
 
 class BlitzschutzMerkmale(BaseModel):
-    """Input do Kalkulatora Blitzschutz (17 pól).
+    """Input für Blitzschutz-Kalkulator (17 Felder).
 
-    Wszystkie Merkmale są ekstraktowalne z MA570 Prüfberichte (P0 extraction difficulty).
+    Alle Merkmale sind aus MA570-Prüfberichten extrahierbar (P0 extraction difficulty).
     """
 
-    # Kontext Anfrage (zawsze wymagane)
+    # Anfrage-Kontext (immer erforderlich)
     nutzung: GebaeudeNutzung = Field(description="Gebäudenutzung")
     adresse_strasse: Optional[str] = None
     adresse_plz: Optional[str] = None
@@ -106,9 +106,9 @@ class BlitzschutzMerkmale(BaseModel):
     schutzklasse: Optional[Schutzklasse] = Field(
         None,
         description=(
-            "DIN EN 62305 Schutzklasse (I/II/III/IV). Optional dla ingest grafu bo "
-            "~58% raportów MA570 ma pole niewypełnione (Sachverständiger pominął). "
-            "Dla Kalkulatora (user-input) wymagane — walidacja w pipeline."
+            "DIN EN 62305 Schutzklasse (I/II/III/IV). Optional für Graph-Ingest, da "
+            "~58% der MA570-Berichte dieses Feld leer haben (Sachverständiger ausgelassen). "
+            "Für Kalkulator (User-Input) erforderlich — Validierung in Pipeline."
         ),
     )
     anzahl_ableitungen: Optional[int] = Field(
@@ -131,7 +131,7 @@ class BlitzschutzMerkmale(BaseModel):
     art_pruefung: ArtPruefung = ArtPruefung.WP
     baurechtlich: bool = Field(
         False,
-        description="TRUE jeśli Baurecht-driven (MA572) — wymusza Ordnungsprüfung 242€"
+        description="TRUE wenn Baurecht-driven (MA572) — erzwingt Ordnungsprüfung 242€"
     )
     vereinsmitglied: bool = True
     eilzuschlag: bool = False

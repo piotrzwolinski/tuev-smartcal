@@ -1,6 +1,6 @@
 """Universal pricing executor.
 
-Dla każdego Gewerku wykonuje identyczny flow:
+For each Gewerk executes identical flow:
     Grundkosten (shared) + Prüfkosten (per-Gewerk) + Reisekosten (shared) + Bericht (shared)
     → Zuschläge (shared + per-Gewerk)
     → Confidence scoring (per-Gewerk validation)
@@ -56,7 +56,7 @@ class PricingEngine:
         # 2. Prüfkosten (per-Gewerk logic)
         breakdown.pruef = gewerk.pruefkosten(merkmale)
 
-        # 3. Reisekosten (jeśli mamy adres Anlage)
+        # 3. Reisekosten (if Anlage address available)
         # Veit 30.05: >9h = 2 Anfahrten, >18h = 3 Anfahrten
         adresse_lat = getattr(merkmale, "adresse_lat", None)
         adresse_lon = getattr(merkmale, "adresse_lon", None)

@@ -4,7 +4,7 @@ Gewerk maps:
 - Blitzschutz → MA570 (Phase 1) + MA572/574/555 (Phase 2)
 - RLT        → MA419-HYG + MA419-WPBA (Phase 1)
 - DGUV V3    → MA507 (Phase 1) + MA501/560 (Phase 2)
-- ... (kolejne 8 produktów w Phase 2)
+- ... (8 more products in Phase 2)
 """
 
 from __future__ import annotations
@@ -103,12 +103,12 @@ M = TypeVar("M", bound=BaseModel)
 
 
 class Gewerk(ABC):
-    """Base class — każdy produkt (products/<name>/__init__.py) implementuje."""
+    """Base class — each product (products/<name>/__init__.py) implementuje."""
 
     # Metadata (override in subclass)
     id: str                      # "blitzschutz" | "rlt" | "dguv_v3"
     name: str                    # "Blitzschutz äußerer"
-    ma_codes: list[str]          # ["MA570"] — który MA-code z dataset
+    ma_codes: list[str]          # ["MA570"] — which MA-code from dataset
     lpv_referenz: str            # "B04 §8.1"
     graph_name: str              # FalkorDB graph name (izolowany per produkt)
 

@@ -1,8 +1,8 @@
 """Blitzschutz pricing rules — LPV B04 §8.1 (Äußerer Blitzschutz).
 
 Primary cost driver: Anzahl Messstellen × 33€ (bis 10 MS).
-Powyżej 10 MS: "besondere Vereinbarung" — w Phase 1 implementujemy Staffeln heurystyczne,
-walidujemy przeciwko 325 Anlagen w Blitzschutz_StV.xlsx w M2.4.
+Ab 10 MS: "besondere Vereinbarung" — Phase 1 nutzt heuristische Staffeln,
+validiert gegen 325 Anlagen aus Blitzschutz_StV.xlsx (M2.4).
 """
 
 from products.blitzschutz.merkmale import (
@@ -24,8 +24,8 @@ from common.pricing_primitives import (
 PREIS_PRO_MESSSTELLE = 33.00   # €/Stück (LPV B04 §8.1)
 SCHWELLE_VEREINBARUNG = 10     # > 10 MS = individuell
 
-# Staffeln heurystyczne (do walidacji na StV 325 Anlagen)
-# Idea: powyżej 10 MS staje się "komplex", cena per-MS maleje nieco
+# Heuristische Staffeln (zu validieren gegen StV 325 Anlagen)
+# Ab 10 MS wird es "komplex", Preis pro MS sinkt leicht
 STAFFEL = [
     # (min_ms, max_ms, preis_pro_ms_ueber_schwelle)
     (11, 20, 30.00),
@@ -71,7 +71,7 @@ def blitz_pruefkosten(m: BlitzschutzMerkmale) -> float:
     if n <= SCHWELLE_VEREINBARUNG:
         return n * PREIS_PRO_MESSSTELLE
 
-    # Base: 10 pierwszych MS × 33€
+    # Base: erste 10 MS × 33€
     cost = SCHWELLE_VEREINBARUNG * PREIS_PRO_MESSSTELLE
     remaining = n - SCHWELLE_VEREINBARUNG
 
@@ -87,10 +87,10 @@ def blitz_pruefkosten(m: BlitzschutzMerkmale) -> float:
 
 
 def blitz_estimate_pruef_tage(m: BlitzschutzMerkmale) -> float:
-    """Ile Prüftage wg Anzahl Messstellen.
+    """Geschätzte Prüftage nach Anzahl Messstellen.
 
-    Heurystyka z 99 Berichte EG Nürnberg Q1/2025:
-    ~15 Messstellen/dzień dla średniego obiektu.
+    Heuristik aus 99 Berichten EG Nürnberg Q1/2025:
+    ~15 Messstellen/Tag für durchschnittliches Objekt.
     """
     n, _ = estimate_ableitungen(m)
     if n <= 10:
@@ -101,7 +101,7 @@ def blitz_estimate_pruef_tage(m: BlitzschutzMerkmale) -> float:
         return 2.0
     if n <= 100:
         return 3.0
-    return max(3.0, n / 40)  # duże obiekty: 40 MS/dzień
+    return max(3.0, n / 40)  # große Objekte: 40 MS/Tag
 
 
 def blitz_choose_bericht_typ(m: BlitzschutzMerkmale) -> str:
@@ -130,7 +130,7 @@ def blitz_zuschlaege(m: BlitzschutzMerkmale) -> list[tuple[str, float]]:
 # Confidence scoring (Veit-angle Risk Score)
 # ──────────────────────────────────────────────────────────────
 
-# Typowe zakresy Anzahl Ableitungen per Gebäudetyp (z 99 Berichte + sampling)
+# Typische Bereiche Anzahl Ableitungen pro Gebäudetyp (aus 99 Berichten + Sampling)
 TYPICAL_RANGES = {
     GebaeudeNutzung.SCHULE:      (6, 35),
     GebaeudeNutzung.BUERO:       (6, 28),
@@ -144,7 +144,7 @@ TYPICAL_RANGES = {
     GebaeudeNutzung.SONSTIGE:    (3, 60),
 }
 
-# Typowa Schutzklasse per Gebäudetyp (z 99 Berichte)
+# Typische Schutzklasse pro Gebäudetyp (aus 99 Berichten)
 TYPICAL_SCHUTZKLASSE = {
     GebaeudeNutzung.KRANKENHAUS: Schutzklasse.II,
     GebaeudeNutzung.MUSEUM:      Schutzklasse.II,
@@ -158,12 +158,12 @@ TYPICAL_SCHUTZKLASSE = {
 
 
 def blitz_validate_ranges(m: BlitzschutzMerkmale) -> tuple[float, str]:
-    """Veit-angle: jeśli Merkmale są nietypowe → flag confidence down.
+    """Veit-angle: bei untypischen Merkmalen Confidence senken.
 
-    Validated 2026-04-16 przeciwko 316 Anlagen Stadtwerke Augsburg StV:
-    - LPV-conform dla TS ≤ 15 (Δ <3%)
-    - Powyżej 25 TS: real Ausschreibungs-Preis może być 30-50% niższy niż LPV nominal
-      (Stadtwerke wyciągnęli agresywny Bieter-rabatt)
+    Validiert 2026-04-16 gegen 316 Anlagen Stadtwerke Augsburg StV:
+    - LPV-konform bei TS ≤ 15 (Δ <3%)
+    - Ab 25 TS: realer Ausschreibungs-Preis kann 30-50% unter LPV-Nominal liegen
+      (Stadtwerke haben aggressiven Bieter-Rabatt durchgesetzt)
     """
     reasons = []
     confidence = 1.0
@@ -181,14 +181,14 @@ def blitz_validate_ranges(m: BlitzschutzMerkmale) -> tuple[float, str]:
     if n < lo:
         confidence *= 0.8
         reasons.append(
-            f"Anzahl Ableitungen ({n}) niższa niż typowa "
-            f"dla {m.nutzung.value} (typisch {lo}-{hi})"
+            f"Anzahl Ableitungen ({n}) unter dem typischen Bereich "
+            f"für {m.nutzung.value} (typisch {lo}-{hi})"
         )
     elif n > hi * 1.5:
         confidence *= 0.7
         reasons.append(
-            f"Anzahl Ableitungen ({n}) znacznie wyższa niż typowa "
-            f"dla {m.nutzung.value} (typisch {lo}-{hi}) — edge case?"
+            f"Anzahl Ableitungen ({n}) deutlich über dem typischen Bereich "
+            f"für {m.nutzung.value} (typisch {lo}-{hi}) — Sonderfall?"
         )
 
     # Check Schutzklasse vs typical
@@ -202,7 +202,7 @@ def blitz_validate_ranges(m: BlitzschutzMerkmale) -> tuple[float, str]:
     elif typical_sk and m.schutzklasse != typical_sk:
         confidence *= 0.9
         reasons.append(
-            f"Schutzklasse {m.schutzklasse.value} nietypowa dla {m.nutzung.value} "
+            f"Schutzklasse {m.schutzklasse.value} untypisch für {m.nutzung.value} "
             f"(typisch {typical_sk.value})"
         )
 
@@ -210,10 +210,10 @@ def blitz_validate_ranges(m: BlitzschutzMerkmale) -> tuple[float, str]:
     if n > 25:
         confidence *= 0.85
         reasons.append(
-            f"⚠ {n} Trennstellen >25 — w realnych Ausschreibungen "
-            f"(Bieter-Wettbewerb) może obowiązywać rabatt 30-50% vs LPV nominal "
-            f"(z Augsburg-StV: ~12-22€/TS zamiast 33€/TS dla dużych obiektów)"
+            f"⚠ {n} Trennstellen >25 — in realen Ausschreibungen "
+            f"(Bieter-Wettbewerb) kann ein Rabatt von 30-50% vs LPV-Nominal gelten "
+            f"(aus Augsburg-StV: ~12-22€/TS statt 33€/TS bei großen Objekten)"
         )
 
-    reason = " · ".join(reasons) if reasons else "Alle Merkmale w typowych zakresach"
+    reason = " · ".join(reasons) if reasons else "Alle Merkmale im typischen Bereich"
     return confidence, reason

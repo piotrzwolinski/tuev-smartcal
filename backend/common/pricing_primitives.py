@@ -1,12 +1,12 @@
 """LPV Teil A shared pricing primitives.
 
-Wspólne dla wszystkich Gewerke (Blitzschutz, RLT, DGUV V3, etc.):
+Shared across all Gewerke (Blitzschutz, RLT, DGUV V3, etc.):
 - Stundensätze (Innendienst / Außendienst / Reise)
 - Reisekosten (km + Tagegeld)
 - Berichterstellung (Pauschalen)
 - Zuschläge (Vereinsmitglied, Eilzuschlag, Sondertermin)
 
-Źródło: LPV 2025/2026 Teil A, §4–§11 (PDF w ~/Desktop/TUEV/LP_00_2026_Gesamt (1).pdf)
+Source: LPV 2025/2026 Teil A, §4–§11 (PDF at ~/Desktop/TUEV/LP_00_2026_Gesamt (1).pdf)
 """
 
 from dataclasses import dataclass
@@ -128,8 +128,8 @@ class Zuschlag:
 # TÜV SÜD IS Niederlassungen (z Veit-Mail + LPV Teil C)
 # ──────────────────────────────────────────────────────────────
 
-# Źródło: E-Mail Stefan Veit (IS-EG1-AUG/SV), 14.08.2025 — dokładne adresy
-# Koordynaty: geocoded z adresów (Google Maps precision)
+# Source: E-Mail Stefan Veit (IS-EG1-AUG/SV), 14.08.2025 — exact addresses
+# Coordinates: geocoded from addresses (Google Maps precision)
 TUEV_NIEDERLASSUNGEN = [
     {"id": "AUG", "name": "Augsburg", "plz": "86199", "adresse": "Oskar-von-Miller-Straße 17", "lat": 48.3543, "lon": 10.8735},
     {"id": "BER", "name": "Berlin", "plz": "13509", "adresse": "Wittestraße 30, Haus LM", "lat": 52.5785, "lon": 13.3195},

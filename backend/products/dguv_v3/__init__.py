@@ -1,7 +1,7 @@
 """DGUV V3 ortsfeste elektrische Anlagen — Phase 1 product.
 
-Covers MA507 (10,096 raportów) — ortsfeste elektrische Anlagen, cyclic DGUV V3/V4 check.
-Phase 2: rozszerzyć o MA501 (Ex-Bereich), MA510 (Sonderbau + ZB+NEA+USV), MA560 (ortsveränderliche).
+Covers MA507 (10,096 reports) — ortsfeste elektrische Anlagen, cyclic DGUV V3/V4 check.
+Phase 2: extend with MA501 (Ex-Bereich), MA510 (Sonderbau + ZB+NEA+USV), MA560 (ortsveränderliche).
 
 Norma: DIN VDE 0105-100/A1 + DGUV V3/V4 + BetrSichV
 LPV referenz: B04 Kap. 2 (250€ Grundpreis + 1-5€/10m² per Installationskategorie)

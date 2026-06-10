@@ -10,7 +10,7 @@ Struktura:
     Col 32: Klasse I & II — Sichtprüfung
     Col 33: Klasse III & IV — Vollprüfung
     Col 34: Klasse III & IV — Sichtprüfung
-- Per Anlage wypełniona tylko jedna z 4 cen (match Schutzklasse + Vollprüfung)
+- Per Anlage only one of 4 prices filled (match Schutzklasse + Vollprüfung)
 
 Merkmale ekstraktowalne:
 - Standort-Strasse, PLZ, Ort
@@ -74,7 +74,7 @@ def _to_schutzklasse(value) -> Optional[Schutzklasse]:
 
 
 def _is_blitzschutz_aussen(bezeichnung: Optional[str]) -> bool:
-    """5 wariantów nazwy w Excel-data — wszystkie äußerer Blitzschutz."""
+    """5 name variants in Excel data — all äußerer Blitzschutz."""
     if not bezeichnung:
         return False
     s = str(bezeichnung).lower()

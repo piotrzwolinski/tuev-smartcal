@@ -1,8 +1,8 @@
 """Shared-secret API key auth via X-API-Key header.
 
-Wszystkie requesty do `/api/*` wymagają headera `X-API-Key: <SMARTCAL_API_KEY>`.
-Klucz jest sharowany między frontendem (Next.js Route Handler) a backendem.
-Przeglądarka nigdy nie widzi klucza — jest wstrzykiwany server-side w proxy.
+All requests to `/api/*` require the `X-API-Key: <SMARTCAL_API_KEY>` header.
+Key is shared between frontend (Next.js Route Handler) and backend.
+Browser never sees the key — injected server-side via proxy.
 """
 
 import hmac

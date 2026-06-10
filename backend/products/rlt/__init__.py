@@ -1,8 +1,8 @@
 """RLT-Anlage — Phase 1 product.
 
 Covers 2 sub-warianty MA419:
-- MA419-HYG: Hygieneinspektion VDI 6022 (862 raportów)
-- MA419-WPBA: Garagenlüftung Baurecht BayBO+GaStellV+VDI 2053 (8,150 raportów)
+- MA419-HYG: Hygieneinspektion VDI 6022 (862 reports)
+- MA419-WPBA: Garagenlüftung Baurecht BayBO+GaStellV+VDI 2053 (8,150 reports)
 
 Phase 1 UI: jeden produkt RLT, auto-detection sub-wariantu z Anfrage.
 

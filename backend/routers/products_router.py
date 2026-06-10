@@ -10,7 +10,7 @@ router = APIRouter(prefix="/api/products", tags=["products"])
 
 @router.get("")
 async def list_products():
-    """Manifest wszystkich zarejestrowanych produktów."""
+    """Manifest of all registered products."""
     return {
         "phase": 1,
         "products": list_gewerke(),

@@ -1,4 +1,4 @@
-"""Batch extraction v2: 50 MA570 PDFów → anonimizer → Haiku → normalize → Pydantic → retry Sonnet.
+"""Batch extraction v2: 50 MA570 PDFs → anonymizer → Haiku → normalize → Pydantic → retry Sonnet.
 
 Pipeline:
   1. pdfminer extract text
@@ -6,7 +6,7 @@ Pipeline:
   3. Haiku extraction → JSON
   4. Normalize (common/normalize.py: enum mapping)
   5. Pydantic BlitzschutzMerkmale validation
-  6. Jeśli fail → Sonnet retry z lepszym promptem
+  6. If fail → Sonnet retry with better prompt
 """
 
 import json

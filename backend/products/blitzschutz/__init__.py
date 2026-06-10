@@ -1,7 +1,7 @@
 """Blitzschutz — Phase 1 primary product.
 
 Covers MA570 (umfassende Prüfung, non-Baurecht, non-Ex).
-Phase 2: rozszerzyć o MA572 (Baurecht Sonderbau), MA574 (wiederkehrend), MA555 (Ex-Schutz).
+Phase 2: extend with MA572 (Baurecht Sonderbau), MA574 (wiederkehrend), MA555 (Ex-Schutz).
 
 Norma: DIN EN 62305-1/-3 + Beiblatt 3 (Oktober 2012)
 LPV referenz: B04 §8.1 (Äußerer Blitzschutz — 33€/Messstelle)

@@ -1,7 +1,7 @@
 """RLT Merkmale — 2 sub-warianty (HYG / WPBA).
 
 Phase 1: jeden schema z wariant-discriminator.
-TODO M3.3 (KW18): rozszerzyć o pełne VDI 6022 Laborfeldy + BSK per-Stück.
+TODO M3.3 (KW18): extend with full VDI 6022 Laborfeldy + BSK per-Stück.
 """
 
 from enum import Enum
@@ -22,7 +22,7 @@ class GaragentTyp(str, Enum):
 
 
 class FilterklasseISO(str, Enum):
-    """ISO 16890 Filterklassen z typowych raportów MA419-HYG."""
+    """ISO 16890 Filterklassen from typical reports MA419-HYG."""
     EPM10_50 = "iso_epm10_50"
     EPM2_5_65 = "iso_epm2_5_65"
     EPM1_50 = "iso_epm1_50"

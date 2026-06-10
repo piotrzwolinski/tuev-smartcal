@@ -1,6 +1,6 @@
 """Product registry.
 
-Import side-effect: każdy submodule wywołuje register_gewerk().
+Import side-effect: each submodule calls register_gewerk().
 """
 
 from . import blitzschutz, rlt, dguv_v3  # noqa: F401
