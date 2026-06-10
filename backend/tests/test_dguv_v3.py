@@ -29,8 +29,10 @@ from products.dguv_v3.pricing_rules import (
     dguv_choose_bericht_typ,
     dguv_zuschlaege,
     dguv_validate_ranges,
+    flaechenkosten_degressiv,
     DGUV_GRUNDPREIS_ANLAGE,
     PREIS_PER_10M2,
+    DEGRESSION_DGUV,
     ZUSCHLAG_NEA,
     ZUSCHLAG_SV_NSHV,
     PREIS_VERTEILUNG_UV,
@@ -72,19 +74,23 @@ def _mock_find_nearest(lat, lon):
 
 class TestDGUVPruefkosten:
     def test_basic_kat1_1000m2(self):
+        # Degression v2: 1000m² in band 0-2000 → factor 0.80
+        # 250 + (1000/10) × 1.00 × 0.80 = 250 + 80 = 330
         m = _make(1000, primary_installationskategorie=Installationskategorie.KAT_1)
-        expected = DGUV_GRUNDPREIS_ANLAGE + (1000 / 10) * PREIS_PER_10M2[Installationskategorie.KAT_1]
+        expected = DGUV_GRUNDPREIS_ANLAGE + flaechenkosten_degressiv(1000, PREIS_PER_10M2[Installationskategorie.KAT_1], DEGRESSION_DGUV)
         assert dguv_pruefkosten(m) == expected
 
     def test_kat2_higher_rate(self):
+        # Degression v2: 1000m² in band 0-2000 → factor 0.80
+        # 250 + (1000/10) × 3.10 × 0.80 = 250 + 248 = 498
         m = _make(1000, primary_installationskategorie=Installationskategorie.KAT_2)
-        expected = DGUV_GRUNDPREIS_ANLAGE + (1000 / 10) * PREIS_PER_10M2[Installationskategorie.KAT_2]
+        expected = DGUV_GRUNDPREIS_ANLAGE + flaechenkosten_degressiv(1000, PREIS_PER_10M2[Installationskategorie.KAT_2], DEGRESSION_DGUV)
         assert dguv_pruefkosten(m) == expected
 
     def test_all_kategorien_rates(self):
         for kat in Installationskategorie:
             m = _make(500, primary_installationskategorie=kat)
-            expected = DGUV_GRUNDPREIS_ANLAGE + 50 * PREIS_PER_10M2[kat]
+            expected = DGUV_GRUNDPREIS_ANLAGE + flaechenkosten_degressiv(500, PREIS_PER_10M2[kat], DEGRESSION_DGUV)
             assert dguv_pruefkosten(m) == expected
 
     def test_kat6_most_expensive(self):
@@ -93,12 +99,15 @@ class TestDGUVPruefkosten:
             costs[kat] = dguv_pruefkosten(_make(1000, primary_installationskategorie=kat))
         assert costs[Installationskategorie.KAT_6] == max(costs.values())
 
-    def test_linear_with_flaeche(self):
-        c1 = dguv_pruefkosten(_make(1000, primary_installationskategorie=Installationskategorie.KAT_1))
-        c2 = dguv_pruefkosten(_make(2000, primary_installationskategorie=Installationskategorie.KAT_1))
-        diff = c2 - c1
-        expected_diff = (1000 / 10) * PREIS_PER_10M2[Installationskategorie.KAT_1]
-        assert abs(diff - expected_diff) < 0.01
+    def test_degression_reduces_large(self):
+        # Degression: effective rate falls with area. 2000→4000 uses factor 0.80,
+        # but 4000→5000 uses factor 0.60, so the marginal cost is lower.
+        c2k = dguv_pruefkosten(_make(2000, primary_installationskategorie=Installationskategorie.KAT_1))
+        c4k = dguv_pruefkosten(_make(4000, primary_installationskategorie=Installationskategorie.KAT_1))
+        c6k = dguv_pruefkosten(_make(6000, primary_installationskategorie=Installationskategorie.KAT_1))
+        marginal_2_4 = (c4k - c2k) / 2000
+        marginal_4_6 = (c6k - c4k) / 2000
+        assert marginal_4_6 < marginal_2_4
 
 
 # ──────────────────────────────────────────────────────────────
@@ -391,8 +400,9 @@ class TestDGUVGoldenReference:
 
         angebot = engine.calculate(gewerk, m)
 
-        # Prüfkosten: 250 + (200/10)×1.00 + 1×25 = 250 + 20 + 25 = 295
-        assert angebot.breakdown.pruef == 295.00
+        # Degression v2: 200m² band 0-2000 factor 0.80
+        # 250 + (200/10)×1.00×0.80 + 1×25 = 250 + 16 + 25 = 291
+        assert angebot.breakdown.pruef == 291.00
         assert angebot.breakdown.bericht == BERICHT_KLEIN  # 200m², 1 UV
         assert angebot.total > 0
 
@@ -415,9 +425,10 @@ class TestDGUVGoldenReference:
 
         angebot = engine.calculate(gewerk, m)
 
-        # 250 + (5000/10)×3.10 + 15×25 + 3×85 + 1×145 + 320(NEA) [KAT_2 calibrated to 3.10]
-        # = 250 + 1550 + 375 + 255 + 145 + 320 = 2895
-        assert angebot.breakdown.pruef == 2895.00
+        # Degression v2: 5000m² KAT_2=3.10€/10m²
+        # Band 0-2000: 200×3.10×0.80=496, 2000-4000: 200×3.10×0.80=496, 4000-5000: 100×3.10×0.60=186
+        # 250 + 1178 + 15×25 + 3×85 + 1×145 + 320(NEA) = 2523
+        assert angebot.breakdown.pruef == 2523.00
         # 5000m² + 19 total verteilungen (>15) → komplex
         assert angebot.breakdown.bericht == BERICHT_KOMPLEX
 
@@ -441,9 +452,11 @@ class TestDGUVGoldenReference:
 
         angebot = engine.calculate(gewerk, m)
 
-        # 250 + (20000/10)×5.40 + 30×25 + 5×85 + 2×145 + 320 + 180 [KAT_5 calibrated to 5.40]
-        # = 250 + 10800 + 750 + 425 + 290 + 320 + 180 = 13015
-        assert angebot.breakdown.pruef == 13015.00
+        # Degression v2: 20000m² KAT_5=5.40€/10m²
+        # 0-2k: 200×5.40×0.80=864, 2-4k: 200×5.40×0.80=864, 4-6k: 200×5.40×0.60=648,
+        # 6-10k: 400×5.40×0.50=1080, 10-20k: 1000×5.40×0.40=2160 → Σ=5616
+        # 250 + 5616 + 30×25 + 5×85 + 2×145 + 320 + 180 = 7831
+        assert angebot.breakdown.pruef == 7831.00
         assert angebot.breakdown.bericht == BERICHT_KOMPLEX
 
 

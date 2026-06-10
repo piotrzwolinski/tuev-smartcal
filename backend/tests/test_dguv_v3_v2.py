@@ -14,6 +14,8 @@ from products.dguv_v3.pricing_rules import (
     VOLLERFASSUNG_FAKTOR,
     PREISSTEIGERUNG,
     DGUV_GRUNDPREIS_ANLAGE,
+    DEGRESSION_DGUV,
+    flaechenkosten_degressiv,
     dguv_pruefkosten,
     dguv_estimate_pruef_tage,
     dguv_choose_bericht_typ,
@@ -54,13 +56,15 @@ class TestCalibratedPricing:
     def test_buero_1000m2_kat2(self):
         m = DGUVMerkmale(nutzung=GebaeudeNutzungDGUV.BUEROGEBAEUDE, gesamtflaeche_m2=1000, primary_installationskategorie=Installationskategorie.KAT_2)
         cost = dguv_pruefkosten(m)
-        expected_pruef = 250 + (1000 / 10) * 3.10  # 250 + 310 = 560
+        # Degression v2: 250 + degressiv(1000, 3.10) = 250 + 248 = 498
+        expected_pruef = DGUV_GRUNDPREIS_ANLAGE + flaechenkosten_degressiv(1000, 3.10, DEGRESSION_DGUV)
         assert cost == expected_pruef
 
     def test_supermarkt_2000m2_kat3(self):
         m = DGUVMerkmale(nutzung=GebaeudeNutzungDGUV.VERKAUFSSTAETTE, gesamtflaeche_m2=2000, primary_installationskategorie=Installationskategorie.KAT_3)
         cost = dguv_pruefkosten(m)
-        expected_pruef = 250 + (2000 / 10) * 5.00  # 250 + 1000 = 1250
+        # Degression v2: 250 + degressiv(2000, 5.00) = 250 + 800 = 1050
+        expected_pruef = DGUV_GRUNDPREIS_ANLAGE + flaechenkosten_degressiv(2000, 5.00, DEGRESSION_DGUV)
         assert cost == expected_pruef
 
 
@@ -104,13 +108,19 @@ class TestNutzungsMix:
             ],
         )
         cost = dguv_pruefkosten(m)
-        expected = 250 + (5000 * 0.30 / 10) * 3.10 + (5000 * 0.50 / 10) * 3.10 + (5000 * 0.20 / 10) * 5.00
+        # Degression v2: each mix zone degressed independently
+        expected = DGUV_GRUNDPREIS_ANLAGE + (
+            flaechenkosten_degressiv(5000 * 0.30, 3.10, DEGRESSION_DGUV)
+            + flaechenkosten_degressiv(5000 * 0.50, 3.10, DEGRESSION_DGUV)
+            + flaechenkosten_degressiv(5000 * 0.20, 5.00, DEGRESSION_DGUV)
+        )
         assert cost == pytest.approx(expected, rel=0.01)
 
     def test_reine_nutzung_ohne_mix(self):
         m = DGUVMerkmale(nutzung=GebaeudeNutzungDGUV.SCHULE, gesamtflaeche_m2=3000, primary_installationskategorie=Installationskategorie.KAT_2)
         cost = dguv_pruefkosten(m)
-        expected = 250 + (3000 / 10) * 3.10
+        # Degression v2: 250 + degressiv(3000, 3.10)
+        expected = DGUV_GRUNDPREIS_ANLAGE + flaechenkosten_degressiv(3000, 3.10, DEGRESSION_DGUV)
         assert cost == expected
 
     def test_mix_normalisierung(self):
@@ -179,7 +189,7 @@ class TestDokumentation:
 
     def test_standard_kein_zuschlag(self):
         m = DGUVMerkmale(nutzung=GebaeudeNutzungDGUV.BUEROGEBAEUDE, gesamtflaeche_m2=1000, primary_installationskategorie=Installationskategorie.KAT_2, vollerfassung=False)
-        base = 250 + (1000 / 10) * 3.10
+        base = DGUV_GRUNDPREIS_ANLAGE + flaechenkosten_degressiv(1000, 3.10, DEGRESSION_DGUV)
         assert dguv_pruefkosten(m) == base
 
     def test_default_keine_vollerfassung(self):
@@ -338,7 +348,8 @@ class TestDemoSzenarien:
             primary_installationskategorie=Installationskategorie.KAT_2,
         )
         cost = dguv_pruefkosten(m)
-        expected = 250 + (3000 / 10) * 3.10  # 250 + 930 = 1180
+        # Degression v2: 250 + degressiv(3000, 3.10)
+        expected = DGUV_GRUNDPREIS_ANLAGE + flaechenkosten_degressiv(3000, 3.10, DEGRESSION_DGUV)
         assert cost == expected
 
     def test_demo_reifegrad_4_abschlag(self):

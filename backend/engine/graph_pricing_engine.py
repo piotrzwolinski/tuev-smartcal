@@ -299,6 +299,10 @@ class GraphPricingEngine:
         flaeche = getattr(merkmale, "gesamtflaeche_m2", 0) or 0  # None-Guard (flaeche Optional)
         mix = getattr(merkmale, "nutzungs_mix", None)
 
+        from products.dguv_v3.pricing_rules import flaechenkosten_degressiv
+        deg_rows = self._q("MATCH (f:Flaechenstaffel {kurve: 'dguv'}) RETURN f.ab_m2, f.faktor ORDER BY f.ab_m2")
+        deg_kurve = [(float(r[0]), float(r[1])) for r in deg_rows] if deg_rows else [(0, 0.80), (2000, 0.80), (4000, 0.60), (6000, 0.50), (10000, 0.40), (25000, 0.30)]
+
         if mix and len(mix) > 0:
             flaeche_cost = 0.0
             for eintrag in mix:
@@ -312,12 +316,12 @@ class GraphPricingEngine:
                 e_rate = e_row[0][0] if e_row else 1.0
                 e_name = e_row[0][1] if e_row else f"Kat {e_kat_val}"
                 zone_m2 = flaeche * eintrag.anteil
-                zone_cost = (zone_m2 / 10.0) * e_rate
+                zone_cost = flaechenkosten_degressiv(zone_m2, e_rate, deg_kurve)
                 flaeche_cost += zone_cost
                 self._log("pruefkosten",
-                          f"Mix {eintrag.nutzung}: {zone_m2:.0f}m² × {e_rate}€/10m² ({e_name})",
+                          f"Mix {eintrag.nutzung}: {zone_m2:.0f}m² × {e_rate}€/10m² degressiv ({e_name})",
                           f"{zone_cost:.2f}", e_kat_id,
-                          ref=f"Kalkulationshilfen NBG: {e_rate}€/10m² für {e_name}")
+                          ref=f"Kalkulationshilfen NBG: {e_rate}€/10m² für {e_name}, Flächenstaffel")
         else:
             kat = getattr(merkmale, "primary_installationskategorie", None)
             kat_val = kat.value if kat else 1
@@ -326,9 +330,9 @@ class GraphPricingEngine:
             kat_row = self._q("MATCH (k:Installationskategorie {id: $kid}) RETURN k.preis_per_10m2, k.name", kid=kat_id)
             rate = kat_row[0][0] if kat_row else 1.0
             kat_name = kat_row[0][1] if kat_row else f"Kat {kat_val}"
-            flaeche_cost = (flaeche / 10.0) * rate
-            self._log("pruefkosten", f"Fläche {flaeche}m² × {rate}€/10m² ({kat_name})", f"{flaeche_cost}", kat_id,
-                      ref=f"Kalkulationshilfen NBG: {rate}€/10m² für {kat_name}")
+            flaeche_cost = flaechenkosten_degressiv(flaeche, rate, deg_kurve)
+            self._log("pruefkosten", f"Fläche {flaeche}m² × {rate}€/10m² degressiv ({kat_name})", f"{flaeche_cost}", kat_id,
+                      ref=f"Kalkulationshilfen NBG: {rate}€/10m² für {kat_name}, Flächenstaffel")
 
         # Kalibrierung: compare with real-world data sources (only for Büro — DEKA data is Büro-specific)
         nutzung = getattr(merkmale, "nutzung", None)

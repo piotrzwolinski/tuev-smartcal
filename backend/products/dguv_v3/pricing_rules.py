@@ -35,6 +35,9 @@ PREIS_PER_10M2 = {
     Installationskategorie.KAT_6: 6.00,   # NSHV, Trafo — S. Veit Mail, Preis TBD → 6.00 estimate
 }
 
+DEGRESSION_DGUV = [(0, 0.80), (2000, 0.80), (4000, 0.60), (6000, 0.50), (10000, 0.40), (25000, 0.30)]
+DEGRESSION_VDS = [(0, 1.00), (2000, 0.90), (4000, 0.80), (6000, 0.70), (10000, 0.50), (25000, 0.35)]
+
 ZUSCHLAG_NEA = 320.00
 ZUSCHLAG_SV_NSHV = 180.00
 
@@ -274,6 +277,38 @@ def _flaeche(m: DGUVMerkmale) -> float:
     return m.gesamtflaeche_m2 or 0.0
 
 
+def flaechenkosten_degressiv(
+    flaeche_m2: float,
+    rate_per_10m2: float,
+    kurve: list[tuple[float, float]],
+) -> float:
+    """Bandwise degression on area cost (NBG Kalkulationshilfen).
+
+    Each (ab_m2, faktor) entry defines the factor from ab_m2 onwards.
+    Returns total € for the area portion of Prüfkosten.
+    """
+    total = 0.0
+    for i, (ab_m2, faktor) in enumerate(kurve):
+        if flaeche_m2 <= ab_m2:
+            break
+        band_end = kurve[i + 1][0] if i + 1 < len(kurve) else flaeche_m2
+        band_m2 = min(flaeche_m2, band_end) - ab_m2
+        total += (band_m2 / 10.0) * rate_per_10m2 * faktor
+    return round(total, 2)
+
+
+def _g_degression_kurve(kurve_name: str) -> list[tuple[float, float]]:
+    r = get_reader()
+    rows = r.get_all(
+        "MATCH (f:Flaechenstaffel {kurve: $k}) RETURN f.ab_m2, f.faktor ORDER BY f.ab_m2",
+        {"k": kurve_name},
+    )
+    if rows:
+        return [(float(row[0]), float(row[1])) for row in rows]
+    fallback = {"dguv": DEGRESSION_DGUV, "vds": DEGRESSION_VDS}
+    return fallback.get(kurve_name, DEGRESSION_DGUV)
+
+
 def resolve_mix_kategorie(nutzung_name: str) -> Installationskategorie:
     return _g_mix_kategorie(nutzung_name)
 
@@ -288,14 +323,15 @@ def dguv_pruefkosten(m: DGUVMerkmale) -> float:
     cost = DGUV_GRUNDPREIS_ANLAGE
 
     flaeche = _flaeche(m)
+    kurve = _g_degression_kurve("dguv")
     if m.nutzungs_mix:
         for eintrag in m.nutzungs_mix:
             kat = eintrag.kategorie or resolve_mix_kategorie(eintrag.nutzung)
             rate = _g_kat_preis(kat)
-            cost += (flaeche * eintrag.anteil / 10.0) * rate
+            cost += flaechenkosten_degressiv(flaeche * eintrag.anteil, rate, kurve)
     else:
         rate = _g_kat_preis(m.primary_installationskategorie)
-        cost += (flaeche / 10.0) * rate
+        cost += flaechenkosten_degressiv(flaeche, rate, kurve)
 
     cost += m.anzahl_verteilungen_uv * PREIS_VERTEILUNG_UV
     cost += m.anzahl_verteilungen_hv * PREIS_VERTEILUNG_HV
