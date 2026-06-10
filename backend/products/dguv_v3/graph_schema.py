@@ -182,7 +182,6 @@ def load_dguv_graph() -> dict:
 
     # ── 14. CROSS-SELL ───────────────────────────────────────
     statements.append(f"CREATE (:CrossSell {{id: 'CS_BLITZ', empfehlung: 'Blitzschutzprüfung — Kombi-Begehung spart Reisekosten', produkt: 'blitzschutz', prioritaet: 'hoch', _quelle: 'S. Veit erster Call', _typ: 'fachexperte', _stand: '{STAND}'}})")
-    statements.append(f"CREATE (:CrossSell {{id: 'CS_RLT', empfehlung: 'RLT-Hygieneinspektion (VDI 6022) — gleiche Begehung möglich', produkt: 'rlt', prioritaet: 'mittel', _quelle: 'S. Veit erster Call', _typ: 'fachexperte', _stand: '{STAND}'}})")
 
     # ══════════════════════════════════════════════════════════
     # NEW PRD v2.1 NODES
