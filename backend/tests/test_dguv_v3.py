@@ -400,9 +400,8 @@ class TestDGUVGoldenReference:
 
         angebot = engine.calculate(gewerk, m)
 
-        # Degression v2: 200m² band 0-2000 factor 0.80
-        # 250 + (200/10)×1.00×0.80 + 1×25 = 250 + 16 + 25 = 291
-        assert angebot.breakdown.pruef == 291.00
+        # Phase 4: 200m² + 1 UV = Kleinauftrag → min_pauschale 270€
+        assert angebot.breakdown.pruef == 270.00
         assert angebot.breakdown.bericht == BERICHT_KLEIN  # 200m², 1 UV
         assert angebot.total > 0
 

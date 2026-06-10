@@ -21,6 +21,9 @@ from products.dguv_v3.pricing_rules import (
     dguv_validate_ranges,
     dguv_referenzpreis,
     dguv_referenzpreis_vergleich,
+    is_kleinauftrag,
+    kleinauftrag_pruefkosten,
+    kleinauftrag_grundkosten,
 )
 from products.dguv_v3.golden_set import load_dguv_golden_set
 
@@ -43,6 +46,8 @@ class DGUVV3Gewerk(Gewerk):
         from products.dguv_v3.merkmale import Pruefart
         if getattr(merkmale, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH:
             return 0.0
+        if is_kleinauftrag(merkmale):
+            return kleinauftrag_grundkosten(merkmale)
         return None
 
     def estimate_pruef_tage(self, merkmale):

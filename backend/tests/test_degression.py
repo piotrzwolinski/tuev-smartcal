@@ -10,6 +10,7 @@ from unittest.mock import patch
 from products.dguv_v3.pricing_rules import (
     flaechenkosten_degressiv,
     dguv_pruefkosten,
+    dispatch_pruefkosten,
     DEGRESSION_DGUV,
     DEGRESSION_VDS,
     DGUV_GRUNDPREIS_ANLAGE,
@@ -145,4 +146,4 @@ class TestDegressionEngineIntegration:
         for flaeche in [200, 1000, 5000, 15000]:
             m = _make(flaeche, adresse_lat=49.01, adresse_lon=12.08)
             angebot = engine.calculate(gewerk, m)
-            assert angebot.breakdown.pruef == dguv_pruefkosten(m), f"parity failed at {flaeche}m²"
+            assert angebot.breakdown.pruef == dispatch_pruefkosten(m), f"parity failed at {flaeche}m²"

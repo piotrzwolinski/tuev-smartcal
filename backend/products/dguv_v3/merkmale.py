@@ -118,6 +118,7 @@ class DGUVMerkmale(BaseModel):
 
     referenzpreis_jahr: Optional[int] = Field(None, ge=2015, le=2026)
     referenzpreis_betrag: Optional[float] = Field(None, ge=0)
+    referenz_vergleichbar: bool = False
 
     baurechtlich: bool = False
     vereinsmitglied: bool = True

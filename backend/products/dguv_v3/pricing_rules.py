@@ -38,6 +38,17 @@ PREIS_PER_10M2 = {
 DEGRESSION_DGUV = [(0, 0.80), (2000, 0.80), (4000, 0.60), (6000, 0.50), (10000, 0.40), (25000, 0.30)]
 DEGRESSION_VDS = [(0, 1.00), (2000, 0.90), (4000, 0.80), (6000, 0.70), (10000, 0.50), (25000, 0.35)]
 
+KLEINAUFTRAG_MAX_VERT = 2
+KLEINAUFTRAG_MAX_FLAECHE = 300
+KLEINAUFTRAG_STUNDENSATZ = 180.00
+KLEINAUFTRAG_STUNDEN_PRO_KOMPONENTE = 1.5
+KLEINAUFTRAG_MIN_PAUSCHALE = 270.00
+KLEINAUFTRAG_GRUNDKOSTEN_REDUZIERT = 100.00
+
+REFERENZ_BLEND_GEWICHT = 0.40
+REFERENZ_BLEND_CAP = 0.30
+REFERENZ_BLEND_MAX_ALTER = 3
+
 ZUSCHLAG_NEA = 320.00
 ZUSCHLAG_SV_NSHV = 180.00
 
@@ -500,8 +511,72 @@ def bm_pruefkosten(m: DGUVMerkmale) -> float:
     return round(cost, 2)
 
 
+def _g_kleinauftrag_params() -> dict:
+    r = get_reader()
+    row = r.get_row(
+        "MATCH (k:Kleinauftrag {id: 'KLEINAUFTRAG'}) RETURN k.max_verteilungen, k.max_flaeche_m2, k.stundensatz, k.stunden_pro_komponente, k.min_pauschale, k.grundkosten_reduziert",
+        cache_key="kleinauftrag",
+    )
+    if row and row[0] is not None:
+        return {"max_vert": int(row[0]), "max_flaeche": float(row[1]), "stundensatz": float(row[2]),
+                "stunden_pro_k": float(row[3]), "min_pauschale": float(row[4]), "grundkosten_red": float(row[5])}
+    return {"max_vert": KLEINAUFTRAG_MAX_VERT, "max_flaeche": KLEINAUFTRAG_MAX_FLAECHE,
+            "stundensatz": KLEINAUFTRAG_STUNDENSATZ, "stunden_pro_k": KLEINAUFTRAG_STUNDEN_PRO_KOMPONENTE,
+            "min_pauschale": KLEINAUFTRAG_MIN_PAUSCHALE, "grundkosten_red": KLEINAUFTRAG_GRUNDKOSTEN_REDUZIERT}
+
+
+def is_kleinauftrag(m: DGUVMerkmale) -> bool:
+    p = _g_kleinauftrag_params()
+    total_vert = m.anzahl_verteilungen_uv + m.anzahl_verteilungen_hv + m.anzahl_verteilungen_nshv
+    flaeche = _flaeche(m)
+    return total_vert <= p["max_vert"] and flaeche <= p["max_flaeche"]
+
+
+def kleinauftrag_pruefkosten(m: DGUVMerkmale) -> float:
+    p = _g_kleinauftrag_params()
+    total_vert = m.anzahl_verteilungen_uv + m.anzahl_verteilungen_hv + m.anzahl_verteilungen_nshv
+    komponenten = max(1, total_vert)
+    stunden = p["stunden_pro_k"] * komponenten
+    return round(max(p["min_pauschale"], stunden * p["stundensatz"]), 2)
+
+
+def kleinauftrag_grundkosten(m: DGUVMerkmale) -> float:
+    p = _g_kleinauftrag_params()
+    return p["grundkosten_red"]
+
+
+def referenz_blend(neukalkulation: float, m: DGUVMerkmale) -> dict | None:
+    """Visible Referenzpreis-Blend: separate Breakdown-Zeile, capped ±30%."""
+    if m.referenzpreis_jahr is None or m.referenzpreis_betrag is None:
+        return None
+    if not getattr(m, "referenz_vergleichbar", False):
+        return None
+
+    steigerung = _g_steigerung(m.referenzpreis_jahr)
+    if steigerung is None:
+        return None
+
+    fortgeschrieben = m.referenzpreis_betrag * (1 + steigerung)
+    alter = 2026 - m.referenzpreis_jahr
+    if alter > REFERENZ_BLEND_MAX_ALTER:
+        gewicht = max(0.1, REFERENZ_BLEND_GEWICHT * (REFERENZ_BLEND_MAX_ALTER / alter))
+    else:
+        gewicht = REFERENZ_BLEND_GEWICHT
+
+    diff = fortgeschrieben - neukalkulation
+    cap = neukalkulation * REFERENZ_BLEND_CAP
+    anpassung = max(-cap, min(cap, diff * gewicht))
+
+    return {
+        "fortgeschrieben": round(fortgeschrieben, 2),
+        "gewicht": round(gewicht, 2),
+        "anpassung": round(anpassung, 2),
+        "neues_total": round(neukalkulation + anpassung, 2),
+    }
+
+
 def dispatch_pruefkosten(m: DGUVMerkmale) -> float:
-    """Route Prüfkosten by Pruefart."""
+    """Route Prüfkosten by Pruefart, with Kleinauftrag override."""
     from products.dguv_v3.merkmale import Pruefart
     pa = getattr(m, "pruefart", Pruefart.DGUV_ORTSFEST)
     if pa == Pruefart.VDS:
@@ -510,6 +585,8 @@ def dispatch_pruefkosten(m: DGUVMerkmale) -> float:
         return dguv_plus_vds_pruefkosten(m)
     if pa == Pruefart.DGUV_ORTSVERAENDERLICH:
         return bm_pruefkosten(m)
+    if is_kleinauftrag(m):
+        return kleinauftrag_pruefkosten(m)
     return dguv_pruefkosten(m)
 
 
