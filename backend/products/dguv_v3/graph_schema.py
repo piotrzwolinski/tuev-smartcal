@@ -30,6 +30,8 @@ def load_dguv_graph() -> dict:
     """)
 
     # ── 2. INSTALLATIONSKATEGORIEN (calibrated to NBG) ──────
+    # KAT_7/KAT_8: Plan v2 Phase 0.5 (Fix 4, Helios PPT-5 / DOC-3) — Raten aus
+    # Kalkulationshilfen NBG; genaue NBG-Bezeichnung im EFI-Review bestätigen.
     for kid, name, preis, beschreibung, quelle, typ in [
         ('KAT_1', 'Wohnung / Freiflächen / Allgemeinbereiche', 1.00, 'Allgemeinbereiche Wohngebäude, Freiflächen in Außenanlagen', 'Kalkulationshilfen NBG / Hilfstabellen / 2026', 'regel'),
         ('KAT_2', 'Büro / Schule / Restaurant / Lager / Krankenhaus', 3.10, 'Büro- oder Wohnräume, Gasträume, Schulen, Werkstätten, Laborbereiche, Alten-/Pflegeheim', 'Kalkulationshilfen NBG / Hilfstabellen / 2026', 'regel'),
@@ -37,6 +39,8 @@ def load_dguv_graph() -> dict:
         ('KAT_4', 'Technikräume / Reinraum', 5.40, 'Technikräume, Reinraum', 'Kalkulationshilfen NBG / Hilfstabellen / 2026', 'regel'),
         ('KAT_5', 'Sonderfläche (OP, Labor)', 5.40, 'OP-Saal, Reinraum, Ex-Bereich', 'Kalkulationshilfen NBG / Hilfstabellen / 2026', 'regel'),
         ('KAT_6', 'NSHV / Trafo / Batterieladestation', 6.00, 'Technikräume, NSHV, Traforäume, Batterieladestationen', 'S. Veit Mail 30.05 Punkt 4', 'fachexperte'),
+        ('KAT_7', 'Krankenhaus/Klinik Funktionsbereiche', 5.42, 'Medizinische Funktionsbereiche (AG1/AG2), Klinik-Technik — EFI-Review: NBG-Bezeichnung bestätigen', 'Kalkulationshilfen NBG / Plan v2 Phase 0.5', 'regel'),
+        ('KAT_8', 'OP / Intensiv / Sonderbereiche', 7.68, 'OP-Säle, Intensivstationen, Ex-/Sonderbereiche — EFI-Review: NBG-Bezeichnung bestätigen', 'Kalkulationshilfen NBG / Plan v2 Phase 0.5', 'regel'),
     ]:
         statements.append(f"""
         CREATE (:Installationskategorie {{id: '{kid}', name: '{name}', preis_per_10m2: {preis}, beschreibung: '{beschreibung}', _quelle: '{quelle}', _typ: '{typ}', _stand: '{STAND}'}})
@@ -148,6 +152,33 @@ def load_dguv_graph() -> dict:
     ]
     for bpid, branche, n, avg_pt, med_pt, p25_pt, p75_pt, avg_m in branchenprofile:
         statements.append(f"CREATE (:BranchenProfil {{id: '{bpid}', branche: '{branche}', n_berichte: {n}, avg_prueftage: {avg_pt}, median_prueftage: {med_pt}, p25_prueftage: {p25_pt}, p75_prueftage: {p75_pt}, avg_maengel: {avg_m}, _quelle: 'Batch Extraction 10.063 MA507 Prüfberichte', _typ: 'statistik', _stand: '{STAND}'}})")
+
+    # ── 13c. FLÄCHENSTAFFEL (Plan v2 Phase 0.5 / Fix 1 Degression) ─
+    # Bandweise Degressionsfaktoren auf die Flächenrate (NBG Kalkulationshilfen).
+    # ⚠ EFI-Review-Punkt: DGUV-Faktor 0.8 schon ab 0 m² (evtl. erste Stufe 1.0).
+    flaechenstaffeln = [
+        ('dguv', [(0, 0.80), (2000, 0.80), (4000, 0.60), (6000, 0.50), (10000, 0.40), (25000, 0.30)]),
+        ('vds', [(0, 1.00), (2000, 0.90), (4000, 0.80), (6000, 0.70), (10000, 0.50), (25000, 0.35)]),
+    ]
+    for kurve, stufen in flaechenstaffeln:
+        for ab_m2, faktor in stufen:
+            statements.append(f"""
+            CREATE (:Flaechenstaffel {{id: 'FS_{kurve.upper()}_{ab_m2}', kurve: '{kurve}', ab_m2: {ab_m2}, faktor: {faktor}, _quelle: 'Kalkulationshilfen NBG Flächenstaffel', _typ: 'regel', _stand: '{STAND}'}})
+            """)
+
+    # ── 13d. BETRIEBSMITTEL-PREIS MA560 (Plan v2 Phase 0.5 / Fix 5) ─
+    # per-Device: Grundpauschale + n × Satz; Staffel ab 500 BM (Faktor 1.0 = neutral, EFI-tunable).
+    # Kalibrierung: ZIP-4 (114 BM → 1.217€ real), PPT-3 Max Planck (545 BM → 5.341€ = 545×9,80€).
+    statements.append(f"""
+    CREATE (:BMPreis {{id: 'BM_SATZ', satz_pro_bm: 9.50, grundpauschale: 200.00, staffel_ab_bm: 500, staffel_faktor: 1.00, _quelle: 'Kalibrierung ZIP-4 + PPT-3 (n=2 Referenzen) — EFI-Review', _typ: 'statistik', _stand: '{STAND}'}})
+    """)
+
+    # ── 13e. KLEINAUFTRAG (Plan v2 Phase 0.5 / Fix 6) ────────
+    # Erkennung: (UV+HV+NSHV ≤ 2 UND flaeche ≤ 300) ODER Einzelkomponente
+    # → Prüfkosten = max(min_pauschale, stunden × 180€); Grundkosten reduziert.
+    statements.append(f"""
+    CREATE (:Kleinauftrag {{id: 'KLEINAUFTRAG', max_verteilungen: 2, max_flaeche_m2: 300, stundensatz: 180.00, stunden_pro_komponente: 1.5, min_pauschale: 270.00, grundkosten_reduziert: 100.00, _quelle: 'ZIP-3 badenova (Real ≈ 2h×180€) — Schwellen EFI-Review', _typ: 'heuristik', _stand: '{STAND}'}})
+    """)
 
     # ── 14. CROSS-SELL ───────────────────────────────────────
     statements.append(f"CREATE (:CrossSell {{id: 'CS_BLITZ', empfehlung: 'Blitzschutzprüfung — Kombi-Begehung spart Reisekosten', produkt: 'blitzschutz', prioritaet: 'hoch', _quelle: 'S. Veit erster Call', _typ: 'fachexperte', _stand: '{STAND}'}})")

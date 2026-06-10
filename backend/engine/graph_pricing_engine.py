@@ -173,7 +173,7 @@ class GraphPricingEngine:
                 return tage
 
         elif self.graph_name == "dguv_v3":
-            flaeche = getattr(merkmale, "gesamtflaeche_m2", 0)
+            flaeche = getattr(merkmale, "gesamtflaeche_m2", 0) or 0  # None-Guard (flaeche Optional)
             row = self._q("MATCH (p:Prueftagschaetzung) WHERE p.von_m2 <= $f AND p.bis_m2 >= $f RETURN p.tage, p.formel, p.id", f=flaeche)
             if row:
                 tage, formel = row[0][0], row[0][1]
@@ -296,7 +296,7 @@ class GraphPricingEngine:
         self._log("pruefkosten", "Grundpreis Anlage", f"{grundpreis}", "DGUV_V3_ORTSFEST",
                   ref="LPV B04 Kap. 2: Grundpreis 250€ pro Anlage")
 
-        flaeche = getattr(merkmale, "gesamtflaeche_m2", 0)
+        flaeche = getattr(merkmale, "gesamtflaeche_m2", 0) or 0  # None-Guard (flaeche Optional)
         mix = getattr(merkmale, "nutzungs_mix", None)
 
         if mix and len(mix) > 0:

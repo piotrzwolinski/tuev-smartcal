@@ -6,7 +6,20 @@ PRD v2.1 — erweitert um Reifegrad, Dokumentationsumfang, Referenzpreis, Nutzun
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+
+class Pruefart(str, Enum):
+    """AE-1 (Plan v2): EIN Elektro-Produkt mit Diskriminator statt neuer Gewerke.
+
+    Deckt Veit P1 ab ("Prüfart identifizieren"). Löst VdS-Only-Routing
+    (Fix 3) und MA560 per-Device (Fix 5) mit einem Konzept.
+    """
+
+    DGUV_ORTSFEST = "dguv_ortsfest"            # MA507/501 — ortsfeste Anlagen
+    DGUV_ORTSVERAENDERLICH = "dguv_ortsv"      # MA560 — ortsveränderliche Betriebsmittel
+    VDS = "vds"                                 # MA505 — nur VdS 2871
+    DGUV_PLUS_VDS = "dguv_plus_vds"            # Kombi (Pausch: VdS + 50%)
 
 
 class GebaeudeNutzungDGUV(str, Enum):
@@ -58,18 +71,27 @@ class NutzungsMixEintrag(BaseModel):
 
 
 class DGUVMerkmale(BaseModel):
-    """Input für Kalkulator DGUV V3 ortsfeste elektrische Anlage."""
+    """Input für Kalkulator Elektro-Prüfungen (DGUV V3 / VdS / MA560).
+
+    AE-2 (Plan v2): gesamtflaeche_m2 ist Optional — Pflicht-Inputs hängen
+    von der Pruefart ab (siehe model_validator unten).
+    """
 
     nutzung: GebaeudeNutzungDGUV
+    pruefart: Pruefart = Pruefart.DGUV_ORTSFEST
     adresse_strasse: Optional[str] = None
     adresse_plz: Optional[str] = None
     adresse_ort: Optional[str] = None
     adresse_lat: Optional[float] = None
     adresse_lon: Optional[float] = None
 
-    gesamtflaeche_m2: float = Field(
-        ge=1, le=1_000_000,
-        description="Gesamte Fläche in m² (primary cost driver)",
+    gesamtflaeche_m2: Optional[float] = Field(
+        None, ge=1, le=1_000_000,
+        description="Gesamte Fläche in m² (primary cost driver bei ortsfest/VdS)",
+    )
+    anzahl_betriebsmittel: Optional[int] = Field(
+        None, ge=1,
+        description="Anzahl ortsveränderlicher Betriebsmittel (MA560, per-Device)",
     )
     errichtungszeitraum: Optional[str] = None
     baujahr: Optional[int] = None
@@ -102,6 +124,8 @@ class DGUVMerkmale(BaseModel):
     eilzuschlag: bool = False
     erstpruefung: bool = False
 
+    # DEPRECATED Alias (Plan v2 AE-2): vds_pruefung=True wird vom Validator
+    # auf pruefart=DGUV_PLUS_VDS gemappt. Neue Aufrufer setzen pruefart direkt.
     vds_pruefung: bool = False
     pv_kwp: Optional[float] = Field(None, ge=0, description="PV-Anlage kWp")
     pv_norm: str = "din"
@@ -117,3 +141,31 @@ class DGUVMerkmale(BaseModel):
             for e in v:
                 e.anteil = e.anteil / total
         return v
+
+    @model_validator(mode="after")
+    def _pruefart_pflicht_inputs(self):
+        """AE-2: Pflicht-Inputs je Pruefart + vds_pruefung-Alias-Mapping."""
+        # Deprecated Alias: vds_pruefung=True → Kombi-Prüfung
+        if self.vds_pruefung and self.pruefart == Pruefart.DGUV_ORTSFEST:
+            self.pruefart = Pruefart.DGUV_PLUS_VDS
+        # Alias synchron halten — Engine-Pfade prüfen noch vds_pruefung
+        if self.pruefart == Pruefart.DGUV_PLUS_VDS:
+            self.vds_pruefung = True
+
+        if self.pruefart == Pruefart.DGUV_ORTSVERAENDERLICH:
+            if self.anzahl_betriebsmittel is None:
+                raise ValueError(
+                    "Pruefart 'dguv_ortsv' (MA560) benötigt anzahl_betriebsmittel"
+                )
+        else:
+            verteilungen = (
+                self.anzahl_verteilungen_uv
+                + self.anzahl_verteilungen_hv
+                + self.anzahl_verteilungen_nshv
+            )
+            if self.gesamtflaeche_m2 is None and verteilungen == 0:
+                raise ValueError(
+                    f"Pruefart '{self.pruefart.value}' benötigt gesamtflaeche_m2 "
+                    "ODER Verteilungen (UV/HV/NSHV) als Mengen-Input"
+                )
+        return self

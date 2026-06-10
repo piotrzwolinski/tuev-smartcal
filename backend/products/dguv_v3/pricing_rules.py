@@ -269,6 +269,11 @@ def _g_umrechnung(merkmal: str) -> float | None:
     return val
 
 
+def _flaeche(m: DGUVMerkmale) -> float:
+    """None-Guard (Plan v2, Phase 0.4): gesamtflaeche_m2 ist Optional — None → 0."""
+    return m.gesamtflaeche_m2 or 0.0
+
+
 def resolve_mix_kategorie(nutzung_name: str) -> Installationskategorie:
     return _g_mix_kategorie(nutzung_name)
 
@@ -282,14 +287,15 @@ def dguv_pruefkosten(m: DGUVMerkmale) -> float:
     """Prüfkosten: Fläche×Kat (ggf. Mix) + Verteilungen + Sonderzuschläge."""
     cost = DGUV_GRUNDPREIS_ANLAGE
 
+    flaeche = _flaeche(m)
     if m.nutzungs_mix:
         for eintrag in m.nutzungs_mix:
             kat = eintrag.kategorie or resolve_mix_kategorie(eintrag.nutzung)
             rate = _g_kat_preis(kat)
-            cost += (m.gesamtflaeche_m2 * eintrag.anteil / 10.0) * rate
+            cost += (flaeche * eintrag.anteil / 10.0) * rate
     else:
         rate = _g_kat_preis(m.primary_installationskategorie)
-        cost += (m.gesamtflaeche_m2 / 10.0) * rate
+        cost += (flaeche / 10.0) * rate
 
     cost += m.anzahl_verteilungen_uv * PREIS_VERTEILUNG_UV
     cost += m.anzahl_verteilungen_hv * PREIS_VERTEILUNG_HV
@@ -309,7 +315,7 @@ def dguv_pruefkosten(m: DGUVMerkmale) -> float:
 
 
 def dguv_estimate_pruef_tage(m: DGUVMerkmale) -> float:
-    flaeche = m.gesamtflaeche_m2
+    flaeche = _flaeche(m)
     if flaeche <= 500:
         return 0.5
     if flaeche <= 2000:
@@ -320,12 +326,13 @@ def dguv_estimate_pruef_tage(m: DGUVMerkmale) -> float:
 
 
 def dguv_choose_bericht_typ(m: DGUVMerkmale) -> str:
+    flaeche = _flaeche(m)
     total_verteilungen = (
         m.anzahl_verteilungen_uv + m.anzahl_verteilungen_hv + m.anzahl_verteilungen_nshv
     )
-    if m.gesamtflaeche_m2 <= 500 and total_verteilungen <= 3:
+    if flaeche <= 500 and total_verteilungen <= 3:
         return "klein"
-    if m.gesamtflaeche_m2 <= 5000 and total_verteilungen <= 15:
+    if flaeche <= 5000 and total_verteilungen <= 15:
         return "standard"
     return "komplex"
 
@@ -410,7 +417,12 @@ def dguv_validate_ranges(m: DGUVMerkmale) -> tuple[float, str]:
     confidence = 1.0
 
     lo, hi = _g_typical_flaeche(m.nutzung)
-    if m.gesamtflaeche_m2 < lo:
+    if m.gesamtflaeche_m2 is None:
+        confidence *= 0.85
+        reasons.append(
+            "Keine Gesamtfläche angegeben — Kalkulation über alternative Mengen-Inputs"
+        )
+    elif m.gesamtflaeche_m2 < lo:
         confidence *= 0.85
         reasons.append(
             f"Gesamtfläche ({m.gesamtflaeche_m2:.0f} m²) unter typisch "
