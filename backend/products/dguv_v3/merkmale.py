@@ -53,6 +53,7 @@ class Installationskategorie(int, Enum):
     KAT_4 = 4  # Technikräume, Reinraum
     KAT_5 = 5  # Sonder (OP, Labor)
     KAT_6 = 6  # NSHV, Trafo, Batterieladestation (S. Veit Mail 30.05)
+    KAT_7 = 7  # Krankenhaus AG2 (OP, Intensiv) — SRB Kalkulation
 
 
 class Reifegrad(int, Enum):

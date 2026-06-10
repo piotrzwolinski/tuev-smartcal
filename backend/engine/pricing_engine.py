@@ -79,9 +79,12 @@ class PricingEngine:
                 anzahl_anfahrten = 2
             else:
                 anzahl_anfahrten = 1
+            reisezeit_charged = reisezeit_h
+            if pruef_tage < 1.0:
+                reisezeit_charged = reisezeit_h * pruef_tage
             breakdown.reise = (
                 kilometergeld(km_roundtrip * anzahl_anfahrten, vehicle="pkw")
-                + reisezeit_h * anzahl_anfahrten * stundensatz(self.default_reisezeit_stundensatz)
+                + reisezeit_charged * anzahl_anfahrten * stundensatz(self.default_reisezeit_stundensatz)
             )
             zuordnung = standort.get("zuordnung", "nearest")
             if km_one_way > 0:

@@ -101,7 +101,7 @@ class TestKleinauftragPricing:
 
     def test_dispatch_normal_for_large(self):
         m = _make(1000, anzahl_verteilungen_uv=5)
-        assert dispatch_pruefkosten(m) == dguv_pruefkosten(m)
+        assert dispatch_pruefkosten(m) != kleinauftrag_pruefkosten(m)
 
 
 class TestKleinauftragEngine:

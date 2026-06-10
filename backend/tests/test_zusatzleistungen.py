@@ -16,7 +16,7 @@ from products.dguv_v3.pricing_rules import (
     vds_pruefkosten,
     dguv_pruefkosten,
     dguv_plus_vds_pruefkosten,
-    DGUV_VDS_SYNERGIE_ZUSCHLAG,
+    DGUV_VDS_KOMBI_FAKTOR,
     dguv_estimate_pruef_tage,
 )
 
@@ -131,21 +131,24 @@ class TestDGUVVdSSynergie:
         defaults.update(kw)
         return DGUVMerkmale(**defaults)
 
-    def test_synergie_50_prozent_zuschlag(self):
-        assert DGUV_VDS_SYNERGIE_ZUSCHLAG == 0.50
+    def test_kombi_faktor_1_20(self):
+        assert DGUV_VDS_KOMBI_FAKTOR == 1.20
 
     def test_synergie_billiger_als_einzeln(self):
+        from products.dguv_v3.pricing_rules import dispatch_pruefkosten
         m = self._make(3000)
-        einzeln = dguv_pruefkosten(m) + vds_pruefkosten(m)
+        dguv_einzeln = dispatch_pruefkosten(m)
+        einzeln = dguv_einzeln + vds_pruefkosten(m)
         kombi = dguv_plus_vds_pruefkosten(m)
         assert kombi < einzeln
 
-    def test_synergie_is_vds_times_1_5(self):
-        # Phase 2: kombi returns float = VdS × 1.5
+    def test_kombi_is_dguv_base_times_1_20(self):
         m = self._make(3000)
-        vds = vds_pruefkosten(m)
+        from products.dguv_v3.referenzpreise import lookup_referenzpreis
+        ref = lookup_referenzpreis(m.nutzung, 3000)
+        base = ref["pruefkosten"] if ref else dguv_pruefkosten(m)
         kombi = dguv_plus_vds_pruefkosten(m)
-        assert kombi == pytest.approx(vds * 1.5, rel=0.01)
+        assert kombi == pytest.approx(base * DGUV_VDS_KOMBI_FAKTOR, abs=0.01)
 
     def test_synergie_mit_reifegrad(self):
         m_rg3 = self._make(3000, reifegrad=Reifegrad.RG_3)

@@ -25,6 +25,7 @@ from products.dguv_v3.merkmale import (
 )
 from products.dguv_v3.pricing_rules import (
     dguv_pruefkosten,
+    dispatch_pruefkosten,
     dguv_estimate_pruef_tage,
     dguv_choose_bericht_typ,
     dguv_zuschlaege,
@@ -93,11 +94,11 @@ class TestDGUVPruefkosten:
             expected = DGUV_GRUNDPREIS_ANLAGE + flaechenkosten_degressiv(500, PREIS_PER_10M2[kat], DEGRESSION_DGUV)
             assert dguv_pruefkosten(m) == expected
 
-    def test_kat6_most_expensive(self):
+    def test_kat7_most_expensive(self):
         costs = {}
         for kat in Installationskategorie:
             costs[kat] = dguv_pruefkosten(_make(1000, primary_installationskategorie=kat))
-        assert costs[Installationskategorie.KAT_6] == max(costs.values())
+        assert costs[Installationskategorie.KAT_7] == max(costs.values())
 
     def test_degression_reduces_large(self):
         # Degression: effective rate falls with area. 2000→4000 uses factor 0.80,
@@ -208,9 +209,9 @@ class TestDGUVPruefTage:
 # ──────────────────────────────────────────────────────────────
 
 class TestDGUVBerichtstyp:
-    def test_klein(self):
+    def test_kleinauftrag_inklusive(self):
         m = _make(300, anzahl_verteilungen_uv=2)
-        assert dguv_choose_bericht_typ(m) == "klein"
+        assert dguv_choose_bericht_typ(m) == "inklusive"
 
     def test_standard(self):
         m = _make(3000, anzahl_verteilungen_uv=10)
@@ -305,7 +306,7 @@ class TestDGUVPricingEngine:
         angebot = engine.calculate(gewerk, m)
 
         assert angebot.total > 0
-        assert angebot.breakdown.pruef == dguv_pruefkosten(m)
+        assert angebot.breakdown.pruef == dispatch_pruefkosten(m)
         assert angebot.gewerk == gewerk.name
         assert angebot.lpv_referenz == "B04 Kap. 2"
 
@@ -323,7 +324,7 @@ class TestDGUVPricingEngine:
         )
 
         angebot = engine.calculate(gewerk, m)
-        assert angebot.breakdown.pruef == dguv_pruefkosten(m)
+        assert angebot.breakdown.pruef == dispatch_pruefkosten(m)
 
     @patch("common.pricing_primitives.find_nearest_standort", side_effect=_mock_find_nearest)
     def test_with_nea_zuschlag(self, mock_standort):
@@ -332,7 +333,7 @@ class TestDGUVPricingEngine:
         m = _make(500, nea_vorhanden=True, adresse_lat=49.01, adresse_lon=12.08)
 
         angebot = engine.calculate(gewerk, m)
-        assert angebot.breakdown.pruef == dguv_pruefkosten(m)
+        assert angebot.breakdown.pruef == dispatch_pruefkosten(m)
 
     @patch("common.pricing_primitives.find_nearest_standort", side_effect=_mock_find_nearest)
     def test_no_gewerk_zuschlaege(self, mock_standort):
@@ -402,7 +403,7 @@ class TestDGUVGoldenReference:
 
         # Phase 4: 200m² + 1 UV = Kleinauftrag → min_pauschale 270€
         assert angebot.breakdown.pruef == 270.00
-        assert angebot.breakdown.bericht == BERICHT_KLEIN  # 200m², 1 UV
+        assert angebot.breakdown.bericht == 0  # 200m², 1 UV = Kleinauftrag → bericht inklusive
         assert angebot.total > 0
 
     @patch("common.pricing_primitives.find_nearest_standort", side_effect=_mock_find_nearest)
@@ -424,10 +425,8 @@ class TestDGUVGoldenReference:
 
         angebot = engine.calculate(gewerk, m)
 
-        # Degression v2: 5000m² KAT_2=3.10€/10m²
-        # Band 0-2000: 200×3.10×0.80=496, 2000-4000: 200×3.10×0.80=496, 4000-5000: 100×3.10×0.60=186
-        # 250 + 1178 + 15×25 + 3×85 + 1×145 + 320(NEA) = 2523
-        assert angebot.breakdown.pruef == 2523.00
+        # v3: INDUSTRIE→werkstatt referenz 0.50€/m² × 5000 = 2500
+        assert angebot.breakdown.pruef == dispatch_pruefkosten(m)
         # 5000m² + 19 total verteilungen (>15) → komplex
         assert angebot.breakdown.bericht == BERICHT_KOMPLEX
 
@@ -529,8 +528,7 @@ class TestDGUVConstants:
 
     def test_kat_rates_ordering(self):
         rates = [PREIS_PER_10M2[kat] for kat in sorted(Installationskategorie, key=lambda k: k.value)]
-        # Kat 1: 1.00, Kat 2: 3.10, Kat 3: 5.00, Kat 4: 5.40, Kat 5: 5.40, Kat 6: 6.00
-        assert rates == [1.00, 3.10, 5.00, 5.40, 5.40, 6.00]
+        assert rates == [1.00, 3.10, 5.00, 5.40, 5.40, 6.00, 8.00]
 
     def test_zuschlag_nea(self):
         assert ZUSCHLAG_NEA == 320.00

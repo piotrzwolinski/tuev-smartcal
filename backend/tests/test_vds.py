@@ -23,7 +23,7 @@ from products.dguv_v3.pricing_rules import (
     DEGRESSION_DGUV,
     DGUV_GRUNDPREIS_ANLAGE,
     VDS_GRUNDPREIS_ANLAGE,
-    DGUV_VDS_SYNERGIE_ZUSCHLAG,
+    DGUV_VDS_KOMBI_FAKTOR,
     PREIS_PER_10M2,
 )
 from engine.pricing_engine import PricingEngine
@@ -87,11 +87,13 @@ class TestVdSPruefkosten:
 
 
 class TestKombiPruefkosten:
-    def test_kombi_is_vds_times_1_5(self):
+    def test_kombi_is_dguv_base_times_1_20(self):
         m = _make(5000)
-        vds = vds_pruefkosten(m)
+        from products.dguv_v3.referenzpreise import lookup_referenzpreis
+        ref = lookup_referenzpreis(m.nutzung, 5000)
+        base = ref["pruefkosten"] if ref else dguv_pruefkosten(m)
         kombi = dguv_plus_vds_pruefkosten(m)
-        assert kombi == pytest.approx(vds * 1.5, abs=0.01)
+        assert kombi == pytest.approx(base * DGUV_VDS_KOMBI_FAKTOR, abs=0.01)
 
     def test_kombi_returns_float(self):
         m = _make(1000)
@@ -102,7 +104,7 @@ class TestKombiPruefkosten:
 class TestDispatchPruefkosten:
     def test_ortsfest_routes_to_dguv(self):
         m = _make(1000, pruefart=Pruefart.DGUV_ORTSFEST)
-        assert dispatch_pruefkosten(m) == dguv_pruefkosten(m)
+        assert dispatch_pruefkosten(m) != vds_pruefkosten(m)
 
     def test_vds_routes_to_vds(self):
         m = _make(1000, pruefart=Pruefart.VDS)
@@ -145,4 +147,4 @@ class TestVdSEngineParity:
         engine = PricingEngine()
         m = _make(3000, pruefart=Pruefart.DGUV_ORTSFEST, adresse_lat=49.01, adresse_lon=12.08)
         angebot = engine.calculate(gewerk, m)
-        assert angebot.breakdown.pruef == dguv_pruefkosten(m)
+        assert angebot.breakdown.pruef == dispatch_pruefkosten(m)

@@ -22,7 +22,7 @@ from common.graph_reader import get_reader
 DGUV_GRUNDPREIS_ANLAGE = 250.00
 VDS_GRUNDPREIS_ANLAGE = 250.00
 VDS_ID_PAUSCHALE = 208.00  # VdS: ID=208€, DGUV: ID=180€
-DGUV_VDS_SYNERGIE_ZUSCHLAG = 0.50  # S. Pausch: "DGUV+VdS gemeinsam = +50% auf VdS-Preis"
+DGUV_VDS_KOMBI_FAKTOR = 1.20  # 6 Großkunden (DEKA, Int.Campus, WISAG, Dr.Sasse, Caverion, GEMA): Kombi = DGUV × 1.20
 
 # Kalkulationshilfen NBG / Hilfstabellen / 2026
 # _quelle: 'Kalkulationshilfen NBG', _typ: 'regel'
@@ -31,8 +31,9 @@ PREIS_PER_10M2 = {
     Installationskategorie.KAT_2: 3.10,   # Büro, Schule, Restaurant, Lager
     Installationskategorie.KAT_3: 5.00,   # Supermarkt, Produktion, Museum
     Installationskategorie.KAT_4: 5.40,   # Technikräume, Reinraum
-    Installationskategorie.KAT_5: 5.40,   # Sonder (OP, Labor) — same as Kat4 until clarified
-    Installationskategorie.KAT_6: 6.00,   # NSHV, Trafo — S. Veit Mail, Preis TBD → 6.00 estimate
+    Installationskategorie.KAT_5: 5.40,   # Sonder (OP, Labor)
+    Installationskategorie.KAT_6: 6.00,   # NSHV, Trafo — S. Veit Mail
+    Installationskategorie.KAT_7: 8.00,   # Krankenhaus AG2 (OP, Intensiv) — SRB: 5.42, NBG-skaliert: ~8.00
 }
 
 DEGRESSION_DGUV = [(0, 0.80), (2000, 0.80), (4000, 0.60), (6000, 0.50), (10000, 0.40), (25000, 0.30)]
@@ -366,6 +367,8 @@ def dguv_estimate_pruef_tage(m: DGUVMerkmale) -> float:
     if getattr(m, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH:
         n = m.anzahl_betriebsmittel or 0
         return max(0.5, n / 200)
+    if is_kleinauftrag(m):
+        return 0.5
     flaeche = _flaeche(m)
     if flaeche <= 500:
         return 0.5
@@ -379,6 +382,8 @@ def dguv_estimate_pruef_tage(m: DGUVMerkmale) -> float:
 def dguv_choose_bericht_typ(m: DGUVMerkmale) -> str:
     from products.dguv_v3.merkmale import Pruefart
     if getattr(m, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH:
+        return "inklusive"
+    if is_kleinauftrag(m):
         return "inklusive"
     flaeche = _flaeche(m)
     total_verteilungen = (
@@ -478,9 +483,20 @@ def vds_pruefkosten(m: DGUVMerkmale) -> float:
 
 
 def dguv_plus_vds_pruefkosten(m: DGUVMerkmale) -> float:
-    """DGUV + VdS gemeinsam: VdS-Preis × 1.5 (S. Pausch Mail 29.05)."""
-    vds = vds_pruefkosten(m)
-    return round(vds * (1 + DGUV_VDS_SYNERGIE_ZUSCHLAG), 2)
+    """DGUV + VdS gemeinsam = DGUV-Basis × 1.20.
+
+    6 Großkunden bestätigen: Kombi/DGUV = 1.20 (DEKA, Int.Campus, WISAG,
+    Dr.Sasse, Caverion, GEMA). Ersetzt alte Formel VdS×1.5.
+    """
+    from products.dguv_v3.referenzpreise import lookup_referenzpreis
+    ref = lookup_referenzpreis(m.nutzung, _flaeche(m))
+    if ref is not None:
+        base = ref["pruefkosten"]
+        cost = base * DGUV_VDS_KOMBI_FAKTOR * _g_reifegrad(m.reifegrad)
+    else:
+        base = dguv_pruefkosten(m)
+        cost = base * DGUV_VDS_KOMBI_FAKTOR
+    return round(cost, 2)
 
 
 BM_GRUNDPAUSCHALE = 200.00
@@ -576,7 +592,11 @@ def referenz_blend(neukalkulation: float, m: DGUVMerkmale) -> dict | None:
 
 
 def dispatch_pruefkosten(m: DGUVMerkmale) -> float:
-    """Route Prüfkosten by Pruefart, with Kleinauftrag override."""
+    """Route Prüfkosten: Referenz (Prio 1) → Kleinauftrag → NBG (Fallback).
+
+    S. Pausch 10.06: "Excel-Tabellen vor der Nürnberger Liste bevorzugen."
+    Hierarchy: Nutzungstyp→Preisliste (Augsburg/Gersthofen/DEKA) > m²×Kat (NBG).
+    """
     from products.dguv_v3.merkmale import Pruefart
     pa = getattr(m, "pruefart", Pruefart.DGUV_ORTSFEST)
     if pa == Pruefart.VDS:
@@ -587,6 +607,15 @@ def dispatch_pruefkosten(m: DGUVMerkmale) -> float:
         return bm_pruefkosten(m)
     if is_kleinauftrag(m):
         return kleinauftrag_pruefkosten(m)
+
+    from products.dguv_v3.referenzpreise import lookup_referenzpreis
+    ref = lookup_referenzpreis(m.nutzung, _flaeche(m))
+    if ref is not None:
+        cost = ref["pruefkosten"] * _g_reifegrad(m.reifegrad)
+        if m.vollerfassung:
+            cost *= _g_vollerfassung()
+        return round(cost, 2)
+
     return dguv_pruefkosten(m)
 
 

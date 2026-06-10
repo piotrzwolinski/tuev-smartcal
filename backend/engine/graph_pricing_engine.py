@@ -412,9 +412,9 @@ class GraphPricingEngine:
                           ref=f"Batch Extraction 10.096 MA507 Prüfberichte")
 
         if pa == Pruefart.DGUV_PLUS_VDS:
-            from products.dguv_v3.pricing_rules import DGUV_VDS_SYNERGIE_ZUSCHLAG
-            cost = round(cost * (1 + DGUV_VDS_SYNERGIE_ZUSCHLAG), 2)
-            self._log("pruefkosten", f"DGUV+VdS Kombi: ×1.5", f"{cost}", ref="S. Pausch Mail 29.05")
+            from products.dguv_v3.pricing_rules import DGUV_VDS_KOMBI_FAKTOR
+            cost = round(cost * DGUV_VDS_KOMBI_FAKTOR, 2)
+            self._log("pruefkosten", f"DGUV+VdS Kombi: ×{DGUV_VDS_KOMBI_FAKTOR}", f"{cost}", ref="6 Großkunden: Kombi = DGUV × 1.20")
 
         return cost
 
@@ -430,20 +430,19 @@ class GraphPricingEngine:
         if pa in (Pruefart.VDS, Pruefart.DGUV_PLUS_VDS):
             pass  # VdS already handled in _pruef_dguv dispatch
         elif getattr(merkmale, "vds_pruefung", False):
-            from products.dguv_v3.pricing_rules import vds_pruefkosten, DGUV_VDS_SYNERGIE_ZUSCHLAG
-            vds = vds_pruefkosten(merkmale)
-            vds_addon = round(vds * DGUV_VDS_SYNERGIE_ZUSCHLAG, 2)
+            from products.dguv_v3.pricing_rules import DGUV_VDS_KOMBI_FAKTOR
+            kombi_addon = round(cost * (DGUV_VDS_KOMBI_FAKTOR - 1.0), 2) if hasattr(breakdown, 'pruef') else 0
             self._log("zusatzleistung",
-                      f"VdS 2871 Synergie: +{vds_addon:.0f}€",
-                      f"{vds_addon:.2f}", "VDS_SYNERGIE",
-                      ref="S. Pausch: VdS-Preis + 50% Zuschlag bei gemeinsamer Durchführung")
+                      f"VdS 2871 Kombi: +{kombi_addon:.0f}€",
+                      f"{kombi_addon:.2f}", "VDS_KOMBI",
+                      ref="6 Großkunden: Kombi = DGUV × 1.20")
             addons.append({
-                "name": "VdS 2871 Prüfung (Synergie-Preis)",
+                "name": "VdS 2871 Prüfung (Kombi-Preis)",
                 "positionen": [
-                    {"name": "VdS bei Kombi-Begehung (+50% auf VdS)", "betrag": round(vds_addon, 2)},
+                    {"name": "VdS bei Kombi-Begehung (×1.20 auf DGUV)", "betrag": kombi_addon},
                 ],
-                "preis": round(vds_addon, 2),
-                "quelle": "S. Pausch Mail 29.05: VdS-Preis + 50% für DGUV",
+                "preis": kombi_addon,
+                "quelle": "6 Großkunden: Kombi = DGUV × 1.20",
             })
 
         pv_kwp = getattr(merkmale, "pv_kwp", None)
