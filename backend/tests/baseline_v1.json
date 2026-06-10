@@ -1,0 +1,3594 @@
+{
+ "version": "v1",
+ "git_rev": "fdcf714",
+ "created": "2026-06-10",
+ "engine": "PricingEngine (Python-Fallbacks, USE_GRAPH_PRICING=false, ohne Reisekosten)",
+ "products": {
+  "blitzschutz": {
+   "cases": [
+    {
+     "i": 0,
+     "ref": "R8 · Agnes-Bernauer-Schule Mäd · 14 TS · KIII",
+     "real": 446.75,
+     "total": 1195.73,
+     "grund": 330.0,
+     "pruef": 450.0,
+     "bericht": 380.0,
+     "delta_pct": 167.65
+    },
+    {
+     "i": 1,
+     "ref": "R9 · Albert-Einstein-Mittelsch · 40 TS · KIII",
+     "real": 1084.38,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 86.78
+    },
+    {
+     "i": 2,
+     "ref": "R10 · Altenheim Labirynthos  · 10 TS · KIII",
+     "real": 533.29,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 43.49
+    },
+    {
+     "i": 3,
+     "ref": "R11 · Altenheim Servatiusstift  · 36 TS · KIII",
+     "real": 981.0,
+     "total": 1913.45,
+     "grund": 384.0,
+     "pruef": 1078.0,
+     "bericht": 380.0,
+     "delta_pct": 95.05
+    },
+    {
+     "i": 4,
+     "ref": "R12 · Alter Friedhof Haunstette · 25 TS · KIII",
+     "real": 636.39,
+     "total": 1515.73,
+     "grund": 330.0,
+     "pruef": 770.0,
+     "bericht": 380.0,
+     "delta_pct": 138.18
+    },
+    {
+     "i": 5,
+     "ref": "R13 · Alter Ostfriedhof: ges. · 22 TS · KIII",
+     "real": 636.39,
+     "total": 1431.73,
+     "grund": 330.0,
+     "pruef": 686.0,
+     "bericht": 380.0,
+     "delta_pct": 124.98
+    },
+    {
+     "i": 6,
+     "ref": "R14 · Amt für Grünordnung Natur · 30 TS · KIII",
+     "real": 742.59,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 122.97
+    },
+    {
+     "i": 7,
+     "ref": "R15 · Anton-Bezler-Sporthalle B · 13 TS · KIII",
+     "real": 468.7,
+     "total": 1165.73,
+     "grund": 330.0,
+     "pruef": 420.0,
+     "bericht": 380.0,
+     "delta_pct": 148.72
+    },
+    {
+     "i": 8,
+     "ref": "R16 · Athleten-Center Bundeslei · 18 TS · KIII",
+     "real": 560.21,
+     "total": 1315.73,
+     "grund": 330.0,
+     "pruef": 570.0,
+     "bericht": 380.0,
+     "delta_pct": 134.86
+    },
+    {
+     "i": 9,
+     "ref": "R17 · Bärenkeller-Volksschule  · 61 TS · KIII",
+     "real": 1202.34,
+     "total": 2826.18,
+     "grund": 433.0,
+     "pruef": 1736.0,
+     "bericht": 550.0,
+     "delta_pct": 135.06
+    },
+    {
+     "i": 10,
+     "ref": "R18 · Bertolt-Brecht-Realschule · 19 TS · KIII",
+     "real": 887.05,
+     "total": 1345.73,
+     "grund": 330.0,
+     "pruef": 600.0,
+     "bericht": 380.0,
+     "delta_pct": 51.71
+    },
+    {
+     "i": 11,
+     "ref": "R19 · Berufschule VI  · 30 TS · KIII",
+     "real": 526.07,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 214.74
+    },
+    {
+     "i": 12,
+     "ref": "R20 · Berufschule VI  · 52 TS · KIII",
+     "real": 1067.74,
+     "total": 2507.45,
+     "grund": 384.0,
+     "pruef": 1502.0,
+     "bericht": 550.0,
+     "delta_pct": 134.84
+    },
+    {
+     "i": 13,
+     "ref": "R21 · Berufschule VI  · 23 TS · KIII",
+     "real": 631.56,
+     "total": 1459.73,
+     "grund": 330.0,
+     "pruef": 714.0,
+     "bericht": 380.0,
+     "delta_pct": 131.13
+    },
+    {
+     "i": 14,
+     "ref": "R22 · Berufschule VI  · 23 TS · KIII",
+     "real": 856.67,
+     "total": 1459.73,
+     "grund": 330.0,
+     "pruef": 714.0,
+     "bericht": 380.0,
+     "delta_pct": 70.4
+    },
+    {
+     "i": 15,
+     "ref": "R23 · Berufsschule I  · 40 TS · KIII",
+     "real": 693.44,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 192.09
+    },
+    {
+     "i": 16,
+     "ref": "R24 · Berufsschule II  · 27 TS · KIII",
+     "real": 693.44,
+     "total": 1571.73,
+     "grund": 330.0,
+     "pruef": 826.0,
+     "bericht": 380.0,
+     "delta_pct": 126.66
+    },
+    {
+     "i": 17,
+     "ref": "R25 · Berufsschule III  · 18 TS · KIII",
+     "real": 572.42,
+     "total": 1315.73,
+     "grund": 330.0,
+     "pruef": 570.0,
+     "bericht": 380.0,
+     "delta_pct": 129.85
+    },
+    {
+     "i": 18,
+     "ref": "R26 · Berufsschule V  · 19 TS · KIII",
+     "real": 677.96,
+     "total": 1345.73,
+     "grund": 330.0,
+     "pruef": 600.0,
+     "bericht": 380.0,
+     "delta_pct": 98.5
+    },
+    {
+     "i": 19,
+     "ref": "R27 · Betriebsgebäude Forstverw · 6 TS · KIII",
+     "real": 310.66,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 103.83
+    },
+    {
+     "i": 20,
+     "ref": "R28 · Betriebshof Stadtentwässe · 17 TS · KIII",
+     "real": 686.16,
+     "total": 1285.73,
+     "grund": 330.0,
+     "pruef": 540.0,
+     "bericht": 380.0,
+     "delta_pct": 87.38
+    },
+    {
+     "i": 21,
+     "ref": "R29 · Birkenau Grundschule  · 36 TS · KIII",
+     "real": 1446.23,
+     "total": 1913.45,
+     "grund": 384.0,
+     "pruef": 1078.0,
+     "bericht": 380.0,
+     "delta_pct": 32.31
+    },
+    {
+     "i": 22,
+     "ref": "R30 · Bleriot-Volksschule  · 29 TS · KIII",
+     "real": 626.4,
+     "total": 1627.73,
+     "grund": 330.0,
+     "pruef": 882.0,
+     "bericht": 380.0,
+     "delta_pct": 159.85
+    },
+    {
+     "i": 23,
+     "ref": "R31 · Botanischer Garten  · 11 TS · KIII",
+     "real": 504.71,
+     "total": 1105.73,
+     "grund": 330.0,
+     "pruef": 360.0,
+     "bericht": 380.0,
+     "delta_pct": 119.08
+    },
+    {
+     "i": 24,
+     "ref": "R32 · Bundesleistungszentrum Ol · 18 TS · KIII",
+     "real": 560.21,
+     "total": 1315.73,
+     "grund": 330.0,
+     "pruef": 570.0,
+     "bericht": 380.0,
+     "delta_pct": 134.86
+    },
+    {
+     "i": 25,
+     "ref": "R33 · Bürgerhaus  · 6 TS · KIII",
+     "real": 266.64,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 137.48
+    },
+    {
+     "i": 26,
+     "ref": "R34 · Burggrafenturm · 4 TS · KIII",
+     "real": 254.22,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 123.13
+    },
+    {
+     "i": 27,
+     "ref": "R35 · Centerville Schule  · 74 TS · KIII",
+     "real": 1067.74,
+     "total": 3164.18,
+     "grund": 433.0,
+     "pruef": 2074.0,
+     "bericht": 550.0,
+     "delta_pct": 196.34
+    },
+    {
+     "i": 28,
+     "ref": "R36 · Curt-Frenzel-Eisstadion  · 42 TS · KIII",
+     "real": 1078.67,
+     "total": 2247.45,
+     "grund": 384.0,
+     "pruef": 1242.0,
+     "bericht": 550.0,
+     "delta_pct": 108.36
+    },
+    {
+     "i": 29,
+     "ref": "R37 · Deponie  · 6 TS · KIII",
+     "real": 206.7,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 206.34
+    },
+    {
+     "i": 30,
+     "ref": "R38 · Deponie  · 3 TS · KIII",
+     "real": 206.7,
+     "total": 534.23,
+     "grund": 280.5,
+     "pruef": 99.0,
+     "bericht": 119.0,
+     "delta_pct": 158.45
+    },
+    {
+     "i": 31,
+     "ref": "R39 · Deponie  · 48 TS · KII",
+     "real": 479.73,
+     "total": 2403.45,
+     "grund": 384.0,
+     "pruef": 1398.0,
+     "bericht": 550.0,
+     "delta_pct": 401.0
+    },
+    {
+     "i": 32,
+     "ref": "R40 · Deponie  · 1 TS · KIII",
+     "real": 161.65,
+     "total": 468.23,
+     "grund": 280.5,
+     "pruef": 33.0,
+     "bericht": 119.0,
+     "delta_pct": 189.65
+    },
+    {
+     "i": 33,
+     "ref": "R41 · Deponie  · 1 TS · KIII",
+     "real": 161.65,
+     "total": 468.23,
+     "grund": 280.5,
+     "pruef": 33.0,
+     "bericht": 119.0,
+     "delta_pct": 189.65
+    },
+    {
+     "i": 34,
+     "ref": "R42 · Deponie  · 4 TS · KIII",
+     "real": 206.7,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 174.42
+    },
+    {
+     "i": 35,
+     "ref": "R43 · Deponie  · 2 TS · KIII",
+     "real": 206.7,
+     "total": 501.23,
+     "grund": 280.5,
+     "pruef": 66.0,
+     "bericht": 119.0,
+     "delta_pct": 142.49
+    },
+    {
+     "i": 36,
+     "ref": "R44 · Deponie  · 3 TS · KIII",
+     "real": 206.7,
+     "total": 534.23,
+     "grund": 280.5,
+     "pruef": 99.0,
+     "bericht": 119.0,
+     "delta_pct": 158.45
+    },
+    {
+     "i": 37,
+     "ref": "R45 · Deponie  · 10 TS · KIII",
+     "real": 206.7,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 270.2
+    },
+    {
+     "i": 38,
+     "ref": "R46 · Depot Innenstadt  · 2 TS · KIII",
+     "real": 257.61,
+     "total": 501.23,
+     "grund": 280.5,
+     "pruef": 66.0,
+     "bericht": 119.0,
+     "delta_pct": 94.57
+    },
+    {
+     "i": 39,
+     "ref": "R47 · Depot Nord Stadtwerke Aug · 50 TS · KIII",
+     "real": 1153.63,
+     "total": 2455.45,
+     "grund": 384.0,
+     "pruef": 1450.0,
+     "bericht": 550.0,
+     "delta_pct": 112.85
+    },
+    {
+     "i": 40,
+     "ref": "R48 · Depot Süd  · 30 TS · KIII",
+     "real": 795.28,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 108.19
+    },
+    {
+     "i": 41,
+     "ref": "R49 · Drei-Auen-Grundschule  · 26 TS · KIII",
+     "real": 565.19,
+     "total": 1543.73,
+     "grund": 330.0,
+     "pruef": 798.0,
+     "bericht": 380.0,
+     "delta_pct": 173.13
+    },
+    {
+     "i": 42,
+     "ref": "R50 · ehem. LVA Augsburg  · 40 TS · KIII",
+     "real": 1124.32,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 80.15
+    },
+    {
+     "i": 43,
+     "ref": "R51 · Eichendorff Volksschule  · 27 TS · KIII",
+     "real": 473.05,
+     "total": 1571.73,
+     "grund": 330.0,
+     "pruef": 826.0,
+     "bericht": 380.0,
+     "delta_pct": 232.26
+    },
+    {
+     "i": 44,
+     "ref": "R52 · Erhard-Wunderlich-Sportha · 16 TS · KIII",
+     "real": 505.83,
+     "total": 1255.73,
+     "grund": 330.0,
+     "pruef": 510.0,
+     "bericht": 380.0,
+     "delta_pct": 148.25
+    },
+    {
+     "i": 45,
+     "ref": "R53 · Fachakademie für Hauswirt · 10 TS · KIII",
+     "real": 504.51,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 51.68
+    },
+    {
+     "i": 46,
+     "ref": "R54 · Färberturm  · 4 TS · KIII",
+     "real": 234.27,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 142.13
+    },
+    {
+     "i": 47,
+     "ref": "R55 · Firnhaberau-Volksschule  · 49 TS · KIII",
+     "real": 905.97,
+     "total": 2429.45,
+     "grund": 384.0,
+     "pruef": 1424.0,
+     "bericht": 550.0,
+     "delta_pct": 168.16
+    },
+    {
+     "i": 48,
+     "ref": "R56 · Forsdienstgebäude · 4 TS · KIII",
+     "real": 249.87,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 127.01
+    },
+    {
+     "i": 49,
+     "ref": "R57 · Forstdienstgebäude · 4 TS · KIII",
+     "real": 249.87,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 127.01
+    },
+    {
+     "i": 50,
+     "ref": "R58 · Forstdienstgebäude · 4 TS · KIII",
+     "real": 249.87,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 127.01
+    },
+    {
+     "i": 51,
+     "ref": "R59 · Forstmuseum (Waldpavillon · 12 TS · KIII",
+     "real": 498.46,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 127.85
+    },
+    {
+     "i": 52,
+     "ref": "R60 · Freibank · 4 TS · KIII",
+     "real": 249.87,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 127.01
+    },
+    {
+     "i": 53,
+     "ref": "R61 · Friedhof Bergheim mit Lei · 4 TS · KIII",
+     "real": 211.99,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 167.58
+    },
+    {
+     "i": 54,
+     "ref": "R62 · Friedhof Göggingen, Leich · 12 TS · KIII",
+     "real": 503.66,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 125.5
+    },
+    {
+     "i": 55,
+     "ref": "R63 · Friedhof Inningen mit Lei · 10 TS · KIII",
+     "real": 447.21,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 71.11
+    },
+    {
+     "i": 56,
+     "ref": "R64 · Friedrich-Ebert-Grund- un · 15 TS · KIII",
+     "real": 338.45,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 262.16
+    },
+    {
+     "i": 57,
+     "ref": "R65 · Friedrich-Ebert-Grund- un · 30 TS · KIII",
+     "real": 608.72,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 172.0
+    },
+    {
+     "i": 58,
+     "ref": "R66 · Friedrich-Ebert-Grund- un · 14 TS · KIII",
+     "real": 423.23,
+     "total": 1195.73,
+     "grund": 330.0,
+     "pruef": 450.0,
+     "bericht": 380.0,
+     "delta_pct": 182.52
+    },
+    {
+     "i": 59,
+     "ref": "R67 · Fröbel Volksschule  · 22 TS · KIII",
+     "real": 832.07,
+     "total": 1431.73,
+     "grund": 330.0,
+     "pruef": 686.0,
+     "bericht": 380.0,
+     "delta_pct": 72.07
+    },
+    {
+     "i": 60,
+     "ref": "R68 · Glaspalast Halle · 5 TS · KIII",
+     "real": 663.22,
+     "total": 600.23,
+     "grund": 280.5,
+     "pruef": 165.0,
+     "bericht": 119.0,
+     "delta_pct": -9.5
+    },
+    {
+     "i": 61,
+     "ref": "R69 · Goethe Volksschule  · 31 TS · KIII",
+     "real": 997.62,
+     "total": 1773.45,
+     "grund": 384.0,
+     "pruef": 938.0,
+     "bericht": 380.0,
+     "delta_pct": 77.77
+    },
+    {
+     "i": 62,
+     "ref": "R70 · Grund- und Sonderschule  · 43 TS · KIII",
+     "real": 952.57,
+     "total": 2273.45,
+     "grund": 384.0,
+     "pruef": 1268.0,
+     "bericht": 550.0,
+     "delta_pct": 138.67
+    },
+    {
+     "i": 63,
+     "ref": "R71 · Grundschule Augsburg-Krie · 44 TS · KIII",
+     "real": 960.62,
+     "total": 2299.45,
+     "grund": 384.0,
+     "pruef": 1294.0,
+     "bericht": 550.0,
+     "delta_pct": 139.37
+    },
+    {
+     "i": 64,
+     "ref": "R72 · Grundschule Hochzoll-Süd  · 48 TS · KIII",
+     "real": 954.89,
+     "total": 2403.45,
+     "grund": 384.0,
+     "pruef": 1398.0,
+     "bericht": 550.0,
+     "delta_pct": 151.7
+    },
+    {
+     "i": 65,
+     "ref": "R73 · Gymnasium bei St. Anna  · 51 TS · KIII",
+     "real": 1787.22,
+     "total": 2481.45,
+     "grund": 384.0,
+     "pruef": 1476.0,
+     "bericht": 550.0,
+     "delta_pct": 38.84
+    },
+    {
+     "i": 66,
+     "ref": "R74 · Gymnasium bei St. Stephan · 35 TS · KIII",
+     "real": 1252.83,
+     "total": 1885.45,
+     "grund": 384.0,
+     "pruef": 1050.0,
+     "bericht": 380.0,
+     "delta_pct": 50.5
+    },
+    {
+     "i": 67,
+     "ref": "R75 · Halle 116  · 15 TS · KIII",
+     "real": 1015.19,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 20.74
+    },
+    {
+     "i": 68,
+     "ref": "R76 · Hallenbad Göggingen  · 14 TS · KIII",
+     "real": 574.54,
+     "total": 1195.73,
+     "grund": 330.0,
+     "pruef": 450.0,
+     "bericht": 380.0,
+     "delta_pct": 108.12
+    },
+    {
+     "i": 69,
+     "ref": "R77 · Hallenbad Haunstetten  · 12 TS · KIII",
+     "real": 493.83,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 129.98
+    },
+    {
+     "i": 70,
+     "ref": "R78 · Hans-Adlhoch-Volksschule  · 33 TS · KIII",
+     "real": 619.23,
+     "total": 1829.45,
+     "grund": 384.0,
+     "pruef": 994.0,
+     "bericht": 380.0,
+     "delta_pct": 195.44
+    },
+    {
+     "i": 71,
+     "ref": "R79 · Hauptdepot  · 70 TS · KIII",
+     "real": 1114.57,
+     "total": 3060.18,
+     "grund": 433.0,
+     "pruef": 1970.0,
+     "bericht": 550.0,
+     "delta_pct": 174.56
+    },
+    {
+     "i": 72,
+     "ref": "R80 · Hauptdepot  · 13 TS · KIII",
+     "real": 646.14,
+     "total": 1165.73,
+     "grund": 330.0,
+     "pruef": 420.0,
+     "bericht": 380.0,
+     "delta_pct": 80.41
+    },
+    {
+     "i": 73,
+     "ref": "R81 · Hauptdepot  · 8 TS · KIII",
+     "real": 434.01,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 61.11
+    },
+    {
+     "i": 74,
+     "ref": "R82 · Hauptdepot  · 15 TS · KIII",
+     "real": 420.01,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 191.83
+    },
+    {
+     "i": 75,
+     "ref": "R83 · Hauptdepot  · 5 TS · KIII",
+     "real": 207.88,
+     "total": 600.23,
+     "grund": 280.5,
+     "pruef": 165.0,
+     "bericht": 119.0,
+     "delta_pct": 188.74
+    },
+    {
+     "i": 76,
+     "ref": "R84 · Hauptdepot  · 8 TS · KIII",
+     "real": 420.01,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 66.48
+    },
+    {
+     "i": 77,
+     "ref": "R85 · Hauptdepot  · 7 TS · KIII",
+     "real": 315.0,
+     "total": 666.23,
+     "grund": 280.5,
+     "pruef": 231.0,
+     "bericht": 119.0,
+     "delta_pct": 111.5
+    },
+    {
+     "i": 78,
+     "ref": "R86 · Heinrich-von-Buz-Realschu · 23 TS · KIII",
+     "real": 1181.57,
+     "total": 1459.73,
+     "grund": 330.0,
+     "pruef": 714.0,
+     "bericht": 380.0,
+     "delta_pct": 23.54
+    },
+    {
+     "i": 79,
+     "ref": "R87 · Höhmannhaus  · 12 TS · KIII",
+     "real": 315.0,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 260.55
+    },
+    {
+     "i": 80,
+     "ref": "R88 · Holbein-Gymnasium  · 51 TS · KIII",
+     "real": 999.67,
+     "total": 2481.45,
+     "grund": 384.0,
+     "pruef": 1476.0,
+     "bericht": 550.0,
+     "delta_pct": 148.23
+    },
+    {
+     "i": 81,
+     "ref": "R89 · Holbeinhaus · 8 TS · KIII",
+     "real": 370.71,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 88.62
+    },
+    {
+     "i": 82,
+     "ref": "R90 · Integrative Kindertagesei · 8 TS · KIII",
+     "real": 729.25,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": -4.12
+    },
+    {
+     "i": 83,
+     "ref": "R91 · Jakobertor (Turm) · 4 TS · KIII",
+     "real": 249.87,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 127.01
+    },
+    {
+     "i": 84,
+     "ref": "R92 · Jakob-Fugger-Gymnasium  · 35 TS · KIII",
+     "real": 1107.92,
+     "total": 1885.45,
+     "grund": 384.0,
+     "pruef": 1050.0,
+     "bericht": 380.0,
+     "delta_pct": 70.18
+    },
+    {
+     "i": 85,
+     "ref": "R93 · Johann-Strauß-Volksschule · 12 TS · KIII",
+     "real": 452.37,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 151.06
+    },
+    {
+     "i": 86,
+     "ref": "R94 · Jüdische Synagoge  · 6 TS · KIII",
+     "real": 521.35,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 21.46
+    },
+    {
+     "i": 87,
+     "ref": "R95 · Jugendhaus Kriegshaber  · 4 TS · KIII",
+     "real": 386.55,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 46.74
+    },
+    {
+     "i": 88,
+     "ref": "R96 · Jugendtreff Oase  · 6 TS · KIII",
+     "real": 384.33,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 64.76
+    },
+    {
+     "i": 89,
+     "ref": "R97 · Jugendzentrum  · 6 TS · KIII",
+     "real": 389.81,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 62.44
+    },
+    {
+     "i": 90,
+     "ref": "R98 · Jugendzentrum  · 6 TS · KIII",
+     "real": 272.73,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 132.18
+    },
+    {
+     "i": 91,
+     "ref": "R99 · Jugendzentrum  · 6 TS · KIII",
+     "real": 207.88,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 204.61
+    },
+    {
+     "i": 92,
+     "ref": "R100 · Kapellenschule  · 25 TS · KIII",
+     "real": 1622.85,
+     "total": 1515.73,
+     "grund": 330.0,
+     "pruef": 770.0,
+     "bericht": 380.0,
+     "delta_pct": -6.6
+    },
+    {
+     "i": 93,
+     "ref": "R101 · Karl-Mögele-Sportanlage  · 11 TS · KIII",
+     "real": 450.01,
+     "total": 1105.73,
+     "grund": 330.0,
+     "pruef": 360.0,
+     "bericht": 380.0,
+     "delta_pct": 145.71
+    },
+    {
+     "i": 94,
+     "ref": "R102 · Kath. Kindertagesstätte S · 10 TS · KIII",
+     "real": 445.6,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 71.73
+    },
+    {
+     "i": 95,
+     "ref": "R103 · Kegelleistungszentrum · 12 TS · KIII",
+     "real": 617.5,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 83.92
+    },
+    {
+     "i": 96,
+     "ref": "R104 · Kerschensteiner Volksschu · 29 TS · KIII",
+     "real": 837.68,
+     "total": 1627.73,
+     "grund": 330.0,
+     "pruef": 882.0,
+     "bericht": 380.0,
+     "delta_pct": 94.31
+    },
+    {
+     "i": 97,
+     "ref": "R105 · Kindergarten  · 8 TS · KIII",
+     "real": 504.82,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 38.51
+    },
+    {
+     "i": 98,
+     "ref": "R106 · Kindergarten  · 13 TS · KIII",
+     "real": 886.86,
+     "total": 1165.73,
+     "grund": 330.0,
+     "pruef": 420.0,
+     "bericht": 380.0,
+     "delta_pct": 31.44
+    },
+    {
+     "i": 99,
+     "ref": "R107 · Kindergarten  · 6 TS · KIII",
+     "real": 252.46,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 150.82
+    },
+    {
+     "i": 100,
+     "ref": "R108 · Kindergarten Graceland  · 4 TS · KIII",
+     "real": 590.82,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": -3.99
+    },
+    {
+     "i": 101,
+     "ref": "R109 · Kindertageseinrichtung Ho · 8 TS · KIII",
+     "real": 571.78,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 22.29
+    },
+    {
+     "i": 102,
+     "ref": "R110 · Kindertageseinrichtung Lü · 7 TS · KIII",
+     "real": 616.42,
+     "total": 666.23,
+     "grund": 280.5,
+     "pruef": 231.0,
+     "bericht": 119.0,
+     "delta_pct": 8.08
+    },
+    {
+     "i": 103,
+     "ref": "R111 · Kindertageseinrichtung Sc · 6 TS · KIII",
+     "real": 509.53,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 24.28
+    },
+    {
+     "i": 104,
+     "ref": "R112 · Kindertageseinrichtung Zu · 6 TS · KIII",
+     "real": 500.58,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 26.5
+    },
+    {
+     "i": 105,
+     "ref": "R113 · Kindertagesstätte  · 10 TS · KIII",
+     "real": 553.63,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 38.22
+    },
+    {
+     "i": 106,
+     "ref": "R114 · Kindertagesstätte  · 18 TS · KIII",
+     "real": 497.55,
+     "total": 1315.73,
+     "grund": 330.0,
+     "pruef": 570.0,
+     "bericht": 380.0,
+     "delta_pct": 164.44
+    },
+    {
+     "i": 107,
+     "ref": "R115 · Kindertagesstätte  · 13 TS · KIII",
+     "real": 521.22,
+     "total": 1165.73,
+     "grund": 330.0,
+     "pruef": 420.0,
+     "bericht": 380.0,
+     "delta_pct": 123.66
+    },
+    {
+     "i": 108,
+     "ref": "R116 · Kindertagesstätte  · 7 TS · KIII",
+     "real": 479.06,
+     "total": 666.23,
+     "grund": 280.5,
+     "pruef": 231.0,
+     "bericht": 119.0,
+     "delta_pct": 39.07
+    },
+    {
+     "i": 109,
+     "ref": "R117 · Kindertagesstätte  · 8 TS · KIII",
+     "real": 457.91,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 52.7
+    },
+    {
+     "i": 110,
+     "ref": "R118 · Kindertagesstätte  · 10 TS · KIII",
+     "real": 443.11,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 72.7
+    },
+    {
+     "i": 111,
+     "ref": "R119 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 501.64,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 126.4
+    },
+    {
+     "i": 112,
+     "ref": "R120 · Kindertagesstätte  · 4 TS · KIII",
+     "real": 276.13,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 105.42
+    },
+    {
+     "i": 113,
+     "ref": "R121 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 451.16,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 151.74
+    },
+    {
+     "i": 114,
+     "ref": "R122 · Kindertagesstätte  · 6 TS · KIII",
+     "real": 410.78,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 54.15
+    },
+    {
+     "i": 115,
+     "ref": "R123 · Kindertagesstätte  · 8 TS · KIII",
+     "real": 471.93,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 48.16
+    },
+    {
+     "i": 116,
+     "ref": "R124 · Kindertagesstätte  · 7 TS · KIII",
+     "real": 407.19,
+     "total": 666.23,
+     "grund": 280.5,
+     "pruef": 231.0,
+     "bericht": 119.0,
+     "delta_pct": 63.62
+    },
+    {
+     "i": 117,
+     "ref": "R125 · Kindertagesstätte  · 13 TS · KIII",
+     "real": 501.64,
+     "total": 1165.73,
+     "grund": 330.0,
+     "pruef": 420.0,
+     "bericht": 380.0,
+     "delta_pct": 132.38
+    },
+    {
+     "i": 118,
+     "ref": "R126 · Kindertagesstätte  · 13 TS · KIII",
+     "real": 392.87,
+     "total": 1165.73,
+     "grund": 330.0,
+     "pruef": 420.0,
+     "bericht": 380.0,
+     "delta_pct": 196.72
+    },
+    {
+     "i": 119,
+     "ref": "R127 · Kindertagesstätte  · 20 TS · KIII",
+     "real": 516.95,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 166.12
+    },
+    {
+     "i": 120,
+     "ref": "R128 · Kindertagesstätte  · 14 TS · KIII",
+     "real": 382.52,
+     "total": 1195.73,
+     "grund": 330.0,
+     "pruef": 450.0,
+     "bericht": 380.0,
+     "delta_pct": 212.59
+    },
+    {
+     "i": 121,
+     "ref": "R129 · Kindertagesstätte  · 26 TS · KIII",
+     "real": 604.13,
+     "total": 1543.73,
+     "grund": 330.0,
+     "pruef": 798.0,
+     "bericht": 380.0,
+     "delta_pct": 155.53
+    },
+    {
+     "i": 122,
+     "ref": "R130 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 674.98,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 68.26
+    },
+    {
+     "i": 123,
+     "ref": "R131 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 580.82,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 95.54
+    },
+    {
+     "i": 124,
+     "ref": "R132 · Kindertagesstätte  · 8 TS · KIII",
+     "real": 634.51,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 10.2
+    },
+    {
+     "i": 125,
+     "ref": "R133 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 878.01,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 29.35
+    },
+    {
+     "i": 126,
+     "ref": "R134 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 520.05,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 118.39
+    },
+    {
+     "i": 127,
+     "ref": "R135 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 501.64,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 126.4
+    },
+    {
+     "i": 128,
+     "ref": "R136 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 287.17,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 295.49
+    },
+    {
+     "i": 129,
+     "ref": "R137 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 435.48,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 160.8
+    },
+    {
+     "i": 130,
+     "ref": "R138 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 437.41,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 159.65
+    },
+    {
+     "i": 131,
+     "ref": "R139 · Kindertagesstätte \"Spatze · 12 TS · KIII",
+     "real": 516.95,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 119.7
+    },
+    {
+     "i": 132,
+     "ref": "R140 · Kindertagesstätte Berghei · 12 TS · KIII",
+     "real": 429.96,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 164.15
+    },
+    {
+     "i": 133,
+     "ref": "R141 · Kita Sonnenkäfer  · 12 TS · KIII",
+     "real": 536.7,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 111.61
+    },
+    {
+     "i": 134,
+     "ref": "R142 · Kita Zollernstraße  · 12 TS · KIII",
+     "real": 293.38,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 287.12
+    },
+    {
+     "i": 135,
+     "ref": "R143 · L - Bundesleistungszentru · 4 TS · KIII",
+     "real": 250.29,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 126.63
+    },
+    {
+     "i": 136,
+     "ref": "R144 · L - Bundesleistungszentru · 14 TS · KIII",
+     "real": 459.36,
+     "total": 1195.73,
+     "grund": 330.0,
+     "pruef": 450.0,
+     "bericht": 380.0,
+     "delta_pct": 160.3
+    },
+    {
+     "i": 137,
+     "ref": "R145 · Ladengeschäfte  · 6 TS · KIII",
+     "real": 315.0,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 101.02
+    },
+    {
+     "i": 138,
+     "ref": "R146 · L-Bundesleistungszentrum  · 12 TS · KIII",
+     "real": 836.31,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 35.8
+    },
+    {
+     "i": 139,
+     "ref": "R147 · Lehmbau  · 9 TS · KIII",
+     "real": 335.1,
+     "total": 732.23,
+     "grund": 280.5,
+     "pruef": 297.0,
+     "bericht": 119.0,
+     "delta_pct": 118.51
+    },
+    {
+     "i": 140,
+     "ref": "R148 · Leopold-Mozart-Zentrum  · 9 TS · KIII",
+     "real": 501.64,
+     "total": 732.23,
+     "grund": 280.5,
+     "pruef": 297.0,
+     "bericht": 119.0,
+     "delta_pct": 45.97
+    },
+    {
+     "i": 141,
+     "ref": "R149 · Liegenschaft  · 4 TS · KIII",
+     "real": 315.0,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 80.07
+    },
+    {
+     "i": 142,
+     "ref": "R150 · Liegenschaft  · 6 TS · KIII",
+     "real": 325.83,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 94.34
+    },
+    {
+     "i": 143,
+     "ref": "R151 · Liegenschaft  · 7 TS · KIII",
+     "real": 315.0,
+     "total": 666.23,
+     "grund": 280.5,
+     "pruef": 231.0,
+     "bericht": 119.0,
+     "delta_pct": 111.5
+    },
+    {
+     "i": 144,
+     "ref": "R152 · Liegenschaft  · 2 TS · KIII",
+     "real": 379.2,
+     "total": 501.23,
+     "grund": 280.5,
+     "pruef": 66.0,
+     "bericht": 119.0,
+     "delta_pct": 32.18
+    },
+    {
+     "i": 145,
+     "ref": "R153 · Liegenschaft  · 14 TS · KIII",
+     "real": 315.0,
+     "total": 1195.73,
+     "grund": 330.0,
+     "pruef": 450.0,
+     "bericht": 380.0,
+     "delta_pct": 279.6
+    },
+    {
+     "i": 146,
+     "ref": "R154 · Liegenschaft  · 4 TS · KIII",
+     "real": 250.29,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 126.63
+    },
+    {
+     "i": 147,
+     "ref": "R155 · Liegenschaft  · 4 TS · KIII",
+     "real": 250.29,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 126.63
+    },
+    {
+     "i": 148,
+     "ref": "R156 · Liegenschaft Kahnfahrt mi · 4 TS · KIII",
+     "real": 250.29,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 126.63
+    },
+    {
+     "i": 149,
+     "ref": "R157 · Löweneckschule  · 31 TS · KIII",
+     "real": 909.65,
+     "total": 1773.45,
+     "grund": 384.0,
+     "pruef": 938.0,
+     "bericht": 380.0,
+     "delta_pct": 94.96
+    },
+    {
+     "i": 150,
+     "ref": "R158 · Luitpoldschule  · 30 TS · KIII",
+     "real": 709.14,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 133.48
+    },
+    {
+     "i": 151,
+     "ref": "R159 · Maria-Theresia-Gymnasium  · 30 TS · KIII",
+     "real": 885.77,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 86.93
+    },
+    {
+     "i": 152,
+     "ref": "R160 · Martinschule  · 30 TS · KIII",
+     "real": 466.89,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 254.63
+    },
+    {
+     "i": 153,
+     "ref": "R161 · Maximilianmuseum · 14 TS · KIII",
+     "real": 435.96,
+     "total": 1195.73,
+     "grund": 330.0,
+     "pruef": 450.0,
+     "bericht": 380.0,
+     "delta_pct": 174.27
+    },
+    {
+     "i": 154,
+     "ref": "R162 · Mozarthaus · 6 TS · KIII",
+     "real": 318.09,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 99.07
+    },
+    {
+     "i": 155,
+     "ref": "R163 · Naturmuseum · 10 TS · KIII",
+     "real": 420.16,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 82.13
+    },
+    {
+     "i": 156,
+     "ref": "R164 · Neuer Friedhof Haunstette · 10 TS · KIII",
+     "real": 387.13,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 97.67
+    },
+    {
+     "i": 157,
+     "ref": "R165 · Neuer Ostfriedhof · 12 TS · KIII",
+     "real": 360.95,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 214.65
+    },
+    {
+     "i": 158,
+     "ref": "R166 · Neuer Ostfriedhof  · 40 TS · KIII",
+     "real": 331.03,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 511.86
+    },
+    {
+     "i": 159,
+     "ref": "R167 · Nordfriedhof  · 16 TS · KIII",
+     "real": 402.96,
+     "total": 1255.73,
+     "grund": 330.0,
+     "pruef": 510.0,
+     "bericht": 380.0,
+     "delta_pct": 211.63
+    },
+    {
+     "i": 160,
+     "ref": "R168 · Oblatterwallturm · 6 TS · KIII",
+     "real": 313.21,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 102.18
+    },
+    {
+     "i": 161,
+     "ref": "R169 · Oblatterwallturm  · 6 TS · KIII",
+     "real": 317.03,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 99.74
+    },
+    {
+     "i": 162,
+     "ref": "R170 · Oblatterwall-Turm  · 6 TS · KIII",
+     "real": 317.03,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 99.74
+    },
+    {
+     "i": 163,
+     "ref": "R171 · Pankratiusschule  · 22 TS · KIII",
+     "real": 677.96,
+     "total": 1431.73,
+     "grund": 330.0,
+     "pruef": 686.0,
+     "bericht": 380.0,
+     "delta_pct": 111.18
+    },
+    {
+     "i": 164,
+     "ref": "R172 · Perlachturm · 12 TS · KIII",
+     "real": 541.11,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 109.89
+    },
+    {
+     "i": 165,
+     "ref": "R173 · Peutinger Gymnasium  · 25 TS · KIII",
+     "real": 736.09,
+     "total": 1515.73,
+     "grund": 330.0,
+     "pruef": 770.0,
+     "bericht": 380.0,
+     "delta_pct": 105.92
+    },
+    {
+     "i": 166,
+     "ref": "R174 · Plärrerbad, Hallenbad  · 14 TS · KIII",
+     "real": 362.42,
+     "total": 1195.73,
+     "grund": 330.0,
+     "pruef": 450.0,
+     "bericht": 380.0,
+     "delta_pct": 229.93
+    },
+    {
+     "i": 167,
+     "ref": "R175 · Polizei  · 1 TS · KIII",
+     "real": 315.0,
+     "total": 468.23,
+     "grund": 280.5,
+     "pruef": 33.0,
+     "bericht": 119.0,
+     "delta_pct": 48.64
+    },
+    {
+     "i": 168,
+     "ref": "R176 · Rathaus  · 12 TS · KIII",
+     "real": 709.84,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 60.0
+    },
+    {
+     "i": 169,
+     "ref": "R177 · Reischlesche Wirtschaftss · 69 TS · KIII",
+     "real": 576.98,
+     "total": 3034.18,
+     "grund": 433.0,
+     "pruef": 1944.0,
+     "bericht": 550.0,
+     "delta_pct": 425.87
+    },
+    {
+     "i": 170,
+     "ref": "R178 · Römerturm im Seyssel'sche · 2 TS · KIII",
+     "real": 208.33,
+     "total": 501.23,
+     "grund": 280.5,
+     "pruef": 66.0,
+     "bericht": 119.0,
+     "delta_pct": 140.6
+    },
+    {
+     "i": 171,
+     "ref": "R179 · Römisches Museum · 50 TS · KIII",
+     "real": 1530.8,
+     "total": 2455.45,
+     "grund": 384.0,
+     "pruef": 1450.0,
+     "bericht": 550.0,
+     "delta_pct": 60.4
+    },
+    {
+     "i": 172,
+     "ref": "R180 · Rosenaustadion Flutlichta · 4 TS · KII",
+     "real": 741.64,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": -23.52
+    },
+    {
+     "i": 173,
+     "ref": "R181 · Rudolf-Diesel-Gymnasium  · 43 TS · KIII",
+     "real": 1674.02,
+     "total": 2273.45,
+     "grund": 384.0,
+     "pruef": 1268.0,
+     "bericht": 550.0,
+     "delta_pct": 35.81
+    },
+    {
+     "i": 174,
+     "ref": "R182 · Schaezler Palais · 20 TS · KIII",
+     "real": 625.99,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 119.77
+    },
+    {
+     "i": 175,
+     "ref": "R183 · Schillerschule Grund- u.  · 38 TS · KIII",
+     "real": 856.67,
+     "total": 1969.45,
+     "grund": 384.0,
+     "pruef": 1134.0,
+     "bericht": 380.0,
+     "delta_pct": 129.9
+    },
+    {
+     "i": 176,
+     "ref": "R184 · Schulamt  · 30 TS · KIII",
+     "real": 526.15,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 214.69
+    },
+    {
+     "i": 177,
+     "ref": "R185 · Schule am Kappeneck Elias · 23 TS · KIII",
+     "real": 973.84,
+     "total": 1459.73,
+     "grund": 330.0,
+     "pruef": 714.0,
+     "bericht": 380.0,
+     "delta_pct": 49.89
+    },
+    {
+     "i": 178,
+     "ref": "R186 · SCHULE VOR DEM ROTEN TOR  · 15 TS · KIII",
+     "real": 563.52,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 117.51
+    },
+    {
+     "i": 179,
+     "ref": "R187 · Schullandheim Altenmünste · 4 TS · KIII",
+     "real": 661.5,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": -14.25
+    },
+    {
+     "i": 180,
+     "ref": "R188 · Simpert-Schule  · 16 TS · KIII",
+     "real": 747.26,
+     "total": 1255.73,
+     "grund": 330.0,
+     "pruef": 510.0,
+     "bericht": 380.0,
+     "delta_pct": 68.04
+    },
+    {
+     "i": 181,
+     "ref": "R189 · Sparkassen-Altenheim  · 38 TS · KIII",
+     "real": 565.19,
+     "total": 1969.45,
+     "grund": 384.0,
+     "pruef": 1134.0,
+     "bericht": 380.0,
+     "delta_pct": 248.46
+    },
+    {
+     "i": 182,
+     "ref": "R190 · Spickelbad mit Sommerbad  · 100 TS · KIII",
+     "real": 728.91,
+     "total": 3840.18,
+     "grund": 433.0,
+     "pruef": 2750.0,
+     "bericht": 550.0,
+     "delta_pct": 426.84
+    },
+    {
+     "i": 183,
+     "ref": "R191 · Sportanlage Süd  · 30 TS · KIII",
+     "real": 422.28,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 292.09
+    },
+    {
+     "i": 184,
+     "ref": "R192 · Sporthalle Haunstetten  · 10 TS · KII",
+     "real": 545.6,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 40.25
+    },
+    {
+     "i": 185,
+     "ref": "R193 · Sporthalle Hochzoll  · 8 TS · KIII",
+     "real": 479.61,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 45.79
+    },
+    {
+     "i": 186,
+     "ref": "R194 · St. Anna Volksschule  · 8 TS · KIII",
+     "real": 868.74,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": -19.51
+    },
+    {
+     "i": 187,
+     "ref": "R195 · St.-Max-Grundschule  · 38 TS · KIII",
+     "real": 791.43,
+     "total": 1969.45,
+     "grund": 384.0,
+     "pruef": 1134.0,
+     "bericht": 380.0,
+     "delta_pct": 148.85
+    },
+    {
+     "i": 188,
+     "ref": "R196 · Staatliche Fachoberschule · 8 TS · KIII",
+     "real": 390.41,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 79.1
+    },
+    {
+     "i": 189,
+     "ref": "R197 · STAATLICHE FACHOBERSCHULE · 30 TS · KIII",
+     "real": 421.07,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 293.22
+    },
+    {
+     "i": 190,
+     "ref": "R198 · Stadt Augsburg Verwaltung · 80 TS · KIII",
+     "real": 1392.03,
+     "total": 3320.18,
+     "grund": 433.0,
+     "pruef": 2230.0,
+     "bericht": 550.0,
+     "delta_pct": 138.51
+    },
+    {
+     "i": 191,
+     "ref": "R199 · Stadtbad  · 22 TS · KIII",
+     "real": 727.74,
+     "total": 1431.73,
+     "grund": 330.0,
+     "pruef": 686.0,
+     "bericht": 380.0,
+     "delta_pct": 96.74
+    },
+    {
+     "i": 192,
+     "ref": "R200 · Stadtgärtnerei  · 55 TS · KIII",
+     "real": 1881.9,
+     "total": 2585.45,
+     "grund": 384.0,
+     "pruef": 1580.0,
+     "bericht": 550.0,
+     "delta_pct": 37.39
+    },
+    {
+     "i": 193,
+     "ref": "R201 · Stadtjugendring Augsburg  · 4 TS · KIII",
+     "real": 329.02,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 72.4
+    },
+    {
+     "i": 194,
+     "ref": "R202 · Stadtmarkt Fleischhalle u · 20 TS · KIII",
+     "real": 999.52,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 37.64
+    },
+    {
+     "i": 195,
+     "ref": "R203 · Stadtmarkt Marktgaststätt · 6 TS · KIII",
+     "real": 355.97,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 77.89
+    },
+    {
+     "i": 196,
+     "ref": "R204 · Stadtmarkt, Komm. 1990214 · 7 TS · KIII",
+     "real": 355.97,
+     "total": 666.23,
+     "grund": 280.5,
+     "pruef": 231.0,
+     "bericht": 119.0,
+     "delta_pct": 87.16
+    },
+    {
+     "i": 197,
+     "ref": "R205 · Tiefbauamt  · 15 TS · KIII",
+     "real": 474.27,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 158.45
+    },
+    {
+     "i": 198,
+     "ref": "R206 · Traglufthalle Eisstadion  · 80 TS · KIII",
+     "real": 639.41,
+     "total": 3320.18,
+     "grund": 433.0,
+     "pruef": 2230.0,
+     "bericht": 550.0,
+     "delta_pct": 419.26
+    },
+    {
+     "i": 199,
+     "ref": "R207 · Ulrich Sonder Volksschule · 23 TS · KIII",
+     "real": 617.8,
+     "total": 1459.73,
+     "grund": 330.0,
+     "pruef": 714.0,
+     "bericht": 380.0,
+     "delta_pct": 136.28
+    },
+    {
+     "i": 200,
+     "ref": "R208 · Unterer Brunnenturm · 4 TS · KIII",
+     "real": 249.97,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 126.92
+    },
+    {
+     "i": 201,
+     "ref": "R209 · Verwaltungsgeb 4 · 40 TS · KIII",
+     "real": 946.41,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 114.01
+    },
+    {
+     "i": 202,
+     "ref": "R210 · Verwaltungsgeb. · 80 TS · KIII",
+     "real": 1663.65,
+     "total": 3320.18,
+     "grund": 433.0,
+     "pruef": 2230.0,
+     "bericht": 550.0,
+     "delta_pct": 99.57
+    },
+    {
+     "i": 203,
+     "ref": "R211 · Verwaltungsgebäude · 15 TS · KIII",
+     "real": 475.86,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 157.58
+    },
+    {
+     "i": 204,
+     "ref": "R212 · Verwaltungsgebäude · 20 TS · KIII",
+     "real": 547.48,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 151.29
+    },
+    {
+     "i": 205,
+     "ref": "R213 · Verwaltungsgebäude · 10 TS · KIII",
+     "real": 377.72,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 102.59
+    },
+    {
+     "i": 206,
+     "ref": "R214 · Verwaltungsgebäude · 40 TS · KIII",
+     "real": 1039.78,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 94.8
+    },
+    {
+     "i": 207,
+     "ref": "R215 · Verwaltungsgebäude I mit  · 20 TS · KIII",
+     "real": 628.11,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 119.03
+    },
+    {
+     "i": 208,
+     "ref": "R216 · Verwaltungsgebäude II · 10 TS · KIII",
+     "real": 355.44,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 115.29
+    },
+    {
+     "i": 209,
+     "ref": "R217 · Verwaltungsgebäude, ehem. · 10 TS · KIII",
+     "real": 370.29,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 106.66
+    },
+    {
+     "i": 210,
+     "ref": "R218 · Veterineramt  · 4 TS · KIII",
+     "real": 249.87,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 127.01
+    },
+    {
+     "i": 211,
+     "ref": "R219 · VG 5 Nordbau  · 32 TS · KIII",
+     "real": 1636.24,
+     "total": 1801.45,
+     "grund": 384.0,
+     "pruef": 966.0,
+     "bericht": 380.0,
+     "delta_pct": 10.1
+    },
+    {
+     "i": 212,
+     "ref": "R220 · Vogeltor · 4 TS · KIII",
+     "real": 249.87,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 127.01
+    },
+    {
+     "i": 213,
+     "ref": "R221 · Volksschule  · 36 TS · KIII",
+     "real": 789.44,
+     "total": 1913.45,
+     "grund": 384.0,
+     "pruef": 1078.0,
+     "bericht": 380.0,
+     "delta_pct": 142.38
+    },
+    {
+     "i": 214,
+     "ref": "R222 · Volksschule Augsburg-Herr · 46 TS · KIII",
+     "real": 1098.13,
+     "total": 2351.45,
+     "grund": 384.0,
+     "pruef": 1346.0,
+     "bericht": 550.0,
+     "delta_pct": 114.13
+    },
+    {
+     "i": 215,
+     "ref": "R223 · Volksschule Augsburg-Herr · 46 TS · KIII",
+     "real": 673.93,
+     "total": 2351.45,
+     "grund": 384.0,
+     "pruef": 1346.0,
+     "bericht": 550.0,
+     "delta_pct": 248.92
+    },
+    {
+     "i": 216,
+     "ref": "R224 · Volksschule Augsburg-Inni · 13 TS · KIII",
+     "real": 526.07,
+     "total": 1165.73,
+     "grund": 330.0,
+     "pruef": 420.0,
+     "bericht": 380.0,
+     "delta_pct": 121.59
+    },
+    {
+     "i": 217,
+     "ref": "R225 · Volksschule St. Georg  · 19 TS · KIII",
+     "real": 516.07,
+     "total": 1345.73,
+     "grund": 330.0,
+     "pruef": 600.0,
+     "bericht": 380.0,
+     "delta_pct": 160.76
+    },
+    {
+     "i": 218,
+     "ref": "R226 · Wassertürme · 30 TS · KIII",
+     "real": 460.07,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 259.89
+    },
+    {
+     "i": 219,
+     "ref": "R227 · Wasserwacht und Bedürfnis · 7 TS · KIII",
+     "real": 412.63,
+     "total": 666.23,
+     "grund": 280.5,
+     "pruef": 231.0,
+     "bericht": 119.0,
+     "delta_pct": 61.46
+    },
+    {
+     "i": 220,
+     "ref": "R228 · WC-Anlage Autobahnsee  · 4 TS · KIII",
+     "real": 347.13,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 63.41
+    },
+    {
+     "i": 221,
+     "ref": "R229 · WC-Anlage Eiskanal  · 2 TS · KIII",
+     "real": 191.51,
+     "total": 501.23,
+     "grund": 280.5,
+     "pruef": 66.0,
+     "bericht": 119.0,
+     "delta_pct": 161.72
+    },
+    {
+     "i": 222,
+     "ref": "R230 · WC-Anlage Oberhauser Bahn · 4 TS · KIII",
+     "real": 249.87,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 127.01
+    },
+    {
+     "i": 223,
+     "ref": "R231 · WELSER-SCHULE BERUFSSCHUL · 17 TS · KIII",
+     "real": 526.07,
+     "total": 1285.73,
+     "grund": 330.0,
+     "pruef": 540.0,
+     "bericht": 380.0,
+     "delta_pct": 144.4
+    },
+    {
+     "i": 224,
+     "ref": "R232 · Werkmeisterei  · 6 TS · KIII",
+     "real": 619.23,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 2.26
+    },
+    {
+     "i": 225,
+     "ref": "R233 · Werner-Egk-Grundschule  · 27 TS · KIII",
+     "real": 636.95,
+     "total": 1571.73,
+     "grund": 330.0,
+     "pruef": 826.0,
+     "bericht": 380.0,
+     "delta_pct": 146.76
+    },
+    {
+     "i": 226,
+     "ref": "R234 · Werner-von-Siemens-Volkss · 54 TS · KIII",
+     "real": 946.83,
+     "total": 2559.45,
+     "grund": 384.0,
+     "pruef": 1554.0,
+     "bericht": 550.0,
+     "delta_pct": 170.32
+    },
+    {
+     "i": 227,
+     "ref": "R235 · Wertachbruckertor · 4 TS · KIII",
+     "real": 971.88,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": -41.64
+    },
+    {
+     "i": 228,
+     "ref": "R236 · Westfriedhof · 40 TS · KIII",
+     "real": 900.07,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 125.03
+    },
+    {
+     "i": 229,
+     "ref": "R237 · Westparkschule  · 27 TS · KIII",
+     "real": 682.5,
+     "total": 1571.73,
+     "grund": 330.0,
+     "pruef": 826.0,
+     "bericht": 380.0,
+     "delta_pct": 130.29
+    },
+    {
+     "i": 230,
+     "ref": "R238 · Wittelsbacher Volksschule · 11 TS · KIII",
+     "real": 358.28,
+     "total": 1105.73,
+     "grund": 330.0,
+     "pruef": 360.0,
+     "bericht": 380.0,
+     "delta_pct": 208.62
+    },
+    {
+     "i": 231,
+     "ref": "R239 · Wittelsbacher Volksschule · 6 TS · KIII",
+     "real": 567.75,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 11.53
+    },
+    {
+     "i": 232,
+     "ref": "R240 · Wittelsbacher Volksschule · 9 TS · KIII",
+     "real": 358.28,
+     "total": 732.23,
+     "grund": 280.5,
+     "pruef": 297.0,
+     "bericht": 119.0,
+     "delta_pct": 104.37
+    },
+    {
+     "i": 233,
+     "ref": "R241 · Wittelsbacher Volksschule · 20 TS · KIII",
+     "real": 463.82,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 196.61
+    },
+    {
+     "i": 234,
+     "ref": "R242 · AVA-Übergabestation  · 8 TS · KIII",
+     "real": 477.4,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 46.47
+    },
+    {
+     "i": 235,
+     "ref": "R243 · Gasübergabestation 5260  · 8 TS · KI",
+     "real": 283.99,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 146.22
+    },
+    {
+     "i": 236,
+     "ref": "R244 · Gasdruckregelanlage 5018  · 8 TS · KII",
+     "real": 321.9,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 117.22
+    },
+    {
+     "i": 237,
+     "ref": "R245 · Gasturbinenkraftwerk Ost  · 48 TS · KIII",
+     "real": 505.8,
+     "total": 2403.45,
+     "grund": 384.0,
+     "pruef": 1398.0,
+     "bericht": 550.0,
+     "delta_pct": 375.18
+    },
+    {
+     "i": 238,
+     "ref": "R246 · Gasübergabestation 5012  · 6 TS · KII",
+     "real": 315.0,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 101.02
+    },
+    {
+     "i": 239,
+     "ref": "R247 · Gasübergabestation Nr. 50 · 16 TS · KI",
+     "real": 207.88,
+     "total": 1255.73,
+     "grund": 330.0,
+     "pruef": 510.0,
+     "bericht": 380.0,
+     "delta_pct": 504.06
+    },
+    {
+     "i": 240,
+     "ref": "R248 · Gasübergabestation Nr. 50 · 6 TS · KI",
+     "real": 315.0,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 101.02
+    },
+    {
+     "i": 241,
+     "ref": "R249 · Gasübergabestation Nr. 50 · 8 TS · KI",
+     "real": 337.51,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 107.17
+    },
+    {
+     "i": 242,
+     "ref": "R250 · Gasübergabestation Nr. 50 · 4 TS · KII",
+     "real": 211.06,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 168.75
+    },
+    {
+     "i": 243,
+     "ref": "R251 · Gasübergabestation Nr. 50 · 6 TS · KI",
+     "real": 211.06,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 200.02
+    },
+    {
+     "i": 244,
+     "ref": "R252 · Gasübergabestation Nr. 50 · 5 TS · KII",
+     "real": 269.59,
+     "total": 600.23,
+     "grund": 280.5,
+     "pruef": 165.0,
+     "bericht": 119.0,
+     "delta_pct": 122.64
+    },
+    {
+     "i": 245,
+     "ref": "R253 · Gasübergabestation Nr. 50 · 3 TS · KII",
+     "real": 315.0,
+     "total": 534.23,
+     "grund": 280.5,
+     "pruef": 99.0,
+     "bericht": 119.0,
+     "delta_pct": 69.6
+    },
+    {
+     "i": 246,
+     "ref": "R254 · Gasübergabestation Nr. 50 · 5 TS · KI",
+     "real": 315.0,
+     "total": 600.23,
+     "grund": 280.5,
+     "pruef": 165.0,
+     "bericht": 119.0,
+     "delta_pct": 90.55
+    },
+    {
+     "i": 247,
+     "ref": "R255 · Gasübergabestation Nr. 50 · 3 TS · KII",
+     "real": 315.0,
+     "total": 534.23,
+     "grund": 280.5,
+     "pruef": 99.0,
+     "bericht": 119.0,
+     "delta_pct": 69.6
+    },
+    {
+     "i": 248,
+     "ref": "R256 · Gasübergabestation Nr. 50 · 4 TS · KII",
+     "real": 383.38,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 47.95
+    },
+    {
+     "i": 249,
+     "ref": "R257 · Gasübergabestation Nr. 50 · 2 TS · KIII",
+     "real": 329.8,
+     "total": 501.23,
+     "grund": 280.5,
+     "pruef": 66.0,
+     "bericht": 119.0,
+     "delta_pct": 51.98
+    },
+    {
+     "i": 250,
+     "ref": "R258 · Gasübergabestation Nr. 50 · 5 TS · KII",
+     "real": 456.08,
+     "total": 600.23,
+     "grund": 280.5,
+     "pruef": 165.0,
+     "bericht": 119.0,
+     "delta_pct": 31.61
+    },
+    {
+     "i": 251,
+     "ref": "R259 · Gasübergabestation Nr. 50 · 8 TS · KII",
+     "real": 211.06,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 231.29
+    },
+    {
+     "i": 252,
+     "ref": "R260 · Gasübergabestation Nr. 50 · 6 TS · KII",
+     "real": 211.06,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 200.02
+    },
+    {
+     "i": 253,
+     "ref": "R261 · Gasübergabestation Nr. 50 · 3 TS · KI",
+     "real": 315.0,
+     "total": 534.23,
+     "grund": 280.5,
+     "pruef": 99.0,
+     "bericht": 119.0,
+     "delta_pct": 69.6
+    },
+    {
+     "i": 254,
+     "ref": "R262 · Gasübergabestation Nr. 51 · 5 TS · KI",
+     "real": 315.0,
+     "total": 600.23,
+     "grund": 280.5,
+     "pruef": 165.0,
+     "bericht": 119.0,
+     "delta_pct": 90.55
+    },
+    {
+     "i": 255,
+     "ref": "R263 · Gasübergabestation Nr. 51 · 5 TS · KII",
+     "real": 211.06,
+     "total": 600.23,
+     "grund": 280.5,
+     "pruef": 165.0,
+     "bericht": 119.0,
+     "delta_pct": 184.38
+    },
+    {
+     "i": 256,
+     "ref": "R264 · Gasübergabestation Nr. 51 · 4 TS · KII",
+     "real": 211.06,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 168.75
+    },
+    {
+     "i": 257,
+     "ref": "R265 · Gasübergabestation Nr. 51 · 4 TS · KII",
+     "real": 211.06,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 168.75
+    },
+    {
+     "i": 258,
+     "ref": "R266 · Gasübergabestation Nr. 51 · 4 TS · KII",
+     "real": 315.0,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 80.07
+    },
+    {
+     "i": 259,
+     "ref": "R267 · Gasübergabestation Nr. 51 · 8 TS · KII",
+     "real": 211.06,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 231.29
+    },
+    {
+     "i": 260,
+     "ref": "R268 · Gasübergabestation Nr. 52 · 6 TS · KII",
+     "real": 211.06,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 200.02
+    },
+    {
+     "i": 261,
+     "ref": "R269 · Gasübergabestation Nr. 52 · 4 TS · KII",
+     "real": 315.0,
+     "total": 567.23,
+     "grund": 280.5,
+     "pruef": 132.0,
+     "bericht": 119.0,
+     "delta_pct": 80.07
+    },
+    {
+     "i": 262,
+     "ref": "R270 · Gaswerk  · 30 TS · KIII",
+     "real": 478.14,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 246.29
+    },
+    {
+     "i": 263,
+     "ref": "R271 · Gaswerk  · 40 TS · KIII",
+     "real": 703.66,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 187.85
+    },
+    {
+     "i": 264,
+     "ref": "R272 · Gaswerk  · 12 TS · KIII",
+     "real": 477.08,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 138.06
+    },
+    {
+     "i": 265,
+     "ref": "R273 · Gaswerk  · 30 TS · KIII",
+     "real": 791.08,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 109.3
+    },
+    {
+     "i": 266,
+     "ref": "R274 · Gaswerk  · 10 TS · KIII",
+     "real": 365.39,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 109.43
+    },
+    {
+     "i": 267,
+     "ref": "R275 · Gaswerk  · 20 TS · KIII",
+     "real": 478.14,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 187.73
+    },
+    {
+     "i": 268,
+     "ref": "R276 · Haag Villa  · 20 TS · KIII",
+     "real": 521.15,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 163.98
+    },
+    {
+     "i": 269,
+     "ref": "R277 · Königsplatz-Umsteigedreie · 30 TS · KIII",
+     "real": 362.06,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 357.31
+    },
+    {
+     "i": 270,
+     "ref": "R278 · Schwabencenter Gasübergab · 8 TS · KII",
+     "real": 337.9,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 106.93
+    },
+    {
+     "i": 271,
+     "ref": "R279 · Stadtwerke Augsburg  · 15 TS · KIII",
+     "real": 518.35,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 136.47
+    },
+    {
+     "i": 272,
+     "ref": "R280 · Stadtwerke Augsburg  · 15 TS · KIV",
+     "real": 209.47,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 485.15
+    },
+    {
+     "i": 273,
+     "ref": "R281 · Stadtwerke Augsburg  · 20 TS · KIV",
+     "real": 315.0,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 336.74
+    },
+    {
+     "i": 274,
+     "ref": "R282 · Stadtwerke Augsburg  · 20 TS · KIV",
+     "real": 315.0,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 336.74
+    },
+    {
+     "i": 275,
+     "ref": "R283 · Stadtwerke Augsburg  · 40 TS · KIV",
+     "real": 540.08,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 275.03
+    },
+    {
+     "i": 276,
+     "ref": "R284 · Stadtwerke Augsburg Bioma · 80 TS · KIII",
+     "real": 504.82,
+     "total": 3320.18,
+     "grund": 433.0,
+     "pruef": 2230.0,
+     "bericht": 550.0,
+     "delta_pct": 557.69
+    },
+    {
+     "i": 277,
+     "ref": "R285 · Stadtwerke Augsburg Diens · 30 TS · KIV",
+     "real": 1292.64,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 28.09
+    },
+    {
+     "i": 278,
+     "ref": "R286 · Stadtwerke Augsburg Energ · 70 TS · KIII",
+     "real": 619.27,
+     "total": 3060.18,
+     "grund": 433.0,
+     "pruef": 1970.0,
+     "bericht": 550.0,
+     "delta_pct": 394.16
+    },
+    {
+     "i": 279,
+     "ref": "R287 · Stadtwerke Augsburg Energ · 40 TS · KIII",
+     "real": 392.87,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 415.56
+    },
+    {
+     "i": 280,
+     "ref": "R288 · Stadtwerke Augsburg Energ · 25 TS · KIII",
+     "real": 802.91,
+     "total": 1515.73,
+     "grund": 330.0,
+     "pruef": 770.0,
+     "bericht": 380.0,
+     "delta_pct": 88.78
+    },
+    {
+     "i": 281,
+     "ref": "R289 · Stadtwerke Augsburg Gasre · 20 TS · KII",
+     "real": 339.7,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 304.98
+    },
+    {
+     "i": 282,
+     "ref": "R290 · Stadtwerke Augsburg Heizw · 25 TS · KIII",
+     "real": 392.87,
+     "total": 1515.73,
+     "grund": 330.0,
+     "pruef": 770.0,
+     "bericht": 380.0,
+     "delta_pct": 285.81
+    },
+    {
+     "i": 283,
+     "ref": "R291 · Stadtwerke Augsburg Hist. · 20 TS · KIV",
+     "real": 459.36,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 199.49
+    },
+    {
+     "i": 284,
+     "ref": "R292 · Stadtwerke Augsburg Leits · 20 TS · KIII",
+     "real": 391.0,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 251.85
+    },
+    {
+     "i": 285,
+     "ref": "R293 · Stadtwerke Augsburg Stati · 20 TS · KIII",
+     "real": 451.87,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 204.45
+    },
+    {
+     "i": 286,
+     "ref": "R294 · Stadtwerke Augsburg Straß · 10 TS · KIV",
+     "real": 569.28,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 34.42
+    },
+    {
+     "i": 287,
+     "ref": "R295 · Stadtwerke Augsburg Verso · 15 TS · KIII",
+     "real": 315.0,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 289.12
+    },
+    {
+     "i": 288,
+     "ref": "R296 · Stadtwerke Augsburg Verso · 15 TS · KIII",
+     "real": 474.27,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 158.45
+    },
+    {
+     "i": 289,
+     "ref": "R297 · Stadtwerke Augsburg Verso · 5 TS · KIV",
+     "real": 339.55,
+     "total": 600.23,
+     "grund": 280.5,
+     "pruef": 165.0,
+     "bericht": 119.0,
+     "delta_pct": 76.77
+    },
+    {
+     "i": 290,
+     "ref": "R298 · Stadtwerke Augsburg Verso · 8 TS · KIV",
+     "real": 340.35,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 105.45
+    },
+    {
+     "i": 291,
+     "ref": "R299 · Stadtwerke Augsburg Verso · 25 TS · KIII",
+     "real": 565.3,
+     "total": 1515.73,
+     "grund": 330.0,
+     "pruef": 770.0,
+     "bericht": 380.0,
+     "delta_pct": 168.13
+    },
+    {
+     "i": 292,
+     "ref": "R300 · Stadtwerke Augsburg Verso · 20 TS · KIII",
+     "real": 384.94,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 257.39
+    },
+    {
+     "i": 293,
+     "ref": "R301 · Stadtwerke Augsburg Verso · 30 TS · KIII",
+     "real": 498.13,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 232.39
+    },
+    {
+     "i": 294,
+     "ref": "R302 · Straßenbahnbetriebshof  · 10 TS · KIV",
+     "real": 361.88,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 111.46
+    },
+    {
+     "i": 295,
+     "ref": "R303 · Straßenbahnbetriebshof  · 15 TS · KII",
+     "real": 499.8,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 145.24
+    },
+    {
+     "i": 296,
+     "ref": "R304 · Straßenbahnbetriebshof  · 50 TS · KIII",
+     "real": 815.34,
+     "total": 2455.45,
+     "grund": 384.0,
+     "pruef": 1450.0,
+     "bericht": 550.0,
+     "delta_pct": 201.16
+    },
+    {
+     "i": 297,
+     "ref": "R305 · Straßenbahnbetriebshof  · 30 TS · KIII",
+     "real": 815.34,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 103.07
+    },
+    {
+     "i": 298,
+     "ref": "R306 · Straßenbahnbetriebshof  · 40 TS · KIII",
+     "real": 588.62,
+     "total": 2025.45,
+     "grund": 384.0,
+     "pruef": 1190.0,
+     "bericht": 380.0,
+     "delta_pct": 244.1
+    },
+    {
+     "i": 299,
+     "ref": "R307 · Straßenbahnbetriebshof  · 8 TS · KIV",
+     "real": 251.27,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 178.28
+    },
+    {
+     "i": 300,
+     "ref": "R308 · Straßenbahnbetriebshof  · 15 TS · KIII",
+     "real": 588.62,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 108.24
+    },
+    {
+     "i": 301,
+     "ref": "R309 · Hans-Adlhoch-Volksschule  · 33 TS · KIII",
+     "real": 619.23,
+     "total": 1829.45,
+     "grund": 384.0,
+     "pruef": 994.0,
+     "bericht": 380.0,
+     "delta_pct": 195.44
+    },
+    {
+     "i": 302,
+     "ref": "R310 · Kindertagesstätte  · 6 TS · KIII",
+     "real": 553.57,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 14.39
+    },
+    {
+     "i": 303,
+     "ref": "R311 · Kindertagesstätte  · 8 TS · KIII",
+     "real": 261.54,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 167.35
+    },
+    {
+     "i": 304,
+     "ref": "R312 · Kindertagesstätte  · 12 TS · KIII",
+     "real": 437.41,
+     "total": 1135.73,
+     "grund": 330.0,
+     "pruef": 390.0,
+     "bericht": 380.0,
+     "delta_pct": 159.65
+    },
+    {
+     "i": 305,
+     "ref": "R313 · Ladenlokale  · 30 TS · KIII",
+     "real": 315.0,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 425.63
+    },
+    {
+     "i": 306,
+     "ref": "R314 · Unterer Brunnenturm  · 20 TS · KIII",
+     "real": 857.2,
+     "total": 1375.73,
+     "grund": 330.0,
+     "pruef": 630.0,
+     "bericht": 380.0,
+     "delta_pct": 60.49
+    },
+    {
+     "i": 307,
+     "ref": "R315 · Stadtwerke Augsburg Holdi · 30 TS · KIII",
+     "real": 811.03,
+     "total": 1655.73,
+     "grund": 330.0,
+     "pruef": 910.0,
+     "bericht": 380.0,
+     "delta_pct": 104.15
+    },
+    {
+     "i": 308,
+     "ref": "R316 · Stadtwerke Augsburg Kreat · 8 TS · KIII",
+     "real": 209.47,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": 233.8
+    },
+    {
+     "i": 309,
+     "ref": "R317 · Stadtwerke Augsburg Kreat · 6 TS · KIII",
+     "real": 209.47,
+     "total": 633.23,
+     "grund": 280.5,
+     "pruef": 198.0,
+     "bericht": 119.0,
+     "delta_pct": 202.3
+    },
+    {
+     "i": 310,
+     "ref": "R318 · Stadtwerke Augsburg Kreat · 10 TS · KIII",
+     "real": 209.47,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 265.31
+    },
+    {
+     "i": 311,
+     "ref": "R319 · Stadtwerke Augsburg Kreat · 10 TS · KIII",
+     "real": 477.08,
+     "total": 765.23,
+     "grund": 280.5,
+     "pruef": 330.0,
+     "bericht": 119.0,
+     "delta_pct": 60.4
+    },
+    {
+     "i": 312,
+     "ref": "R320 · Stadtwerke Augsburg Kreat · 15 TS · KIII",
+     "real": 703.66,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 74.19
+    },
+    {
+     "i": 313,
+     "ref": "R321 · Stadtwerke Augsburg Kreat · 25 TS · KIII",
+     "real": 531.77,
+     "total": 1515.73,
+     "grund": 330.0,
+     "pruef": 770.0,
+     "bericht": 380.0,
+     "delta_pct": 185.03
+    },
+    {
+     "i": 314,
+     "ref": "R322 · Stadtwerke Augsburg Kreat · 15 TS · KIII",
+     "real": 477.08,
+     "total": 1225.73,
+     "grund": 330.0,
+     "pruef": 480.0,
+     "bericht": 380.0,
+     "delta_pct": 156.92
+    },
+    {
+     "i": 315,
+     "ref": "R323 · Stadtwerke Augsburg Kreat · 8 TS · KIII",
+     "real": 791.08,
+     "total": 699.23,
+     "grund": 280.5,
+     "pruef": 264.0,
+     "bericht": 119.0,
+     "delta_pct": -11.61
+    }
+   ],
+   "summary": {
+    "n": 316,
+    "errors": 0,
+    "mean_abs_delta_pct": 138.54,
+    "median_abs_delta_pct": 126.63,
+    "p90_abs_delta_pct": 251.85,
+    "within_15pct": 12,
+    "within_30pct": 22
+   }
+  },
+  "dguv_v3": {
+   "cases": [
+    {
+     "i": 0,
+     "ref": "Gersthofen OZ01 · Rathaus, Rathausplatz 1, 86368 Gersthofen  · 25 UV · 7996€",
+     "real": 7996.0,
+     "total": 2309.0,
+     "grund": 384.0,
+     "pruef": 1375.0,
+     "bericht": 550.0,
+     "delta_pct": -71.12
+    },
+    {
+     "i": 1,
+     "ref": "Gersthofen OZ02 · Kulturamt, Bahnhofstraße 2, 86368 Gersthofen  · 3 UV · 434€",
+     "real": 434.0,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 152.3
+    },
+    {
+     "i": 2,
+     "ref": "Gersthofen OZ03 · Pestalozzischule, Brucknerstraße 1, 86368 Gersthofen  · 13 UV · 3993€",
+     "real": 3992.8,
+     "total": 1599.0,
+     "grund": 384.0,
+     "pruef": 835.0,
+     "bericht": 380.0,
+     "delta_pct": -59.95
+    },
+    {
+     "i": 3,
+     "ref": "Gersthofen OZ04 · Mozartschule,Jahnstr.2 86368 Gersthofen Anlagenprüfung  · 10 UV · 2384€",
+     "real": 2384.0,
+     "total": 1410.0,
+     "grund": 330.0,
+     "pruef": 700.0,
+     "bericht": 380.0,
+     "delta_pct": -40.86
+    },
+    {
+     "i": 4,
+     "ref": "Gersthofen OZ06 · Mittagsbetreuung-Pestalozzischule, Pestalozzistr.11,  · 15 UV · 1402€",
+     "real": 1402.0,
+     "total": 1689.0,
+     "grund": 384.0,
+     "pruef": 925.0,
+     "bericht": 380.0,
+     "delta_pct": 20.47
+    },
+    {
+     "i": 5,
+     "ref": "Gersthofen OZ07 · Anna-Pröll-Mittelschule Theresienstraße 12 86368  · 15 UV · 5386€",
+     "real": 5386.0,
+     "total": 1689.0,
+     "grund": 384.0,
+     "pruef": 925.0,
+     "bericht": 380.0,
+     "delta_pct": -68.64
+    },
+    {
+     "i": 6,
+     "ref": "Gersthofen OZ08 · Sportbetriebsgebäude, Schubertstr. 66 86368 Gersthofen  · 3 UV · 578€",
+     "real": 578.0,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 89.45
+    },
+    {
+     "i": 7,
+     "ref": "Gersthofen OZ09 · St. Ulrich Kindertagesstätte, Sportallee 29 86368  · 7 UV · 1427€",
+     "real": 1427.2,
+     "total": 1275.0,
+     "grund": 330.0,
+     "pruef": 565.0,
+     "bericht": 380.0,
+     "delta_pct": -10.66
+    },
+    {
+     "i": 8,
+     "ref": "Gersthofen OZ10 · Hedwigskindergarten, Böhmerwaldstr. 27 86368 Gersthofen  · 4 UV · 680€",
+     "real": 680.0,
+     "total": 1140.0,
+     "grund": 330.0,
+     "pruef": 430.0,
+     "bericht": 380.0,
+     "delta_pct": 67.65
+    },
+    {
+     "i": 9,
+     "ref": "Gersthofen OZ11 · Kolpingskindergarten, Roseeggerstr. 29 86368 Gersthofen  · 4 UV · 710€",
+     "real": 710.0,
+     "total": 1140.0,
+     "grund": 330.0,
+     "pruef": 430.0,
+     "bericht": 380.0,
+     "delta_pct": 60.56
+    },
+    {
+     "i": 10,
+     "ref": "Gersthofen OZ12 · St. Elisabeth, Johannesstr. 6 86368 Gersthofen  · 12 UV · 2680€",
+     "real": 2680.0,
+     "total": 1554.0,
+     "grund": 384.0,
+     "pruef": 790.0,
+     "bericht": 380.0,
+     "delta_pct": -42.01
+    },
+    {
+     "i": 11,
+     "ref": "Gersthofen OZ13 · Blumenwiese Kindertagesstätte, Schubertstr. 64 86368  · 3 UV · 376€",
+     "real": 376.0,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 191.22
+    },
+    {
+     "i": 12,
+     "ref": "Gersthofen OZ14 · Lechstrolche Kindertagesstätte, Roseggerstraße 22 86368  · 9 UV · 2256€",
+     "real": 2256.4,
+     "total": 1365.0,
+     "grund": 330.0,
+     "pruef": 655.0,
+     "bericht": 380.0,
+     "delta_pct": -39.51
+    },
+    {
+     "i": 13,
+     "ref": "Gersthofen OZ15 · Kinderhaus am Ballonstartplatz, Albstr. 4 86368  · 8 UV · 1883€",
+     "real": 1882.8,
+     "total": 1320.0,
+     "grund": 330.0,
+     "pruef": 610.0,
+     "bericht": 380.0,
+     "delta_pct": -29.89
+    },
+    {
+     "i": 14,
+     "ref": "Gersthofen OZ16 · Via Claudia, Kindertagesstätte Albstr. 70 86368  · 6 UV · 1351€",
+     "real": 1350.8,
+     "total": 1230.0,
+     "grund": 330.0,
+     "pruef": 520.0,
+     "bericht": 380.0,
+     "delta_pct": -8.94
+    },
+    {
+     "i": 15,
+     "ref": "Gersthofen OZ17 · Kindervilla Tiefenbacher, Kindertagesstätte  · 9 UV · 2084€",
+     "real": 2084.4,
+     "total": 1365.0,
+     "grund": 330.0,
+     "pruef": 655.0,
+     "bericht": 380.0,
+     "delta_pct": -34.51
+    },
+    {
+     "i": 16,
+     "ref": "Gersthofen OZ18 · Wohnanlage Pestalozzistraße 2 86368 Gersthofen  · 3 UV · 778€",
+     "real": 778.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 40.67
+    },
+    {
+     "i": 17,
+     "ref": "Gersthofen OZ19 · Wohnanlage Pestalozzistraße 2a 86368 Gersthofen  · 3 UV · 778€",
+     "real": 778.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 40.67
+    },
+    {
+     "i": 18,
+     "ref": "Gersthofen OZ20 · Wohnanlage Pestalozzistraße 4 86368 Gersthofen  · 3 UV · 778€",
+     "real": 778.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 40.67
+    },
+    {
+     "i": 19,
+     "ref": "Gersthofen OZ21 · Wohnanlage Pestalozzistraße 4a 86368 Gersthofen  · 3 UV · 778€",
+     "real": 778.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 40.67
+    },
+    {
+     "i": 20,
+     "ref": "Gersthofen OZ22 · Wohnanlage Pestalozzistraße 6 86368 Gersthofen  · 3 UV · 778€",
+     "real": 778.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 40.67
+    },
+    {
+     "i": 21,
+     "ref": "Gersthofen OZ23 · Wohnanlage Pestalozzistraße 6a 86368 Gersthofen  · 3 UV · 778€",
+     "real": 778.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 40.67
+    },
+    {
+     "i": 22,
+     "ref": "Gersthofen OZ24 · Wohnanlage Pestalozzistraße 8 86368 Gersthofen  · 3 UV · 778€",
+     "real": 778.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 40.67
+    },
+    {
+     "i": 23,
+     "ref": "Gersthofen OZ25 · Wohnanlage Pestalozzistraße 8a 86368 Gersthofen  · 3 UV · 778€",
+     "real": 778.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 40.67
+    },
+    {
+     "i": 24,
+     "ref": "Gersthofen OZ26 · Wohnanlage, Raiffeisenstraße 4 86368  · 3 UV · 776€",
+     "real": 776.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 41.04
+    },
+    {
+     "i": 25,
+     "ref": "Gersthofen OZ27 · Wohnanlage Kreuzstr. 1 86368 Gersthofen Anlagenprüfung  · 4 UV · 941€",
+     "real": 940.8,
+     "total": 1140.0,
+     "grund": 330.0,
+     "pruef": 430.0,
+     "bericht": 380.0,
+     "delta_pct": 21.17
+    },
+    {
+     "i": 26,
+     "ref": "Gersthofen OZ28 · Wohnanlage Brucknerstr.12 86368 Gersthofen  · 4 UV · 778€",
+     "real": 778.4,
+     "total": 1140.0,
+     "grund": 330.0,
+     "pruef": 430.0,
+     "bericht": 380.0,
+     "delta_pct": 46.45
+    },
+    {
+     "i": 27,
+     "ref": "Gersthofen OZ29 · Wohnanlage Brucknerstr.14 86368 Gersthofen  · 3 UV · 778€",
+     "real": 778.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 40.67
+    },
+    {
+     "i": 28,
+     "ref": "Gersthofen OZ30 · Doppelhaus Lehnholzweg 3 86368 Gersthofen  · 3 UV · 454€",
+     "real": 454.4,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 140.98
+    },
+    {
+     "i": 29,
+     "ref": "Gersthofen OZ31 · Hausmeisterwohnung Mozartschule Jahnstr.2 86368  · 5 UV · 740€",
+     "real": 740.0,
+     "total": 1185.0,
+     "grund": 330.0,
+     "pruef": 475.0,
+     "bericht": 380.0,
+     "delta_pct": 60.14
+    },
+    {
+     "i": 30,
+     "ref": "Gersthofen OZ32 · Betriebswohnungen GVG 86368 Gersthofen Anlagenprüfung  · 3 UV · 432€",
+     "real": 432.0,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 153.47
+    },
+    {
+     "i": 31,
+     "ref": "Gersthofen OZ33 · Rathaus Tiefgarage Rathausplatz 1 86368 Gersthofen  · 4 UV · 898€",
+     "real": 898.0,
+     "total": 1140.0,
+     "grund": 330.0,
+     "pruef": 430.0,
+     "bericht": 380.0,
+     "delta_pct": 26.95
+    },
+    {
+     "i": 32,
+     "ref": "Gersthofen OZ34 · GVG-Busbetriebshof, Flotowstr. 10 86368 Gersthofen  · 5 UV · 1606€",
+     "real": 1606.0,
+     "total": 1185.0,
+     "grund": 330.0,
+     "pruef": 475.0,
+     "bericht": 380.0,
+     "delta_pct": -26.21
+    },
+    {
+     "i": 33,
+     "ref": "Gersthofen OZ35 · Bauhof, Dieselstraße 24 86368 Gersthofen Anlagenprüfung  · 6 UV · 1345€",
+     "real": 1344.8,
+     "total": 1230.0,
+     "grund": 330.0,
+     "pruef": 520.0,
+     "bericht": 380.0,
+     "delta_pct": -8.54
+    },
+    {
+     "i": 34,
+     "ref": "Gersthofen OZ36 · Bauhof, Gärtnerei Dieselstraße 24 86368 Gersthofen  · 3 UV · 291€",
+     "real": 291.2,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 276.03
+    },
+    {
+     "i": 35,
+     "ref": "Gersthofen OZ39 · Jugendbegegnungsstätte-Möbellager 86368  · 5 UV · 820€",
+     "real": 820.0,
+     "total": 1185.0,
+     "grund": 330.0,
+     "pruef": 475.0,
+     "bericht": 380.0,
+     "delta_pct": 44.51
+    },
+    {
+     "i": 36,
+     "ref": "Gersthofen OZ41 · Ballonmuseum/Bücherei Bahnhofstr. 12 86368 Gersthofen  · 13 UV · 3627€",
+     "real": 3627.2,
+     "total": 1599.0,
+     "grund": 384.0,
+     "pruef": 835.0,
+     "bericht": 380.0,
+     "delta_pct": -55.92
+    },
+    {
+     "i": 37,
+     "ref": "Gersthofen OZ42 · Musikschule, Quellenstr. 7 86368 Gersthofen  · 3 UV · 950€",
+     "real": 950.0,
+     "total": 1095.0,
+     "grund": 330.0,
+     "pruef": 385.0,
+     "bericht": 380.0,
+     "delta_pct": 15.26
+    },
+    {
+     "i": 38,
+     "ref": "Gersthofen OZ43 · Kapelle St. Emmeran, Kapellenstr. 1 86368 Gersthofen  · 2 UV · 392€",
+     "real": 392.4,
+     "total": 739.5,
+     "grund": 280.5,
+     "pruef": 340.0,
+     "bericht": 119.0,
+     "delta_pct": 88.46
+    },
+    {
+     "i": 39,
+     "ref": "Gersthofen OZ44 · Instandsetzungsarbeiten · 1 UV · 11380€",
+     "real": 11380.0,
+     "total": 694.5,
+     "grund": 280.5,
+     "pruef": 295.0,
+     "bericht": 119.0,
+     "delta_pct": -93.9
+    }
+   ],
+   "summary": {
+    "n": 40,
+    "errors": 0,
+    "mean_abs_delta_pct": 61.32,
+    "median_abs_delta_pct": 40.86,
+    "p90_abs_delta_pct": 152.3,
+    "within_15pct": 3,
+    "within_30pct": 9
+   }
+  }
+ }
+}
