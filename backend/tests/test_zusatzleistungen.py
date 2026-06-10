@@ -105,9 +105,10 @@ class TestVdSPricing:
         defaults.update(kw)
         return DGUVMerkmale(**defaults)
 
-    def test_vds_gleiche_formel_wie_dguv(self):
+    def test_vds_different_from_dguv(self):
+        # Phase 2: VdS uses its own degression curve (higher than DGUV)
         m = self._make(3000)
-        assert vds_pruefkosten(m) == dguv_pruefkosten(m)
+        assert vds_pruefkosten(m) > dguv_pruefkosten(m)
 
     def test_vds_berechnet_preis(self):
         m = self._make(2000)
@@ -137,25 +138,21 @@ class TestDGUVVdSSynergie:
         m = self._make(3000)
         einzeln = dguv_pruefkosten(m) + vds_pruefkosten(m)
         kombi = dguv_plus_vds_pruefkosten(m)
-        assert kombi["gesamt"] < einzeln
+        assert kombi < einzeln
 
-    def test_synergie_gesamt_korrekt(self):
+    def test_synergie_is_vds_times_1_5(self):
+        # Phase 2: kombi returns float = VdS × 1.5
         m = self._make(3000)
+        vds = vds_pruefkosten(m)
         kombi = dguv_plus_vds_pruefkosten(m)
-        vds = kombi["vds_preis"]
-        assert kombi["gesamt"] == pytest.approx(vds * 1.5, rel=0.01)
-
-    def test_synergie_hat_quelle(self):
-        m = self._make(1000)
-        kombi = dguv_plus_vds_pruefkosten(m)
-        assert "Pausch" in kombi["_quelle"]
+        assert kombi == pytest.approx(vds * 1.5, rel=0.01)
 
     def test_synergie_mit_reifegrad(self):
         m_rg3 = self._make(3000, reifegrad=Reifegrad.RG_3)
         m_rg4 = self._make(3000, reifegrad=Reifegrad.RG_4)
         kombi_rg3 = dguv_plus_vds_pruefkosten(m_rg3)
         kombi_rg4 = dguv_plus_vds_pruefkosten(m_rg4)
-        assert kombi_rg4["gesamt"] < kombi_rg3["gesamt"]
+        assert kombi_rg4 < kombi_rg3
 
 
 # ══════════════════════════════════════════════════════════════
@@ -218,18 +215,14 @@ class TestGraphEngineAddons:
         assert a.total > 0
         assert a.zusatzleistungen == []
 
-    def test_vds_synergie_addon(self):
+    def test_vds_kombi_in_pruef(self):
+        # Phase 2: vds_pruefung=True → pruefart=DGUV_PLUS_VDS → pruef includes VdS×1.5
         m_solo = self._make()
         m_vds = self._make(vds_pruefung=True)
         a_solo = self._calc(m_solo)
         a_vds = self._calc(m_vds)
-        assert a_vds.breakdown.pruef == a_solo.breakdown.pruef
+        assert a_vds.breakdown.pruef > a_solo.breakdown.pruef
         assert a_vds.total > a_solo.total
-        assert len(a_vds.zusatzleistungen) == 1
-        vds = a_vds.zusatzleistungen[0]
-        assert "VdS" in vds["name"]
-        assert vds["preis"] > 0
-        assert vds["preis"] == pytest.approx(a_solo.breakdown.pruef * 0.5, rel=0.01)
 
     def test_pv_addon(self):
         m = self._make(pv_kwp=100.0)
@@ -246,8 +239,9 @@ class TestGraphEngineAddons:
         assert ls_items[0]["preis"] == 71.20 + 4 * 44.50
 
     def test_all_addons_total(self):
+        # Phase 2: VdS now in pruef dispatch, only PV + Ladesäulen remain as addons
         m = self._make(vds_pruefung=True, pv_kwp=50.0, ladesaeulen=[{"typ": "dc", "anschluesse": 1, "anzahl": 2}])
         a = self._calc(m)
-        assert len(a.zusatzleistungen) == 3
+        assert len(a.zusatzleistungen) == 2
         addon_sum = sum(z["preis"] for z in a.zusatzleistungen)
-        assert a.total > a.breakdown.subtotal + addon_sum - 1  # total includes zuschlaege too
+        assert a.total > a.breakdown.subtotal + addon_sum - 1

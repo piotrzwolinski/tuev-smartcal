@@ -429,23 +429,51 @@ def dguv_referenzpreis_vergleich(neukalkulation: float, referenz: dict | None) -
 
 
 def vds_pruefkosten(m: DGUVMerkmale) -> float:
-    """VdS 2871: identische Fläche×Kat Logik wie DGUV, aber ID=208€."""
-    return dguv_pruefkosten(m)
+    """VdS 2871 Prüfkosten: Grundpreis + Fläche×Kat (VdS-Kurve) + Verteilungen + Sonderzuschläge."""
+    cost = VDS_GRUNDPREIS_ANLAGE
+    flaeche = _flaeche(m)
+    kurve = _g_degression_kurve("vds")
+
+    if m.nutzungs_mix:
+        for eintrag in m.nutzungs_mix:
+            kat = eintrag.kategorie or resolve_mix_kategorie(eintrag.nutzung)
+            rate = _g_kat_preis(kat)
+            cost += flaechenkosten_degressiv(flaeche * eintrag.anteil, rate, kurve)
+    else:
+        rate = _g_kat_preis(m.primary_installationskategorie)
+        cost += flaechenkosten_degressiv(flaeche, rate, kurve)
+
+    cost += m.anzahl_verteilungen_uv * PREIS_VERTEILUNG_UV
+    cost += m.anzahl_verteilungen_hv * PREIS_VERTEILUNG_HV
+    cost += m.anzahl_verteilungen_nshv * PREIS_VERTEILUNG_NSHV
+
+    if m.nea_vorhanden:
+        cost += ZUSCHLAG_NEA
+    if m.sv_nshv_vorhanden:
+        cost += ZUSCHLAG_SV_NSHV
+
+    cost *= _g_reifegrad(m.reifegrad)
+    if m.vollerfassung:
+        cost *= _g_vollerfassung()
+
+    return round(cost, 2)
 
 
-def dguv_plus_vds_pruefkosten(m: DGUVMerkmale) -> dict:
-    """DGUV + VdS gemeinsam: VdS-Preis als Basis + 50% Zuschlag für DGUV.
-    S. Pausch Mail 29.05.
-    """
+def dguv_plus_vds_pruefkosten(m: DGUVMerkmale) -> float:
+    """DGUV + VdS gemeinsam: VdS-Preis × 1.5 (S. Pausch Mail 29.05)."""
     vds = vds_pruefkosten(m)
-    dguv_zuschlag = round(vds * DGUV_VDS_SYNERGIE_ZUSCHLAG, 2)
-    return {
-        "vds_preis": vds,
-        "dguv_zuschlag": dguv_zuschlag,
-        "gesamt": round(vds + dguv_zuschlag, 2),
-        "_quelle": "S. Pausch Mail 29.05: VdS-Preis + 50% für DGUV",
-        "_typ": "fachexperte",
-    }
+    return round(vds * (1 + DGUV_VDS_SYNERGIE_ZUSCHLAG), 2)
+
+
+def dispatch_pruefkosten(m: DGUVMerkmale) -> float:
+    """Route Prüfkosten by Pruefart."""
+    from products.dguv_v3.merkmale import Pruefart
+    pa = getattr(m, "pruefart", Pruefart.DGUV_ORTSFEST)
+    if pa == Pruefart.VDS:
+        return vds_pruefkosten(m)
+    if pa == Pruefart.DGUV_PLUS_VDS:
+        return dguv_plus_vds_pruefkosten(m)
+    return dguv_pruefkosten(m)
 
 
 def dguv_validate_ranges(m: DGUVMerkmale) -> tuple[float, str]:

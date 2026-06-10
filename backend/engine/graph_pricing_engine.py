@@ -291,16 +291,21 @@ class GraphPricingEngine:
     # ═══════════════════════════════════════════════════════════
 
     def _pruef_dguv(self, merkmale: BaseModel) -> float:
+        from products.dguv_v3.merkmale import Pruefart
+        pa = getattr(merkmale, "pruefart", Pruefart.DGUV_ORTSFEST)
+
         produkt = self._q("MATCH (p:Produkt {id: 'DGUV_V3_ORTSFEST'}) RETURN p.grundpreis")
         grundpreis = produkt[0][0] if produkt else 250
-        self._log("pruefkosten", "Grundpreis Anlage", f"{grundpreis}", "DGUV_V3_ORTSFEST",
+        pruefart_label = "VdS 2871" if pa == Pruefart.VDS else "DGUV+VdS Kombi" if pa == Pruefart.DGUV_PLUS_VDS else "DGUV V3"
+        self._log("pruefkosten", f"Grundpreis Anlage ({pruefart_label})", f"{grundpreis}", "DGUV_V3_ORTSFEST",
                   ref="LPV B04 Kap. 2: Grundpreis 250€ pro Anlage")
 
         flaeche = getattr(merkmale, "gesamtflaeche_m2", 0) or 0  # None-Guard (flaeche Optional)
         mix = getattr(merkmale, "nutzungs_mix", None)
 
         from products.dguv_v3.pricing_rules import flaechenkosten_degressiv
-        deg_rows = self._q("MATCH (f:Flaechenstaffel {kurve: 'dguv'}) RETURN f.ab_m2, f.faktor ORDER BY f.ab_m2")
+        kurve_name = "vds" if pa in (Pruefart.VDS, Pruefart.DGUV_PLUS_VDS) else "dguv"
+        deg_rows = self._q("MATCH (f:Flaechenstaffel {kurve: $k}) RETURN f.ab_m2, f.faktor ORDER BY f.ab_m2", k=kurve_name)
         deg_kurve = [(float(r[0]), float(r[1])) for r in deg_rows] if deg_rows else [(0, 0.80), (2000, 0.80), (4000, 0.60), (6000, 0.50), (10000, 0.40), (25000, 0.30)]
 
         if mix and len(mix) > 0:
@@ -406,6 +411,11 @@ class GraphPricingEngine:
                           f"Schätzung {est_tage} Tage",
                           ref=f"Batch Extraction 10.096 MA507 Prüfberichte")
 
+        if pa == Pruefart.DGUV_PLUS_VDS:
+            from products.dguv_v3.pricing_rules import DGUV_VDS_SYNERGIE_ZUSCHLAG
+            cost = round(cost * (1 + DGUV_VDS_SYNERGIE_ZUSCHLAG), 2)
+            self._log("pruefkosten", f"DGUV+VdS Kombi: ×1.5", f"{cost}", ref="S. Pausch Mail 29.05")
+
         return cost
 
     # ═══════════════════════════════════════════════════════════
@@ -415,24 +425,25 @@ class GraphPricingEngine:
     def _calc_dguv_addons(self, merkmale: BaseModel, breakdown) -> list[dict]:
         addons = []
 
-        if getattr(merkmale, "vds_pruefung", False):
-            from products.dguv_v3.pricing_rules import dguv_plus_vds_pruefkosten
-            kombi = dguv_plus_vds_pruefkosten(merkmale)
-            vds_addon = kombi["dguv_zuschlag"]
-            einzeln = kombi["vds_preis"] * 2
-            ersparnis = einzeln - kombi["gesamt"]
+        from products.dguv_v3.merkmale import Pruefart
+        pa = getattr(merkmale, "pruefart", Pruefart.DGUV_ORTSFEST)
+        if pa in (Pruefart.VDS, Pruefart.DGUV_PLUS_VDS):
+            pass  # VdS already handled in _pruef_dguv dispatch
+        elif getattr(merkmale, "vds_pruefung", False):
+            from products.dguv_v3.pricing_rules import vds_pruefkosten, DGUV_VDS_SYNERGIE_ZUSCHLAG
+            vds = vds_pruefkosten(merkmale)
+            vds_addon = round(vds * DGUV_VDS_SYNERGIE_ZUSCHLAG, 2)
             self._log("zusatzleistung",
-                      f"VdS 2871 Synergie: +{vds_addon:.0f}€ (statt {kombi['vds_preis']:.0f}€ einzeln, Ersparnis {ersparnis:.0f}€)",
+                      f"VdS 2871 Synergie: +{vds_addon:.0f}€",
                       f"{vds_addon:.2f}", "VDS_SYNERGIE",
                       ref="S. Pausch: VdS-Preis + 50% Zuschlag bei gemeinsamer Durchführung")
             addons.append({
                 "name": "VdS 2871 Prüfung (Synergie-Preis)",
                 "positionen": [
-                    {"name": f"VdS bei Kombi-Begehung (+50% auf DGUV)", "betrag": round(vds_addon, 2)},
-                    {"name": f"Ersparnis ggü. Einzelbeauftragung", "betrag": round(-ersparnis, 2)},
+                    {"name": "VdS bei Kombi-Begehung (+50% auf VdS)", "betrag": round(vds_addon, 2)},
                 ],
                 "preis": round(vds_addon, 2),
-                "quelle": kombi["_quelle"],
+                "quelle": "S. Pausch Mail 29.05: VdS-Preis + 50% für DGUV",
             })
 
         pv_kwp = getattr(merkmale, "pv_kwp", None)

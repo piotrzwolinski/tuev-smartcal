@@ -14,6 +14,7 @@ from engine.gewerk import Gewerk, register_gewerk
 from products.dguv_v3.merkmale import DGUVMerkmale
 from products.dguv_v3.pricing_rules import (
     dguv_pruefkosten,
+    dispatch_pruefkosten,
     dguv_estimate_pruef_tage,
     dguv_choose_bericht_typ,
     dguv_zuschlaege,
@@ -36,7 +37,7 @@ class DGUVV3Gewerk(Gewerk):
     merkmale_schema = DGUVMerkmale
 
     def pruefkosten(self, merkmale):
-        return dguv_pruefkosten(merkmale)
+        return dispatch_pruefkosten(merkmale)
 
     def estimate_pruef_tage(self, merkmale):
         return dguv_estimate_pruef_tage(merkmale)
