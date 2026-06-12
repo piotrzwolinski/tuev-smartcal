@@ -16,6 +16,7 @@ from products.dguv_v3.chat import (
     _has_minimum,
     _apply_uv_estimation,
     _parse_llm_json,
+    _sanitize_m2_questions,
     UV_TO_M2_FACTOR,
     RV_BANNER,
 )
@@ -134,7 +135,7 @@ class TestCoordinatorRouting:
         result = await coordinator_respond(session, "1 Schaltschrank prüfen")
         assert result["action"] == "calculate"
         assert result["params"]["anzahl_verteilungen_nshv"] == 1
-        assert result["params"]["gesamtflaeche_m2"] == UV_TO_M2_FACTOR
+        assert result["params"].get("gesamtflaeche_m2") is None  # Kleinauftrag: no UV estimation
         assert "Mitarbeiter" not in result.get("message", "")
 
     @pytest.mark.asyncio
@@ -226,3 +227,125 @@ class TestParseJSON:
     def test_garbage_returns_chat(self):
         r = _parse_llm_json("this is not json")
         assert r["action"] == "chat"
+
+
+class TestForcePromote:
+    """Force-promote chat→calculate when _has_minimum() is True, even on first turn."""
+
+    @pytest.mark.asyncio
+    @patch("products.dguv_v3.chat.ClaudeLLM")
+    async def test_llm_says_chat_but_has_uv_promotes(self, MockLLM):
+        """LLM returns action=chat + nutzung+UV → force promote to calculate."""
+        MockLLM.return_value = _mock_llm_response({
+            "message": "Können Sie mir die Fläche nennen?",
+            "action": "chat",
+            "params": {"nutzung": "buerogebaeude", "anzahl_verteilungen_uv": 48},
+            "missing": ["gesamtflaeche_m2"],
+        })
+        session = _session()
+        result = await coordinator_respond(session, "48 UV Verwaltungsgebäude")
+        assert result["action"] == "calculate"
+        assert result["params"]["anzahl_verteilungen_uv"] == 48
+
+    @pytest.mark.asyncio
+    @patch("products.dguv_v3.chat.ClaudeLLM")
+    async def test_llm_says_chat_but_has_bm_ortsv_promotes(self, MockLLM):
+        """LLM returns action=chat + BM → force promote to calculate for MA560."""
+        MockLLM.return_value = _mock_llm_response({
+            "message": "Wie groß ist das Gebäude?",
+            "action": "chat",
+            "params": {"nutzung": "industrie", "pruefart": "dguv_ortsv", "anzahl_betriebsmittel": 20},
+            "missing": [],
+        })
+        session = _session()
+        result = await coordinator_respond(session, "20 Geräte Kindergarten")
+        assert result["action"] == "calculate"
+
+    @pytest.mark.asyncio
+    @patch("products.dguv_v3.chat.ClaudeLLM")
+    async def test_genuinely_missing_stays_chat(self, MockLLM):
+        """LLM returns action=chat + only nutzung → stays chat (genuinely missing)."""
+        MockLLM.return_value = _mock_llm_response({
+            "message": "Wie groß ist die Fläche?",
+            "action": "chat",
+            "params": {"nutzung": "buerogebaeude"},
+            "missing": ["gesamtflaeche_m2"],
+        })
+        session = _session()
+        result = await coordinator_respond(session, "Bürogebäude prüfen")
+        assert result["action"] == "chat"
+
+    @pytest.mark.asyncio
+    @patch("products.dguv_v3.chat.ClaudeLLM")
+    async def test_nshv_schaltschrank_promotes(self, MockLLM):
+        """'1 Schaltschrank' with NSHV=1 → force promote."""
+        MockLLM.return_value = _mock_llm_response({
+            "message": "Wie viele Mitarbeiter hat der Standort?",
+            "action": "chat",
+            "params": {"nutzung": "sonstige", "anzahl_verteilungen_nshv": 1},
+            "missing": [],
+        })
+        session = _session()
+        result = await coordinator_respond(session, "1 Schaltschrank prüfen")
+        assert result["action"] == "calculate"
+        assert result["params"]["anzahl_verteilungen_nshv"] == 1
+
+
+class TestSanitizeMessage:
+    """m²-questions removed from message when calculating."""
+
+    def test_m2_question_stripped(self):
+        msg = "48 UV — Kalkulation startet. Wie groß ist die Fläche in m²?"
+        cleaned = _sanitize_m2_questions(msg)
+        assert "m²" not in cleaned
+        assert "Fläche" not in cleaned
+        assert "Kalkulation" in cleaned
+
+    def test_quadratmeter_stripped(self):
+        msg = "Verwaltungsgebäude erkannt. Können Sie die Quadratmeter nennen?"
+        cleaned = _sanitize_m2_questions(msg)
+        assert "Quadratmeter" not in cleaned
+        assert "Verwaltungsgebäude" in cleaned
+
+    def test_wie_gross_stripped(self):
+        msg = "Büro erkannt. Wie groß ist das Gebäude? Ich kalkuliere."
+        cleaned = _sanitize_m2_questions(msg)
+        assert "Wie groß" not in cleaned
+
+    def test_proxy_preserved_zimmer(self):
+        msg = "Hotel in München — wie viele Zimmer hat das Hotel?"
+        cleaned = _sanitize_m2_questions(msg)
+        assert "Zimmer" in cleaned
+        assert cleaned == msg
+
+    def test_proxy_preserved_betten(self):
+        msg = "Krankenhaus — wie viele Betten?"
+        cleaned = _sanitize_m2_questions(msg)
+        assert "Betten" in cleaned
+        assert cleaned == msg
+
+    def test_proxy_preserved_klassen(self):
+        msg = "Grundschule — wie viele Klassenräume?"
+        cleaned = _sanitize_m2_questions(msg)
+        assert "Klassenräume" in cleaned
+
+    def test_empty_after_strip_returns_original(self):
+        msg = "Wie groß ist die Fläche in m²?"
+        cleaned = _sanitize_m2_questions(msg)
+        assert cleaned == msg  # all stripped → return original
+
+    @pytest.mark.asyncio
+    @patch("products.dguv_v3.chat.ClaudeLLM")
+    async def test_sanitize_applied_in_coordinator(self, MockLLM):
+        """Full integration: message sanitized when action=calculate."""
+        MockLLM.return_value = _mock_llm_response({
+            "message": "48 UV im Verwaltungsgebäude. Wie groß ist die Gesamtfläche in m²?",
+            "action": "calculate",
+            "params": {"nutzung": "buerogebaeude", "anzahl_verteilungen_uv": 48},
+            "missing": [],
+        })
+        session = _session()
+        result = await coordinator_respond(session, "48 UV Verwaltungsgebäude")
+        assert result["action"] == "calculate"
+        assert "m²" not in result["message"]
+        assert "Gesamtfläche" not in result["message"]

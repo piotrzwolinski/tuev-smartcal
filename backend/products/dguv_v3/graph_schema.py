@@ -180,6 +180,12 @@ def load_dguv_graph() -> dict:
     CREATE (:Kleinauftrag {{id: 'KLEINAUFTRAG', max_verteilungen: 2, max_flaeche_m2: 300, stundensatz: 180.00, stunden_pro_komponente: 1.5, min_pauschale: 270.00, grundkosten_reduziert: 100.00, _quelle: 'ZIP-3 badenova (Real ≈ 2h×180€) — Schwellen EFI-Review', _typ: 'heuristik', _stand: '{STAND}'}})
     """)
 
+    # ── 13f. KOMPLEXITÄTSFAKTOR (Kriterien_Preisfindung_EG.docx) ─
+    # S. Pausch: >10.000 m² + komplex → nur 60% Anlagenmerkmale; Faktor 1.25 kompensiert.
+    statements.append(f"""
+    CREATE (:Komplexitaet {{id: 'KOMPLEX_FAKTOR', schwelle_m2: 10000, faktor: 1.25, _quelle: 'Kriterien_Preisfindung_EG.docx (S. Pausch)', _typ: 'regel', _stand: '{STAND}'}})
+    """)
+
     # ── 14. CROSS-SELL ───────────────────────────────────────
     statements.append(f"CREATE (:CrossSell {{id: 'CS_BLITZ', empfehlung: 'Blitzschutzprüfung — Kombi-Begehung spart Reisekosten', produkt: 'blitzschutz', prioritaet: 'hoch', _quelle: 'S. Veit erster Call', _typ: 'fachexperte', _stand: '{STAND}'}})")
 
@@ -259,7 +265,7 @@ def load_dguv_graph() -> dict:
     """)
 
     # ── 20. PREISSTEIGERUNG ──────────────────────────────────
-    for jahr, steigerung in [(2020, 0.282), (2021, 0.244), (2022, 0.208), (2023, 0.148), (2024, 0.083), (2025, 0.055)]:
+    for jahr, steigerung in [(2010, 0.560), (2011, 0.520), (2012, 0.480), (2013, 0.446), (2014, 0.412), (2015, 0.378), (2016, 0.344), (2017, 0.310), (2018, 0.282), (2019, 0.282), (2020, 0.282), (2021, 0.244), (2022, 0.208), (2023, 0.148), (2024, 0.083), (2025, 0.055)]:
         statements.append(f"""
         CREATE (:Preissteigerung {{id: 'PS_{jahr}', jahr: {jahr}, steigerung_vs_2026: {steigerung}, _quelle: 'S. Veit Mail 30.05 Punkt 9', _typ: 'fachexperte', _stand: '{STAND}'}})
         """)

@@ -69,7 +69,7 @@ def _mock_standort(lat, lon):
     return STANDORT_MAP.get(best, STANDORT_MAP["80331"])
 
 
-def run_case(case_id, label, merkmale, real_price, v1_price, note=""):
+def run_case(case_id, label, merkmale, real_price, v1_price, note="", referenz_jahr=None):
     gewerk = get_gewerk("dguv_v3")
     engine = PricingEngine()
     try:
@@ -81,15 +81,22 @@ def run_case(case_id, label, merkmale, real_price, v1_price, note=""):
         bericht = angebot.breakdown.bericht
         conf = angebot.confidence
 
-        if real_price and real_price > 0:
-            delta_v2 = (total - real_price) / real_price * 100
-            delta_v1 = (v1_price - real_price) / real_price * 100 if v1_price else None
+        real_adj = real_price
+        if referenz_jahr and real_price and real_price > 0:
+            from products.dguv_v3.pricing_rules import inflate_to_current
+            real_adj = inflate_to_current(real_price, referenz_jahr)
+
+        if real_adj and real_adj > 0:
+            delta_v2 = (total - real_adj) / real_adj * 100
+            delta_v1 = (v1_price - real_adj) / real_adj * 100 if v1_price else None
         else:
             delta_v2 = None
             delta_v1 = None
 
         return {
             "id": case_id, "label": label, "real": real_price, "v1": v1_price,
+            "real_adj": real_adj if referenz_jahr else None,
+            "referenz_jahr": referenz_jahr,
             "v2_total": total, "v2_pruef": pruef, "v2_grund": grund,
             "v2_reise": reise, "v2_bericht": bericht, "conf": conf,
             "delta_v2": delta_v2, "delta_v1": delta_v1, "note": note,
@@ -114,6 +121,7 @@ def main(mock_standort):
         pruefart=Pruefart.VDS,
         gesamtflaeche_m2=20000,
         anzahl_verteilungen_uv=45,
+        primary_installationskategorie=Installationskategorie.KAT_3,
         adresse_lat=48.53, adresse_lon=11.49,
         adresse_plz="85276",
     ), real_price=6850, v1_price=11877, note="MA505 VdS"))
@@ -245,7 +253,7 @@ def main(mock_standort):
         ],
         adresse_lat=47.85, adresse_lon=12.34,
         adresse_plz="83209",
-    ), real_price=3470, v1_price=4322.74, note="PASS in R1 (2012 nominal)"))
+    ), real_price=3470, v1_price=4322.74, referenz_jahr=2012, note="inflationsbereinigt (2012→2026)"))
 
     # T15 — DOC-3: DGUV Würzburg, MA507
     cases.append(run_case("T15", "DGUV Würzburg", DGUVMerkmale(
@@ -297,10 +305,16 @@ def main(mock_standort):
 
     for c in cases:
         real = c.get("real")
+        real_adj = c.get("real_adj")
         v1 = c.get("v1")
         v2 = c.get("v2_total")
 
-        real_s = f"{real:,.0f}" if real else "—"
+        if real_adj:
+            real_s = f"{real_adj:,.0f}*"
+        elif real:
+            real_s = f"{real:,.0f}"
+        else:
+            real_s = "—"
         v1_s = f"{v1:,.0f}" if v1 else "—"
         v2_s = f"{v2:,.0f}" if v2 else "ERR"
 

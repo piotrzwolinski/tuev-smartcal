@@ -53,6 +53,16 @@ REFERENZ_BLEND_MAX_ALTER = 3
 ZUSCHLAG_NEA = 320.00
 ZUSCHLAG_SV_NSHV = 180.00
 
+# Kriterien_Preisfindung_EG.docx (S. Pausch):
+# >10.000 m² + komplex → nur 60% Anlagenmerkmale (rest = Doku + Ortskenntnis)
+# Faktor = 1/0.80 ≈ 1.25 kompensiert den nicht-modellierten Anteil.
+KOMPLEXITAET_SCHWELLE_M2 = 10_000
+KOMPLEXITAET_FAKTOR = 1.25
+KOMPLEXE_NUTZUNGEN = {
+    GebaeudeNutzungDGUV.KRANKENHAUS,
+    GebaeudeNutzungDGUV.VERSAMMLUNGSSTAETTE,
+}
+
 PREIS_VERTEILUNG_UV = 25.00
 PREIS_VERTEILUNG_HV = 85.00
 PREIS_VERTEILUNG_NSHV = 145.00
@@ -69,8 +79,18 @@ REIFEGRAD_FAKTOR = {
 # S. Pausch Mail 29.05 + S. Veit Mail 30.05 Punkt 6
 VOLLERFASSUNG_FAKTOR = 1.30
 
-# S. Veit Mail 30.05 Punkt 9
+# S. Veit Mail 30.05 Punkt 9 + Rückrechnung VPI Elektrohandwerk ~3.4% p.a.
 PREISSTEIGERUNG = {
+    2010: 0.560,
+    2011: 0.520,
+    2012: 0.480,
+    2013: 0.446,
+    2014: 0.412,
+    2015: 0.378,
+    2016: 0.344,
+    2017: 0.310,
+    2018: 0.282,
+    2019: 0.282,
     2020: 0.282,
     2021: 0.244,
     2022: 0.208,
@@ -218,6 +238,25 @@ def _g_warn_schwelle() -> float:
         cache_key="warn_schwelle",
     ) / 100.0
 
+
+def _g_komplexitaet(nutzung: GebaeudeNutzungDGUV, flaeche_m2: float) -> float:
+    r = get_reader()
+    row = r.get_row(
+        "MATCH (k:Komplexitaet {id: 'KOMPLEX_FAKTOR'}) RETURN k.schwelle_m2, k.faktor",
+        cache_key="komplex_faktor",
+    )
+    schwelle = float(row[0]) if row else KOMPLEXITAET_SCHWELLE_M2
+    faktor = float(row[1]) if row else KOMPLEXITAET_FAKTOR
+    if flaeche_m2 > schwelle and nutzung in KOMPLEXE_NUTZUNGEN:
+        return faktor
+    return 1.0
+
+
+def inflate_to_current(betrag: float, jahr: int) -> float:
+    steigerung = PREISSTEIGERUNG.get(jahr, 0.0)
+    return betrag * (1.0 + steigerung)
+
+
 def _g_typical_kat(nutzung: GebaeudeNutzungDGUV) -> Installationskategorie:
     r = get_reader()
     gt_map = {
@@ -355,6 +394,7 @@ def dguv_pruefkosten(m: DGUVMerkmale) -> float:
         cost += ZUSCHLAG_SV_NSHV
 
     cost *= _g_reifegrad(m.reifegrad)
+    cost *= _g_komplexitaet(m.nutzung, _flaeche(m))
 
     if m.vollerfassung:
         cost *= _g_vollerfassung()
@@ -476,6 +516,7 @@ def vds_pruefkosten(m: DGUVMerkmale) -> float:
         cost += ZUSCHLAG_SV_NSHV
 
     cost *= _g_reifegrad(m.reifegrad)
+    cost *= _g_komplexitaet(m.nutzung, _flaeche(m))
     if m.vollerfassung:
         cost *= _g_vollerfassung()
 
@@ -617,6 +658,32 @@ def dispatch_pruefkosten(m: DGUVMerkmale) -> float:
         return round(cost, 2)
 
     return dguv_pruefkosten(m)
+
+
+# Dehner EG-2025AUG1401 + Volkswohlbund: identischer Grundpreis Kombi 518€
+PER_UV_GRUNDPREIS_KOMBI = 518.00
+PER_UV_STAFFEL = [(15, 116.50), (30, 184.50), (45, 233.00), (60, 283.00)]
+
+
+def per_uv_crosscheck(m: DGUVMerkmale) -> dict | None:
+    """Cross-check: per-UV pricing from Dehner + Volkswohlbund Großkunden-Daten."""
+    n_uv = m.anzahl_verteilungen_uv
+    if n_uv <= 0:
+        return None
+    uv_cost = 0.0
+    remaining = n_uv
+    prev_grenze = 0
+    for grenze, preis in PER_UV_STAFFEL:
+        if remaining <= 0:
+            break
+        batch = min(remaining, grenze - prev_grenze)
+        uv_cost += batch * preis
+        remaining -= batch
+        prev_grenze = grenze
+    if remaining > 0:
+        uv_cost += remaining * PER_UV_STAFFEL[-1][1]
+    total = PER_UV_GRUNDPREIS_KOMBI + uv_cost
+    return {"per_uv_total": round(total, 2), "n_uv": n_uv}
 
 
 def dguv_validate_ranges(m: DGUVMerkmale) -> tuple[float, str]:

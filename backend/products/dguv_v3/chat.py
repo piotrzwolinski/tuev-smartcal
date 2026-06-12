@@ -16,6 +16,17 @@ from llm import ClaudeLLM, HAIKU_MODEL
 COORDINATOR_SYSTEM = """Du bist ein Preisberater für TÜV SÜD Elektroprüfungen (DGUV V3 / VdS / ortsveränderliche Geräte).
 Du sammelst Informationen vom Kunden in einem natürlichen Gespräch auf Deutsch.
 
+## KRITISCHE REGEL — M² NIE ERZWINGEN
+NIEMALS nach m², Fläche oder Quadratmeter fragen, wenn der Kunde bereits ein anderes Mengenmaß genannt hat.
+Akzeptierte Alternativen: UV-Anzahl, Betriebsmittel, Schaltschränke, Zimmer, Betten, Klassen, Stellplätze.
+Wenn eines davon vorliegt → SOFORT action="calculate".
+
+FALSCH: User sagt "48 UV" → Bot fragt "Wie groß ist die Fläche?"
+FALSCH: User sagt "1 Schaltschrank" → Bot fragt "Wie viele Mitarbeiter?"
+FALSCH: User sagt "545 Geräte" → Bot fragt "Wie groß ist das Gebäude?"
+RICHTIG: User sagt "48 UV" → Bot sagt "Kalkulation startet." action=calculate
+RICHTIG: User sagt "Hotel, 120 Zimmer" → Bot sagt "Kalkulation startet." action=calculate
+
 ## SCHRITT 1 — PRÜFART ERKENNEN (Veit P1)
 Erkenne aus der Anfrage die Prüfart und setze `pruefart`:
 - **"dguv_ortsfest"** (Default): ortsfeste Anlagen (DGUV V3, MA507) — Gebäude mit fester Elektroinstallation
@@ -139,6 +150,10 @@ User: "20 Geräte Kindergarten"
 
 User: "Hotel in München, 120 Zimmer"
 → {"message":"Hotel in München mit 120 Zimmern — ca. 3.600 m² Nutzfläche. Kalkulation startet.\n\nRückfragen:\n• Besteht ein **Rahmenvertrag** mit TÜV SÜD?\n• Wurde die Anlage bereits durch **TÜV SÜD** geprüft?\n• Welche **PLZ** hat der Standort?","action":"calculate","params":{"nutzung":"hotel","pruefart":"dguv_ortsfest","gesamtflaeche_m2":3600,"primary_installationskategorie":2,"adresse_ort":"München"},"missing":[]}
+
+## ERINNERUNG
+Frage NIEMALS nach m² oder Fläche, wenn bereits UV, Geräte, Schaltschränke oder ein anderes Mengenmaß vorliegt!
+Wenn ein Mengenmaß vorhanden ist → SOFORT action="calculate", OHNE nach m² zu fragen.
 """
 
 
@@ -178,6 +193,34 @@ def _apply_uv_estimation(params: dict) -> list[str]:
             f"{params['gesamtflaeche_m2']:.0f} m² (Schätzung, Confidence reduziert)"
         )
     return warnings
+
+
+def _sanitize_m2_questions(message: str) -> str:
+    """Remove clauses asking about m²/Fläche/Mitarbeiter when we already have sufficient inputs."""
+    m2_pattern = r'[^.!?\n—]*(?:m²|[Qq]uadratmeter|[Gg]esamtfläche|[Ff]läche\b|[Ww]ie groß|[Mm]itarbeiter)[^.!?\n—]*[.!?\n—]?\s*'
+    cleaned = re.sub(m2_pattern, '', message).strip()
+    cleaned = re.sub(r'\s*—\s*$', '', cleaned).strip()
+    return cleaned if cleaned else message
+
+
+_FLAECHE_MARKERS = re.compile(
+    r'\d+\s*m²|quadratmeter|\d+\s*qm|fläche\s*\d|etagen.*breite|länge.*breite'
+    r'|\d+\s*zimmer|\d+\s*bett|\d+\s*klassen|\d+\s*stellpl|\d+\s*mitarbeiter',
+    re.IGNORECASE,
+)
+
+
+def _strip_hallucinated_flaeche(params: dict, user_message: str, session_messages: list[dict] | None = None) -> None:
+    """Remove gesamtflaeche_m2 if the user never mentioned any area."""
+    if "gesamtflaeche_m2" not in params:
+        return
+    if _FLAECHE_MARKERS.search(user_message):
+        return
+    if session_messages:
+        for msg in session_messages:
+            if msg.get("role") == "user" and _FLAECHE_MARKERS.search(msg.get("content", "")):
+                return
+    del params["gesamtflaeche_m2"]
 
 
 def _parse_llm_json(text: str) -> dict:
@@ -240,6 +283,7 @@ async def coordinator_respond(session: DGUVSession, user_message: str) -> dict:
 
     new_params = result.get("params", {})
     if new_params:
+        _strip_hallucinated_flaeche(new_params, user_message, session.messages)
         nutzung = new_params.get("nutzung")
         if nutzung and "primary_installationskategorie" not in new_params:
             try:
@@ -261,8 +305,11 @@ async def coordinator_respond(session: DGUVSession, user_message: str) -> dict:
     ort = session.extracted_params.get("adresse_ort")
     plz = session.extracted_params.get("adresse_plz")
     if (ort or plz) and session.extracted_params.get("adresse_lat") is None:
+        geo_ort = ort
+        if plz and ort and ort.lower() not in user_message.lower():
+            geo_ort = None
         coords = geocode(
-            ort=ort,
+            ort=geo_ort,
             plz=plz,
             strasse=session.extracted_params.get("adresse_strasse"),
         )
@@ -271,17 +318,23 @@ async def coordinator_respond(session: DGUVSession, user_message: str) -> dict:
             session.extracted_params["adresse_lon"] = coords[1]
 
     if _has_minimum(session.extracted_params):
-        estimation_warnings = _apply_uv_estimation(session.extracted_params)
-        if estimation_warnings:
-            result.setdefault("_estimation_warnings", []).extend(estimation_warnings)
-
-    if result.get("action") == "calculate" and _has_minimum(session.extracted_params):
-        result["params"] = dict(session.extracted_params)
-    elif result.get("action") == "calculate" and not _has_minimum(session.extracted_params):
-        result["action"] = "chat"
-    elif session.last_kalkulation and _has_minimum(session.extracted_params):
+        if session.extracted_params.get("gesamtflaeche_m2") is None:
+            from products.dguv_v3.pricing_rules import is_kleinauftrag
+            from products.dguv_v3.merkmale import DGUVMerkmale
+            try:
+                test_m = DGUVMerkmale(**{k: v for k, v in session.extracted_params.items() if v is not None})
+                skip_estimation = is_kleinauftrag(test_m)
+            except Exception:
+                skip_estimation = False
+            if not skip_estimation:
+                estimation_warnings = _apply_uv_estimation(session.extracted_params)
+                if estimation_warnings:
+                    result.setdefault("_estimation_warnings", []).extend(estimation_warnings)
         result["action"] = "calculate"
         result["params"] = dict(session.extracted_params)
+        result["message"] = _sanitize_m2_questions(result.get("message", ""))
+    elif result.get("action") == "calculate":
+        result["action"] = "chat"
 
     return result
 

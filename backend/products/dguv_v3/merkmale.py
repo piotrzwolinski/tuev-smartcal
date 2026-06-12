@@ -117,7 +117,7 @@ class DGUVMerkmale(BaseModel):
     reifegrad: Reifegrad = Reifegrad.RG_3
     vollerfassung: bool = False
 
-    referenzpreis_jahr: Optional[int] = Field(None, ge=2015, le=2026)
+    referenzpreis_jahr: Optional[int] = Field(None, ge=2010, le=2026)
     referenzpreis_betrag: Optional[float] = Field(None, ge=0)
     referenz_vergleichbar: bool = False
 

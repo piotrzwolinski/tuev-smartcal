@@ -362,6 +362,15 @@ class GraphPricingEngine:
 
         cost = grundpreis + flaeche_cost
 
+        from products.dguv_v3.pricing_rules import _g_komplexitaet, KOMPLEXITAET_SCHWELLE_M2
+        k_faktor = _g_komplexitaet(nutzung, flaeche)
+        if k_faktor != 1.0:
+            cost *= k_faktor
+            self._log("pruefkosten",
+                      f"Komplexitätsfaktor: ×{k_faktor} (>{KOMPLEXITAET_SCHWELLE_M2}m² + {nutzung_val})",
+                      f"{cost:.2f}",
+                      ref="Kriterien_Preisfindung_EG.docx (S. Pausch): >10.000m² komplex → 60% Anlagenmerkmale")
+
         for field, label, node_prefix in [
             ("anzahl_verteilungen_uv", "UV", "VERT_UV"),
             ("anzahl_verteilungen_hv", "HV", "VERT_HV"),
