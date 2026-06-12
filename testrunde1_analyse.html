@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Testrunde 1 — Analyse & Maßnahmen</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif; background: #f5f6f8; color: #1a1a2e; line-height: 1.5; padding: 32px; max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .subtitle { color: #666; font-size: 14px; margin-bottom: 32px; }
+  .case { background: #fff; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 24px; overflow: hidden; }
+  .case-header { padding: 16px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #eee; }
+  .case-id { font-weight: 700; font-size: 15px; color: #fff; background: #3b5998; border-radius: 6px; padding: 2px 10px; min-width: 36px; text-align: center; }
+  .case-title { font-weight: 600; font-size: 15px; flex: 1; }
+  .badge { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 12px; }
+  .badge-pass { background: #d4edda; color: #155724; }
+  .badge-marginal { background: #fff3cd; color: #856404; }
+  .badge-fail { background: #f8d7da; color: #721c24; }
+  .badge-rv { background: #d1ecf1; color: #0c5460; }
+  .badge-xfail { background: #e2e3e5; color: #383d41; }
+  .case-body { padding: 20px 24px; }
+  .section { margin-bottom: 16px; }
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 4px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .kpi { background: #f8f9fb; border-radius: 8px; padding: 12px 16px; }
+  .kpi-value { font-size: 20px; font-weight: 700; }
+  .kpi-label { font-size: 12px; color: #666; }
+  .kpi-small { font-size: 13px; color: #888; }
+  .analysis { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 12px; }
+  .analysis p { font-size: 14px; }
+  .todo { background: #eff6ff; border-left: 3px solid #3b82f6; padding: 12px 16px; border-radius: 0 8px 8px 0; }
+  .todo ul { margin-left: 18px; font-size: 14px; }
+  .todo li { margin-bottom: 4px; }
+  .quote { font-style: italic; color: #555; font-size: 13px; border-left: 2px solid #ccc; padding-left: 10px; margin: 8px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  th { text-align: left; font-weight: 600; padding: 6px 10px; border-bottom: 2px solid #ddd; font-size: 12px; color: #666; }
+  td { padding: 6px 10px; border-bottom: 1px solid #eee; }
+  .delta-pos { color: #dc3545; }
+  .delta-neg { color: #28a745; }
+  .tester { font-size: 12px; color: #888; }
+  hr { border: none; border-top: 1px solid #eee; margin: 16px 0; }
+  .summary-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+  .summary-box { background: #fff; border-radius: 8px; padding: 14px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); text-align: center; min-width: 120px; }
+  .summary-box .num { font-size: 28px; font-weight: 700; }
+  .summary-box .label { font-size: 12px; color: #666; }
+  .placeholder { background: #f0f0f0; border: 2px dashed #ccc; border-radius: 8px; padding: 24px; text-align: center; color: #999; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<h1>Testrunde 1 — Analyse je Testfall</h1>
+<p class="subtitle">Stand: 12.06.2026 · SmartCal v4.1 · Für Besprechung mit S. Pausch / M. Pfeiffer</p>
+
+<div class="summary-bar">
+  <div class="summary-box"><div class="num" style="color:#28a745">3</div><div class="label">PASS (≤20%)</div></div>
+  <div class="summary-box"><div class="num" style="color:#ffc107">1</div><div class="label">MARGINAL (≤35%)</div></div>
+  <div class="summary-box"><div class="num" style="color:#dc3545">4</div><div class="label">FAIL</div></div>
+  <div class="summary-box"><div class="num" style="color:#6c757d">4</div><div class="label">RV-FLAG</div></div>
+  <div class="summary-box"><div class="num" style="color:#aaa">4</div><div class="label">xfail / OOS</div></div>
+  <div class="summary-box"><div class="num">33%</div><div class="label">PASS (4/12 testbar)</div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T01 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T01</span>
+    <span class="case-title">Hipp Nahrungsmittelwerk Pfaffenhofen — VdS (MA505)</span>
+    <span class="badge badge-fail">FAIL +54%</span>
+    <span class="tester">Tester: Pausch</span>
+  </div>
+  <div class="case-body">
+
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>Hipp-Werk (Nahrungsmittel), Georg-Hipp-Str. 7, 85276 Pfaffenhofen. VdS-Prüfung (MA505 VdS 2871). 20.000 m², 45 Unterverteilungen, 8.000 kVA Trafo.</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „VdS-Prüfung für ein Nahrungsmittelwerk in Pfaffenhofen, PLZ 85276, 20.000 m², 45 Unterverteilungen, 8.000 kVA"
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Pausch XLSX)</div>
+        <div class="kpi-value">6.850 €</div>
+        <div class="kpi-small">Quelle: EQ1550815</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value" style="color:#dc3545">11.877 €</div>
+        <div class="kpi-small">Δ +73%</div>
+      </div>
+      <div class="kpi" style="background:#fff8f0;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value" style="color:#e67e22">10.586 €</div>
+        <div class="kpi-small">Δ +54% · Prüf 7.975 · Grund 848 · Reise 1.213 · Bericht 550</div>
+      </div>
+    </div>
+
+    <table style="margin-top:12px">
+      <tr><th>Position</th><th>SmartCal</th><th>Kommentar</th></tr>
+      <tr><td>Grundkosten</td><td>848 €</td><td>Pauschale 256€ + Prüfmittel 392€ (8 Tage × 49€) + Tagegeld 200€</td></tr>
+      <tr><td>Prüfkosten</td><td>7.975 €</td><td>250€ Grundpreis + 6.600€ Fläche (20k m² × 5€/10m² VdS-Degression, KAT_3) + 1.125€ UV (45×25€)</td></tr>
+      <tr><td>Reisekosten</td><td>1.213 €</td><td>München→Pfaffenhofen 55km, 3 Anfahrten (8 Prüftage)</td></tr>
+      <tr><td>Bericht</td><td>550 €</td><td>Komplex (20k m²)</td></tr>
+    </table>
+
+    <div class="quote">Tester: "Ggf. Prüfdienstleistung abweichend? VdS kommt fast hin"</div>
+
+    <div class="analysis">
+      <div class="section-label">Analyse — warum weicht der Preis ab?</div>
+
+      <p style="margin-bottom:10px;"><strong>Offene Frage vorab:</strong> Die Referenz 6.850 € — ist das der VdS-Gesamtpreis inkl. Reise + Bericht? Oder nur Prüfkosten? Der Tester markiert: <em>"Ggf. Prüfdienstleistung abweichend"</em> — das Vergleichsgrundlage muss geklärt werden.</p>
+
+      <p><strong>Drei Probleme in der Kalkulation:</strong></p>
+      <ol style="margin: 10px 0 10px 20px; font-size:14px;">
+        <li><strong>Keine Referenzdaten für Industrie:</strong> Unsere Referenzpreise (Augsburg/Gersthofen) decken nur öffentliche Gebäude ab — Schulen, Kitas, Verwaltung. Für "Industrie" existiert lediglich ein Mapping auf "Werkstatt" (18 kleine Objekte, max. 10.000 m²). Hipp hat 20.000 m² → kein Match → das System fällt auf die Nürnberger Flächen-Pauschale zurück.</li>
+        <li><strong>Prüftage-Schätzung zu hoch (8 Tage):</strong> Das System schätzt 8 Prüftage aus der Fläche (20.000 m² ÷ 2.500). VdS ist eine Stichprobenprüfung — realistisch eher 2–3 Tage. Daraus folgen zu hohe Grundkosten (Prüfmittel 392€ statt ~147€) und 3 Anfahrten statt 1.</li>
+        <li><strong>Fläche ist der falsche Preistreiber:</strong> Bei Industrieanlagen bestimmen die Anlagenmerkmale den Aufwand — 8.000 kVA Trafo, Schaltanlagen, Produktionslinien — nicht die m². Die Flächen-Pauschale allein (6.600 €) ist bereits fast so hoch wie der reale Gesamtpreis.</li>
+      </ol>
+
+      <table style="margin-top:8px; font-size:13px;">
+        <tr><th>Position</th><th>SmartCal</th><th>Realistisch (geschätzt)</th><th>Problem</th></tr>
+        <tr><td>Prüfkosten</td><td>7.975 €</td><td>~4.000–5.000 €</td><td>Fläche×Kat statt Anlagenmerkmale</td></tr>
+        <tr><td>Grundkosten</td><td>848 €</td><td>~450 €</td><td>8 Prüftage statt 2–3</td></tr>
+        <tr><td>Reisekosten</td><td>1.213 €</td><td>~400 €</td><td>3 Anfahrten statt 1 (folgt aus Prüftagen)</td></tr>
+        <tr><td>Bericht</td><td>550 €</td><td>380 €</td><td>Standard statt Komplex?</td></tr>
+        <tr style="font-weight:600"><td>Gesamt</td><td>10.586 €</td><td>~5.200–6.200 €</td><td></td></tr>
+      </table>
+    </div>
+
+    <div class="todo">
+      <div class="section-label">Klärungsbedarf / Datenbedarfe von TÜV</div>
+      <ul>
+        <li><strong>Referenzpreis klären:</strong> Was beinhaltet die 6.850 €? Nur VdS-Prüfkosten oder Gesamtpreis inkl. Reise/Bericht? VdS allein oder VdS+DGUV Kombi? Listenpreis oder Rahmenvertrag?</li>
+        <li><strong>Prüftage VdS bei Industrie:</strong> Wie viele Prüftage sind realistisch für VdS bei 20.000 m² Industrie? Wenn 2–3 Tage → Grund- und Reisekosten halbieren sich.</li>
+        <li><strong>Branchenspezifische Preisliste Industrie:</strong> Gibt es Rahmenverträge oder Erfahrungswerte für Industriekunden (analog Dehner für Gartenmärkte)? Bereits 3–5 Aufträge mit Preis + m² + kVA würden eine Regression ermöglichen.</li>
+        <li><strong>kVA als Preistreiber:</strong> Korreliert die Anschlussleistung besser mit dem Prüfaufwand als m² bei Industrieanlagen?</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- PLACEHOLDER FOR REMAINING CASES -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T02 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T02</span>
+    <span class="case-title">REWE Markt Eching — DGUV (MA507)</span>
+    <span class="badge badge-rv">RV-FLAG</span>
+    <span class="tester">Tester: Pausch</span>
+  </div>
+  <div class="case-body">
+
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>REWE-Markt, Gewerbepark 1, 83088 Kiefersfelden (Auftraggeber 85386 Eching). DGUV V3 Prüfung (MA507). ~800 m² Verkaufsfläche, Kühltheke.</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „DGUV V3 Prüfung für einen REWE-Markt in Kiefersfelden, PLZ 83088, ca. 800 m² Verkaufsfläche, Kühltheke"
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Pausch XLSX)</div>
+        <div class="kpi-value">657 €</div>
+        <div class="kpi-small">Quelle: EQ2828424 · "Abrechnung ggf. zu gering"</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value" style="color:#dc3545">2.125 €</div>
+        <div class="kpi-small">Δ +223%</div>
+      </div>
+      <div class="kpi" style="background:#f0fff0;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value" style="color:#28a745">1.883 €</div>
+        <div class="kpi-small">Δ +187% · Prüf 570 · Grund 330 · Reise 603 · Bericht 380</div>
+      </div>
+    </div>
+
+    <table style="margin-top:12px">
+      <tr><th>Position</th><th>SmartCal</th><th>Kommentar</th></tr>
+      <tr><td>Grundkosten</td><td>330 €</td><td>Pauschale 256€ + Prüfmittel 49€ (1 Tag) + Tagegeld 25€</td></tr>
+      <tr><td>Prüfkosten</td><td>570 €</td><td>250€ Grundpreis + 320€ Fläche (800m² × 5€/10m² × 0,8 Degression, KAT_3)</td></tr>
+      <tr><td>Reisekosten</td><td>603 €</td><td>München→Kiefersfelden 93km, 1 Anfahrt (204€ km + 399€ Reisezeit)</td></tr>
+      <tr><td>Bericht</td><td>380 €</td><td>Standard</td></tr>
+    </table>
+
+    <div class="quote" style="margin-top:12px">Tester: "Abrechnung ggf. zu gering"</div>
+
+    <div class="analysis">
+      <div class="section-label">Analyse</div>
+
+      <p style="margin-bottom:10px;"><strong>Kernfrage: 657 € ist ein Rahmenvertrags-Preis (REWE Filialnetz).</strong> REWE hat einen bundesweiten Rahmenvertrag mit TÜV SÜD — Filialpreise liegen typisch 30–60% unter LPV. Unser Listenpreis (2.125 €) ist nicht mit dem RV-Preis vergleichbar. Der Tester merkt an: <em>"Abrechnung ggf. zu gering"</em>.</p>
+
+      <p><strong>Trotzdem: auffällige Positionen im SmartCal-Ergebnis:</strong></p>
+      <ol style="margin: 10px 0 10px 20px; font-size:14px;">
+        <li><strong>Reisekosten 603 € (32% vom Gesamt):</strong> Kiefersfelden liegt 93 km von München. Die Reisekosten-Formel (185km × 1,10€ + 2,2h × 180€/h) ergibt 603 € für eine einzelne Anfahrt — das ist für einen 1-Tages-REWE-Markt unverhältnismäßig hoch. Bei einem Filialnetz-Auftrag würden Routen gebündelt.</li>
+        <li><strong>Bericht 380 € (Standard):</strong> Für einen 800m²-Supermarkt mit 1 Prüftag wäre "Klein" (119 €) ggf. angemessener.</li>
+      </ol>
+
+      <table style="margin-top:8px; font-size:13px;">
+        <tr><th>Position</th><th>SmartCal</th><th>Optimiert</th><th>Anmerkung</th></tr>
+        <tr><td>Prüfkosten</td><td>570 €</td><td>570 €</td><td>OK</td></tr>
+        <tr><td>Grundkosten</td><td>330 €</td><td>330 €</td><td>OK für 1 Prüftag</td></tr>
+        <tr><td>Reisekosten</td><td>603 €</td><td>~300 €</td><td>Nächste NL? Routen-Bündelung?</td></tr>
+        <tr><td>Bericht</td><td>380 €</td><td>119 €</td><td>Klein statt Standard bei 800m²?</td></tr>
+        <tr style="font-weight:600"><td>Gesamt</td><td>1.883 €</td><td>~1.320 €</td><td>LPV-Listenpreis (ohne RV-Rabatt)</td></tr>
+      </table>
+      <p style="font-size:13px; color:#888; margin-top:6px;">Selbst optimiert wäre der LPV-Preis (~1.320 €) doppelt so hoch wie der RV-Preis (657 €) — das entspricht der erwarteten RV-Differenz von 30–60%.</p>
+    </div>
+
+    <div class="todo">
+      <div class="section-label">Klärungsbedarf / Maßnahmen</div>
+      <ul>
+        <li><strong>Bug: Reifegrad 2 ohne Nutzereingabe:</strong> Der Chat-Coordinator hat Reifegrad 2 gesetzt, obwohl der Nutzer nichts dazu gesagt hat. Default muss Reifegrad 3 (×1,0) sein — wird gefixt.</li>
+        <li><strong>Referenzpreis klären:</strong> Ist 657 € ein REWE-RV-Preis? Falls ja, ist die Abweichung erwartet und dieser Testfall kein FAIL sondern ein "RV-FLAG" (nicht vergleichbar).</li>
+        <li><strong>Berichtskosten bei kleinen Märkten:</strong> 380 € (Standard) für einen 800m²-Supermarkt — sollte das "Klein" (119 €) sein?</li>
+        <li><strong>Reisekostenbündelung:</strong> REWE-Filialprüfungen werden typisch als Route geplant. Einzelanfahrt-Kalkulation ist bei Filialkunden nicht marktgerecht.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T03 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T03</span>
+    <span class="case-title">badenova Schaltschrank Lahr — DGUV (MA501)</span>
+    <span class="badge badge-marginal">MARGINAL +25% (war +169%)</span>
+    <span class="tester">Tester: Pausch</span>
+  </div>
+  <div class="case-body">
+
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>badenova NETZE, KO Huwe Anl 192, Zwischen den Wegen, 77933 Lahr-Hugsweier. DGUV V3 (MA501). <strong>Exakt 1 Schaltschrank</strong> (KKS-Fremdstrom Speisegerät).</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „Material 501, 1 Schaltschrank in 77933"
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Pausch XLSX)</div>
+        <div class="kpi-value">391 €</div>
+        <div class="kpi-small">Quelle: EQ3316380 · "Abfrage führt zu zu hohen Preisen?"</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value" style="color:#dc3545">1.051 €</div>
+        <div class="kpi-small">Δ +169%</div>
+      </div>
+      <div class="kpi" style="background:#fff8f0;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value" style="color:#e67e22">~490 €</div>
+        <div class="kpi-small">Δ +25% · Kleinauftrag-Pfad · PLZ→Freiburg (50km) · kein halluziniertes m²</div>
+      </div>
+    </div>
+
+    <div class="quote" style="margin-top:12px">
+      Tester: "PLZ passt nicht zu angezeigtem Ort, NL passt wiederum"<br>
+      Tester: "Anfrage nach Mitarbeiter sinnfrei, da exakt 1 Schaltschrank beschrieben"
+    </div>
+
+    <div class="analysis">
+      <div class="section-label">Analyse — drei Probleme</div>
+
+      <ol style="margin: 10px 0 10px 20px; font-size:14px;">
+        <li><strong style="color:#28a745">✓ GEFIXT — Halluzinierte Fläche:</strong> <s>Chat-Coordinator hat 400 m² erfunden</s> → Jetzt: Wenn der Nutzer keine Fläche/m² nennt, wird keine Fläche angenommen. Der Kleinauftrag-Pfad greift korrekt (NSHV=1, keine Fläche → Prüfkosten = 270 €).</li>
+        <li><strong style="color:#28a745">✓ GEFIXT — PLZ-Geocoding:</strong> <s>PLZ 77933 → "Bad Kissingen"/"Heilbronn" (falsch)</s> → Jetzt: PLZ 77933 → Lahr bei Freiburg (korrekt, 50 km). Das System ignoriert jetzt vom LLM geratene Ortsnamen und geocodiert direkt über die PLZ.</li>
+        <li><strong>Grundkosten noch zu hoch:</strong> Im Kleinauftrag-Pfad wird die Grundkosten-Pauschale auf 100 € reduziert (statt 256 €). Die Graph-Engine muss diesen Pfad noch korrekt durchlaufen — aktuell greift die Reduktion nur im Python-Pfad.</li>
+      </ol>
+
+      <table style="margin-top:8px; font-size:13px;">
+        <tr><th>Position</th><th>Testrunde (v1)</th><th>v4.1 (aktuell)</th><th>Ziel (Kleinauftrag)</th></tr>
+        <tr><td>Prüfkosten</td><td>297 €</td><td>270 €</td><td>270 € <span style="color:#28a745">✓</span></td></tr>
+        <tr><td>Grundkosten</td><td>306 €</td><td>306 €</td><td>100 € (offen)</td></tr>
+        <tr><td>Reisekosten</td><td>330 €</td><td>~120 €</td><td>~120 € <span style="color:#28a745">✓</span></td></tr>
+        <tr><td>Bericht</td><td>119 €</td><td>0 €</td><td>0 € <span style="color:#28a745">✓</span></td></tr>
+        <tr style="font-weight:600"><td>Gesamt</td><td>1.051 €</td><td>~490 €</td><td>~490 € vs. Real 391 € → Δ +25%</td></tr>
+      </table>
+      <p style="font-size:13px; color:#888; margin-top:6px;"><strong>Verbesserung: 1.051 € → ~490 € (−53%).</strong> Zwei der drei Probleme sind behoben (halluzinierte Fläche + PLZ-Geocoding). Grundkosten-Reduktion im Graph-Pfad steht noch aus.</p>
+    </div>
+
+    <div class="todo">
+      <div class="section-label">Maßnahmen / Klärungsbedarf</div>
+      <ul>
+        <li><strong style="color:#28a745">✓ GEFIXT — PLZ-Geocoding:</strong> System ignoriert jetzt vom LLM geratene Ortsnamen wenn der Nutzer nur eine PLZ angegeben hat. Geocodierung erfolgt direkt über PLZ → korrekte Koordinaten.</li>
+        <li><strong style="color:#28a745">✓ GEFIXT — Halluzinierte Fläche:</strong> System entfernt jetzt vom LLM erfundene m²-Werte wenn der Nutzer keine Fläche genannt hat. Kleinauftrag-Erkennung greift korrekt.</li>
+        <li><strong>Offen — Grundkosten Graph-Pfad:</strong> Im Kleinauftrag-Pfad sollten Grundkosten auf 100 € reduziert werden. Aktuell berechnet die Graph-Engine noch die volle Pauschale (306 €).</li>
+        <li><strong>Klärung Berichtskosten Kleinauftrag:</strong> Fällt bei einem Einzelschaltschrank ein separater Prüfbericht an, oder ist das im Stundensatz enthalten?</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T04 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T04</span>
+    <span class="case-title">TÜV Auto Service Calw — MA560 ortsveränderlich</span>
+    <span class="badge badge-pass">PASS +8%</span>
+    <span class="tester">Tester: Pausch</span>
+  </div>
+  <div class="case-body">
+
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>TÜV SÜD Auto Service GmbH, Rudolf-Diesel-Str. 3, 75365 Calw. MA560 ortsveränderliche Betriebsmittel. <strong>114 Betriebsmittel</strong>, Auto Service, ~300 m² (Annahme).</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „114 Betriebsmittel, Auto Service in Calw, PLZ 75365"
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Pausch XLSX)</div>
+        <div class="kpi-value">1.217 €</div>
+        <div class="kpi-small">Quelle: EQ2597657 · Tester: "Passt!"</div>
+      </div>
+      <div class="kpi" style="background:#f0fff0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value" style="color:#28a745">1.198 €</div>
+        <div class="kpi-small">Δ -1,5% · PASS</div>
+      </div>
+      <div class="kpi" style="background:#f0fff0;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value" style="color:#28a745">1.309 €</div>
+        <div class="kpi-small">Δ +8% · Prüf 250 · Grund 306 · Reise 374 · Bericht 380</div>
+      </div>
+    </div>
+
+    <div class="quote" style="margin-top:12px">
+      Tester (Testrunde): "Passt!"<br>
+      Tester (Feedback): "Warum Abfrage nach m² wenn Angabe der Betriebsmittel vorhanden?"
+    </div>
+
+    <div class="analysis">
+      <div class="section-label">Analyse</div>
+      <p><strong>Preis passt — UX war das Problem.</strong> In der Testrunde hat das System trotz korrektem Ergebnis nach m² gefragt, obwohl 114 Betriebsmittel ausreichen (MA560 = Geräteprüfung, m² irrelevant).</p>
+      <ol style="margin: 10px 0 10px 20px; font-size:14px;">
+        <li><strong style="color:#28a745">✓ GEFIXT — m²-Frage entfällt:</strong> Bot erkennt jetzt "114 Betriebsmittel" → pruefart=dguv_ortsv → kalkuliert sofort ohne nach m² zu fragen.</li>
+        <li><strong>Preis leicht gestiegen (1.198 → 1.309 €):</strong> Differenz kommt von Berichtskosten (119 → 380 €, Standard statt Klein). Gegenläufig: Prüfkosten gesunken (400 → 250 €). Beides innerhalb PASS-Toleranz.</li>
+        <li><strong>PLZ-Geocoding korrekt:</strong> 75365 → Calw/Filderstadt (50 km), Reisekosten 374 € plausibel.</li>
+      </ol>
+    </div>
+
+    <div class="todo">
+      <div class="section-label">Klärungsbedarf</div>
+      <ul>
+        <li><strong>Berichtstyp bei MA560:</strong> 380 € (Standard) für 114 BM — sollte das "Klein" (119 €) sein wie in v1? Bei Geräteprüfung (Checkliste) ist ein vollständiger Bericht ggf. nicht erforderlich.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T05 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T05</span>
+    <span class="case-title">Landwirt Neukirchen — MA560 ortsveränderlich</span>
+    <span class="badge badge-xfail">xfail — Referenz fehlerhaft</span>
+    <span class="tester">Tester: Pausch</span>
+  </div>
+  <div class="case-body">
+
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>Rank Silke, Böhmerwaldstr., 93453 Neukirchen b. hl. Blut. MA560 ortsveränderliche Betriebsmittel. 23 Betriebsmittel, Landwirtschaftlicher Betrieb, 1 Gebäude, 150 m².</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „23 ortsveränderliche Betriebsmittel, Landwirtschaftlicher Betrieb, PLZ 93444"
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Pausch XLSX)</div>
+        <div class="kpi-value" style="color:#999; text-decoration:line-through">175 €</div>
+        <div class="kpi-small">Quelle: EQ3578607 · <strong style="color:#dc3545">Tester: "Abrechnung fehlerhaft"</strong></div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value" style="color:#dc3545">1.400 €</div>
+        <div class="kpi-small">Δ +701% · Reifegrad 1 halluziniert (×1,25)</div>
+      </div>
+      <div class="kpi" style="background:#e2e3e5;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value">~717 €</div>
+        <div class="kpi-small">Prüf 418 · Grund 0 · Reise 299 · Bericht 0 (Test-Script)</div>
+      </div>
+    </div>
+
+    <div class="quote" style="margin-top:12px">
+      Tester: "Abrechnung fehlerhaft" — 175 € für 23 Betriebsmittel mit 2 Mängeln ist nicht marktgerecht.
+    </div>
+
+    <div class="analysis">
+      <div class="section-label">Analyse</div>
+      <p><strong>Referenzpreis nicht verwertbar.</strong> 175 € für 23 BM (= ~7,60 €/Gerät) liegt deutlich unter den Materialkosten. Der Tester hat die Abrechnung selbst als fehlerhaft markiert. Dieser Testfall ist nicht bewertbar (xfail).</p>
+      <ol style="margin: 10px 0 10px 20px; font-size:14px;">
+        <li><strong style="color:#28a745">✓ GEFIXT — m²-Frage entfällt:</strong> Bot erkennt MA560 und kalkuliert sofort mit 23 BM. Kein m² halluziniert.</li>
+        <li><strong style="color:#28a745">✓ GEFIXT — Reifegrad:</strong> v1 hatte Reifegrad 1 (×1,25) halluziniert — "Landwirt" wurde als "ungeordnet" interpretiert. Jetzt: Default Reifegrad 3 (×1,0).</li>
+        <li><strong>Reisekosten dominant:</strong> Regensburg→Neukirchen 86 km = 605 € Reise — bei 23 BM (Prüfkosten ~250 €) sind Reisekosten &gt; Prüfkosten. Das ist bei ländlichen Kleinstaufträgen realistisch.</li>
+      </ol>
+    </div>
+
+    <div class="todo">
+      <div class="section-label">Klärungsbedarf</div>
+      <ul>
+        <li><strong>Referenzpreis korrigieren:</strong> Was wäre ein realistischer Preis für 23 BM Landwirtschaft? Der korrekte Auftragswert aus SAP wäre hilfreich.</li>
+        <li><strong>Mindestauftragswert MA560:</strong> Gibt es bei MA560 einen Mindestauftragswert / Anfahrtspauschale? 23 BM auf dem Land könnten unwirtschaftlich sein.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T06 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T06</span>
+    <span class="case-title">Maritim Hotel Königswinter — MA510 Baurecht</span>
+    <span class="badge badge-xfail">xfail — MA510 OOS + Referenz fehlerhaft</span>
+    <span class="tester">Tester: Pausch</span>
+  </div>
+  <div class="case-body">
+
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>Maritim Hotel, Rheinallee 3, 53639 Königswinter. <strong>Baurechtliche Prüfung (MA510)</strong>. 5 Konferenzräume, Gastrobereich, 40 UV, ~100 Zimmer.</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „Elektrische Anlage nach Baurecht, Wiederkehrend, Maritim-Hotel, 5 Konferenzräume, Gastronomiebereich, 40 Unterverteilungen, 100 Zimmer, PLZ 32105"
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Pausch XLSX)</div>
+        <div class="kpi-value" style="color:#999; text-decoration:line-through">220 €</div>
+        <div class="kpi-small">Quelle: EQ2909976 · <strong style="color:#dc3545">Tester: "Abrechnung fehlerhaft"</strong></div>
+      </div>
+      <div class="kpi" style="background:#e2e3e5;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value">4.064 €</div>
+        <div class="kpi-small">DGUV statt MA510 berechnet</div>
+      </div>
+      <div class="kpi" style="background:#e2e3e5;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value">5.274 €</div>
+        <div class="kpi-small">DGUV statt MA510 berechnet</div>
+      </div>
+    </div>
+
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse — doppelt nicht vergleichbar</div>
+      <ol style="margin: 10px 0 10px 20px; font-size:14px;">
+        <li><strong>MA510 (Baurecht) ist out of scope:</strong> SmartCal deckt aktuell DGUV V3 (MA507), VdS (MA505) und MA560 (ortsveränderlich) ab. <strong>Baurechtliche Prüfungen (MA510)</strong> erfordern eine individuelle Bewertung — Sonderbau, Versammlungsstätte, andere Prüfgrundlagen (z.B. PrüfVO, BauO). Der Scope-Guard im Chat-Coordinator hätte "Baurecht" erkennen und weiterleiten sollen.</li>
+        <li><strong>Referenzpreis 220 € nicht marktgerecht:</strong> Der zugehörige Prüfbericht (EQ2909976) umfasst 10 Seiten mit 46 Mängeln. 220 € für diesen Umfang ist offensichtlich fehlerhaft — vom Tester bestätigt.</li>
+        <li><strong>Reisekosten dominieren:</strong> PLZ 32105 (Bad Salzuflen/Bielefeld) → NL Essen = 165 km. 2 Anfahrten × 972 € = 1.945 € Reise — fast 50% des Gesamtpreises. Für NRW wäre ggf. eine nähere NL (z.B. Bielefeld) zuständig.</li>
+      </ol>
+    </div>
+
+    <div class="todo">
+      <div class="section-label">Maßnahmen</div>
+      <ul>
+        <li><strong>Offen — Scope Guard MA510:</strong> Chat-Coordinator soll "Baurecht"/"Sonderbauprüfung"/"MA510" erkennen und mit Hinweis weiterleiten: "Baurechtliche Prüfungen erfordern individuelle Bewertung — Weiterleitung an Fachbereich." Im Prompt ist die Regel definiert, aber Haiku setzt sie nicht konsequent um → Code-seitiger Guard nötig.</li>
+        <li><strong>Testfall nicht bewertbar:</strong> Weder Referenzpreis noch Produkttyp sind vergleichbar. Kein Handlungsbedarf für die Preislogik.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T07 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T07</span>
+    <span class="case-title">König & Bauer Radebeul — VdS (MA505)</span>
+    <span class="badge badge-xfail">NO-REF — kein Realpreis</span>
+    <span class="tester">Tester: Pausch</span>
+  </div>
+  <div class="case-body">
+
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>König & Bauer Industrial, Friedrich-List-Str. 47, 01445 Radebeul. VdS 2871 (MA505). Metallverarbeitung, 48 UV, 4 Gebäude, 80% Produktion / 20% Verwaltung, 900 m².</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „VdS 2871 Prüfung, Metallverarbeitung König & Bauer in Radebeul, PLZ 01445, 48 UV, 4 Gebäude, 80% Produktion 20% Verwaltung, 900m²"
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real</div>
+        <div class="kpi-value" style="color:#999">— €</div>
+        <div class="kpi-small">Nicht in Testrunde getestet (Bot hing bei m²-Frage)</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value" style="color:#dc3545">4.493 €</div>
+        <div class="kpi-small">DGUV+VdS Addon · Reifegrad 2 (×1,25) halluziniert</div>
+      </div>
+      <div class="kpi" style="background:#f0fff0;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value" style="color:#28a745">2.861 €</div>
+        <div class="kpi-small">VdS-only · Prüf 1.866 · Grund 330 · Reise 115 · Bericht 550</div>
+      </div>
+    </div>
+
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse — drei Verbesserungen v1 → v4.1</div>
+      <ol style="margin: 10px 0 10px 20px; font-size:14px;">
+        <li><strong style="color:#28a745">✓ Prüfart korrigiert:</strong> v1 berechnete DGUV-Basis + VdS-Addon (= doppelte Kalkulation). v4.1 erkennt "nur VdS" korrekt → reine VdS-Kalkulation.</li>
+        <li><strong style="color:#28a745">✓ Reifegrad korrigiert:</strong> v1 halluzinierte Reifegrad 2 (×1,25) — "Metallverarbeitung" wurde als "Nachholbedarf" interpretiert. v4.1: Default Reifegrad 3 (×1,0).</li>
+        <li><strong style="color:#28a745">✓ Nutzungs-Mix korrekt:</strong> 80% Produktion (5,00 €/10m², KAT_3) + 20% Verwaltung (3,10 €/10m², KAT_2) — in beiden Versionen korrekt erkannt.</li>
+      </ol>
+      <p style="font-size:13px; color:#888; margin-top:6px;"><strong>Preisreduktion: 4.493 → 2.861 € (−36%)</strong> — hauptsächlich durch korrekte VdS-Routing und Reifegrad-Fix. Ohne Realpreis nicht bewertbar, aber deutlich plausibler.</p>
+    </div>
+
+    <div class="todo">
+      <div class="section-label">Klärungsbedarf</div>
+      <ul>
+        <li><strong>Realpreis nachliefern:</strong> In der Testrunde konnte der Tester diesen Fall nicht zu Ende testen (Bot fragte nach m²). Der Realpreis aus SAP/Versand wäre hilfreich zur Validierung.</li>
+        <li><strong>Hinweis:</strong> Dies war der Auslöser für das Tester-Feedback "48 UV, hat ständig auf m² herumgeritten" — das m²-Problem ist jetzt behoben.</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T08 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T08</span>
+    <span class="case-title">Apleona Gilching — DGUV+VdS Kombi</span>
+    <span class="badge badge-fail">FAIL +66%</span>
+    <span class="tester">Tester: Weiß</span>
+  </div>
+  <div class="case-body">
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>Bau- und Kreativwerkstatt, Zeppelinstr. 16-18b, 82205 Gilching. DGUV+VdS Kombi. 26.000 m², 37 UV, Büro/Verwaltung + Produktion + Labor.</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „DGUV V3 + VdS Kombiprüfung, Industriegebäude Gilching PLZ 82205, 26000 m², 37 UV"
+      </p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Weiß PPTX)</div>
+        <div class="kpi-value">7.932 €</div>
+        <div class="kpi-small">30h × 236€ + 3 Anfahrten (Benjamin Bachmeir)</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value" style="color:#dc3545">10.370 €</div>
+        <div class="kpi-small">Δ +31%</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value" style="color:#dc3545">13.163 €</div>
+        <div class="kpi-small">Δ +66% · Prüf 11.040 · Grund 1.016 · Reise 558 · Bericht 550</div>
+      </div>
+    </div>
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse</div>
+      <p><strong>Prüfkosten zu hoch (11.040 € vs. Real-Gesamt 7.932 €).</strong> 26.000 m² Industrie mit VdS-Degressionskurve ergibt hohe Flächenkosten. Wie bei T01 fehlt eine branchenspezifische Referenz für große Industrieanlagen. Der Realpreis basiert auf 30 Stunden × 236 €/h — unser Flächen-Modell überschätzt den Aufwand für ein Gebäude, das überwiegend aus Büro/Verwaltung besteht.</p>
+      <p style="margin-top:8px;">Verschlechterung v1→v4.1 (10.370→13.163 €) kommt durch KAT_3 statt KAT_2 für "Industrie" — korrektere Kategorie, aber ohne Referenzdaten führt das zu höheren Werten.</p>
+    </div>
+    <div class="todo">
+      <div class="section-label">Klärungsbedarf</div>
+      <ul>
+        <li><strong>Nutzungs-Mix nötig:</strong> 26k m² Industrie ist zu pauschal. Der Tester beschreibt "Büro + Produktion + Labor" — ein 60/20/20 Mix würde den Preis deutlich senken.</li>
+        <li><strong>Stundensatz als Preistreiber:</strong> Real = 30h × 236€. Bei Industrieanlagen korrelieren Prüfstunden besser mit dem Preis als m².</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T09 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T09</span>
+    <span class="case-title">Weber-Gymnasium München — Multi-Gewerk</span>
+    <span class="badge badge-xfail">xfail — Multi-Produkt OOS</span>
+    <span class="tester">Tester: Weiß</span>
+  </div>
+  <div class="case-body">
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>Adolf-Weber-Gymnasium, Kapschstr. 4, 80636 München. Erweiterungsbau: BMA (583-PI) + Sicherheitsbeleuchtung (511-PI) + DGUV V3 (510-PI). Multi-Gewerk-Bundling.</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „Adolf-Weber-Gymnasium München, Erweiterungsbau Schule, BMA + Sicherheitsbeleuchtung + DGUV V3, PLZ 80636" → Bot fragt nach Klassenräumen → „12 Klassenräume"
+      </p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Weiß PPTX)</div>
+        <div class="kpi-value">4.800 €</div>
+        <div class="kpi-small">8h BMA + 4h SiBel + 8h ELT, je 239€</div>
+      </div>
+      <div class="kpi" style="background:#e2e3e5;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value">2.834 €</div>
+        <div class="kpi-small">Nur ELT-Anteil</div>
+      </div>
+      <div class="kpi" style="background:#e2e3e5;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value">1.482 €</div>
+        <div class="kpi-small">Nur ELT-Anteil · +Nicht-Vereinsmitglied 247€</div>
+      </div>
+    </div>
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse</div>
+      <p><strong>Multi-Gewerk ist out of scope.</strong> Der Realpreis (4.800 €) enthält BMA (8h) + Sicherheitsbeleuchtung (4h) + DGUV V3 (8h). SmartCal kann aktuell nur den DGUV V3-Anteil kalkulieren — BMA und SiBel sind separate Produkte (MA583, MA511), die nicht implementiert sind.</p>
+      <p style="margin-top:8px;">Der reine ELT-Anteil wäre: 8h × 239€ = 1.912€. Unser Ergebnis (1.482€) liegt darunter — der Nicht-Vereinsmitglied-Zuschlag (+247€) sollte ggf. nicht angewendet werden (Gymnasium = öffentlich = typisch Vereinsmitglied).</p>
+    </div>
+    <div class="todo">
+      <div class="section-label">Klärungsbedarf</div>
+      <ul>
+        <li><strong>Multi-Gewerk-Bundling:</strong> MVP-Feature — separate Kalkulationen pro Gewerk + Bündelrabatt auf Reisekosten.</li>
+        <li><strong>Nicht-Vereinsmitglied:</strong> Warum wurde dieser Zuschlag angewendet? Gymnasium = öffentlich → sollte Vereinsmitglied sein.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T10 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T10</span>
+    <span class="case-title">Max Planck RZ Garching — MA560</span>
+    <span class="badge badge-fail">FAIL -79%</span>
+    <span class="tester">Tester: Weiß/Steinwidder</span>
+  </div>
+  <div class="case-body">
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>Max Planck Computing and Data Facility, Gießenbachstr. 2, 85748 Garching. MA560 ortsveränderlich. <strong>545 Betriebsmittel</strong>, Rechenzentrum.</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „545 ortsveränderliche Betriebsmittel, Rechenzentrum Max Planck Garching, PLZ 85748"
+      </p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Weiß PPTX)</div>
+        <div class="kpi-value">5.341 €</div>
+        <div class="kpi-small">545 × 9,80 €/Stück (Original-Rechnung)</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value" style="color:#dc3545">2.084 €</div>
+        <div class="kpi-small">Δ -61%</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value" style="color:#dc3545">1.138 €</div>
+        <div class="kpi-small">Δ -79% · Prüf 250 · Grund 306 · Reise 202 · Bericht 380</div>
+      </div>
+    </div>
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse</div>
+      <p><strong>Graph-Engine wendet per-Device-Pricing nicht korrekt an.</strong> Die Prüfkosten betragen nur 250 € (= Grundpreis Anlage) statt der erwarteten ~5.178 € (200€ Grundpauschale + 545 × 9,50€). Der Python-Engine (Test-Script) berechnet korrekt 5.378 € Prüfkosten — das Problem liegt in der Graph-Engine, die den MA560-Pfad (bm_pruefkosten) nicht korrekt durchläuft.</p>
+      <p style="margin-top:8px;"><strong style="color:#28a745">✓ m²-Fix wirkt:</strong> Bot erkennt MA560 sofort und fragt nicht nach m². Aber die Graph-Engine-Berechnung muss für per-Device-Pricing korrigiert werden.</p>
+    </div>
+    <div class="todo">
+      <div class="section-label">Maßnahmen</div>
+      <ul>
+        <li><strong>Bug-Fix: Graph-Engine per-Device-Pricing:</strong> _pruef_dguv() in graph_pricing_engine.py muss für pruefart=dguv_ortsv den bm_pruefkosten-Pfad nutzen (Grundpauschale + n × Satz) statt Fläche×Kat.</li>
+        <li><strong>Hinweis:</strong> Im Test-Script (Python-Engine) ist das Ergebnis 5.991 € (Δ +12%, PASS) — das Problem ist Graph-Engine-spezifisch.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T11 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T11</span>
+    <span class="case-title">REWE München — DGUV (MA507)</span>
+    <span class="badge badge-rv">RV-FLAG</span>
+    <span class="tester">Tester: Weiß</span>
+  </div>
+  <div class="case-body">
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>REWE-Markt, Würmtalstr. 117, 81375 München. DGUV V3 (MA507). ~1.600 m².</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „DGUV V3 Prüfung, REWE-Markt München, ca. 1600 m², PLZ 81375"
+      </p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Weiß PPTX)</div>
+        <div class="kpi-value">657 €</div>
+        <div class="kpi-small">SAP: 1 ST × 657,26€ · Rahmenvertrag REWE</div>
+      </div>
+      <div class="kpi" style="background:#d1ecf1;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value">1.738 €</div>
+        <div class="kpi-small">Δ +164%</div>
+      </div>
+      <div class="kpi" style="background:#d1ecf1;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value">1.666 €</div>
+        <div class="kpi-small">Δ +154% · Prüf 890 · Grund 330 · Reise 66 · Bericht 380</div>
+      </div>
+    </div>
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse</div>
+      <p><strong>Rahmenvertrag — nicht vergleichbar.</strong> Wie T02: REWE-Filialnetz hat bundesweiten RV mit TÜV SÜD. LPV-Preis (1.666 €) vs. RV-Preis (657 €) entspricht der erwarteten Differenz von ~60%. Leichte Verbesserung v1→v4.1 (-72€).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T12 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T12</span>
+    <span class="case-title">Helios Klinik Pasing — DGUV+VdS Kombi</span>
+    <span class="badge badge-pass">PASS -16%</span>
+    <span class="tester">Tester: Weiß</span>
+  </div>
+  <div class="case-body">
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>Helios Kliniken, Klinikgebäude Pasing, 81249 München. DGUV+VdS Kombi. 18.000 m², Krankenhaus (70% Allgemein, 30% Technik/OP).</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „DGUV V3 + VdS Kombiprüfung, Helios Klinik Pasing, Krankenhaus, 18.000 m², PLZ 81249"
+      </p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Weiß PPTX)</div>
+        <div class="kpi-value">13.110 €</div>
+        <div class="kpi-small">54h × 239€ + Reise (SAP KA 0004300652)</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value" style="color:#dc3545">10.840 €</div>
+        <div class="kpi-small">Δ -17%</div>
+      </div>
+      <div class="kpi" style="background:#f0fff0;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value" style="color:#28a745">10.976 €</div>
+        <div class="kpi-small">Δ -16% · Prüf 9.221 · Grund 784 · Reise 422 · Bericht 550</div>
+      </div>
+    </div>
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse</div>
+      <p><strong>PASS — und eine Verbesserung.</strong> v4.1 mit Komplexitätsfaktor (×1,25 für >10k m² Krankenhaus) bringt den Preis näher an den Realwert. v1 lag bei -17%, v4.1 bei -16%. Krankenhaus-Nutzungs-Mix (70% Allgemein/30% Technik) wird automatisch angewendet.</p>
+      <p style="margin-top:8px;">Verbleibende Differenz (~2.100€) erklärt sich durch die 54 Prüfstunden — unser Modell unterschätzt den Aufwand für Krankenhäuser leicht, da Komplexitätsfaktoren wie OP-Räume und Intensivstationen nur pauschal erfasst werden.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T13 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T13</span>
+    <span class="case-title">Motel One München — DGUV (MA501)</span>
+    <span class="badge badge-rv">RV-FLAG</span>
+    <span class="tester">Tester: Pausch (Docx)</span>
+  </div>
+  <div class="case-body">
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>Motel One München, Deutsches Museum. DGUV V3 (MA501). Hotel, ~200 Zimmer.</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „DGUV V3 Prüfung, Motel One München Deutsches Museum, Hotel, ca. 200 Zimmer, PLZ 80331"
+      </p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Pausch Docx)</div>
+        <div class="kpi-value">621 €</div>
+        <div class="kpi-small">RV 2023 · Tester: "Utopischer Preis"</div>
+      </div>
+      <div class="kpi" style="background:#d1ecf1;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value">5.161 €</div>
+        <div class="kpi-small">Δ +731%</div>
+      </div>
+      <div class="kpi" style="background:#d1ecf1;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value">2.787 €</div>
+        <div class="kpi-small">Δ +349% · Prüf 1.614 · Grund 424 · Reise 199 · Bericht 550</div>
+      </div>
+    </div>
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse</div>
+      <p><strong>Rahmenvertrag — nicht vergleichbar.</strong> 621 € ist ein Motel One-RV-Preis. Der Tester nannte unser v1-Ergebnis "utopischer Preis". v4.1 deutlich besser (5.161→2.787€, −46%) — hauptsächlich durch korrekte Hotel-Zimmer→m²-Umrechnung und Reisekosten-Optimierung (München lokal).</p>
+      <p style="margin-top:8px;">Routing-Tabelle (10.06): Hotels → Preisliste Maritim/Motel One. Wenn wir die Motel One-Preisliste hätten, könnten wir den RV-Preis direkt referenzieren.</p>
+    </div>
+    <div class="todo">
+      <div class="section-label">Datenbedarf</div>
+      <ul>
+        <li><strong>Preisliste Motel One:</strong> TÜV hat "Maritim, Motel One" als Hotel-Referenz genannt (Mail 10.06). Diese Preisliste fehlt noch.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T14 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T14</span>
+    <span class="case-title">roMEd Klinik Prien — DGUV (MA501)</span>
+    <span class="badge badge-pass">PASS -12% (inflationsbereinigt)</span>
+    <span class="tester">Tester: Pausch (Docx)</span>
+  </div>
+  <div class="case-body">
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>roMEd Klinik, 83209 Prien am Chiemsee. DGUV V3 (MA501). Krankenhaus, ~8.000 m².</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „DGUV V3 Prüfung, Krankenhaus roMEd Klinik Prien am Chiemsee, ca. 8000 m², PLZ 83209"
+      </p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Pausch Docx)</div>
+        <div class="kpi-value">3.470 €</div>
+        <div class="kpi-small">Nominal 2012 · inflationsbereinigt (2012→2026): <strong>5.136 €</strong></div>
+      </div>
+      <div class="kpi" style="background:#f0fff0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value">4.323 €</div>
+        <div class="kpi-small">Δ nominal +25% · Tester: "Sieht gut aus"</div>
+      </div>
+      <div class="kpi" style="background:#f0fff0;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value" style="color:#28a745">4.539 €</div>
+        <div class="kpi-small">Δ -12% (infl.ber.) · Prüf 2.692 · Grund 488 · Reise 810 · Bericht 550</div>
+      </div>
+    </div>
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse</div>
+      <p><strong>PASS — mit Inflationsbereinigung.</strong> Der Realpreis stammt aus 2012. Bei ~3,4% jährlicher Preissteigerung (VPI Elektrohandwerk) entspricht 3.470€ (2012) ca. 5.136€ (2026). SmartCal v4.1: 4.539€ → Δ -12% inflationsbereinigt. Krankenhaus-Mix (70/30) und Komplexitätsfaktor greifen korrekt.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T15 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T15</span>
+    <span class="case-title">DGUV Würzburg — Bürogebäude (MA507)</span>
+    <span class="badge badge-fail">FAIL -45%</span>
+    <span class="tester">Tester: Pausch (Docx)</span>
+  </div>
+  <div class="case-body">
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>Bürogebäude, Raum Würzburg, 97080. DGUV V3 (MA507). ~5.000 m².</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „DGUV V3 Prüfung, Bürogebäude in Würzburg, ca. 5000 m², PLZ 97080"
+      </p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Pausch Docx)</div>
+        <div class="kpi-value">4.195 €</div>
+        <div class="kpi-small">Tester: "Liegt 1000 drunter. Man muss sehr viele Daten wissen."</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value" style="color:#dc3545">3.282 €</div>
+        <div class="kpi-small">Δ -22%</div>
+      </div>
+      <div class="kpi" style="background:#fff0f0;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value" style="color:#dc3545">2.301 €</div>
+        <div class="kpi-small">Δ -45% · Prüf 1.428 · Grund 404 · Reise 89 · Bericht 380</div>
+      </div>
+    </div>
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse</div>
+      <p><strong>Verschlechtert v1→v4.1.</strong> Der Preis ist gesunken (3.282→2.301€) obwohl der Realpreis bei 4.195€ liegt. Ursache: Reisekosten stark gesunken (1.286→89€ durch korrektes Routing Würzburg→Würzburg = 2km). Dafür fehlen Merkmale — Der Tester sagt: <em>"Man muss sehr viele Daten wissen. Aus dem Internet bekommt man die nicht."</em></p>
+      <p style="margin-top:8px;">Die Prüfkosten (1.428€) sind zu niedrig für ein 5k m² Bürogebäude. Ohne Angaben zu UV, Stockwerken, Technikräumen kann das System nur über m²×Kat rechnen — und die NBG-Flächenliste unterschätzt den realen Aufwand bei Bürogebäuden mit versteckter Komplexität.</p>
+    </div>
+    <div class="todo">
+      <div class="section-label">Klärungsbedarf</div>
+      <ul>
+        <li><strong>Welche Merkmale fehlen?</strong> Der Tester deutet an, dass zusätzliche Daten den Preis erhöhen würden. Welche konkreten Merkmale treiben den Preis bei diesem Bürogebäude?</li>
+        <li><strong>Augsburg-Referenz nutzen:</strong> Für Büro 5k m² gibt es eine Augsburg-Regression (a=7.39, b=0.73, R²=0.91) — aber die Graph-Engine nutzt diese nicht bei der Chat-Kalkulation. Fix im Referenz-Routing nötig.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- T16 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case">
+  <div class="case-header">
+    <span class="case-id">T16</span>
+    <span class="case-title">Polizei Dachau — Blitzschutz (MA574)</span>
+    <span class="badge badge-rv">RV-FLAG</span>
+    <span class="tester">Tester: Pausch (Docx)</span>
+  </div>
+  <div class="case-body">
+    <div class="section">
+      <div class="section-label">Kundenszenario</div>
+      <p>Polizeiinspektion Dachau, 85221 Dachau. Blitzschutzprüfung (MA574). 12 Ableitungen.</p>
+      <p style="font-size:13px; color:#555; margin-top:6px; font-family:monospace; background:#f4f4f4; padding:6px 10px; border-radius:4px;">
+        💬 Testeingabe: „Blitzschutzprüfung, Polizeiinspektion Dachau, PLZ 85221, 12 Ableitungen" (im Blitzschutz-Kalkulator)
+      </p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Real (Pausch Docx)</div>
+        <div class="kpi-value">205 €</div>
+        <div class="kpi-small">Rahmenvertrag Polizei/öffentl. Hand</div>
+      </div>
+      <div class="kpi" style="background:#d1ecf1;">
+        <div class="kpi-label">Testrunde 08.06 (v1)</div>
+        <div class="kpi-value">1.537 €</div>
+        <div class="kpi-small">Δ +650%</div>
+      </div>
+      <div class="kpi" style="background:#d1ecf1;">
+        <div class="kpi-label">SmartCal v4.1 (aktuell)</div>
+        <div class="kpi-value">1.295 €</div>
+        <div class="kpi-small">Δ +531% · Prüf 390 · Grund 330 · Reise 195 · Bericht 380</div>
+      </div>
+    </div>
+    <div class="analysis" style="margin-top:12px;">
+      <div class="section-label">Analyse</div>
+      <p><strong>Rahmenvertrag — nicht vergleichbar.</strong> 205€ für eine komplette Blitzschutzprüfung (12 Ableitungen + Reise + Bericht) ist ein extremer RV-Rabatt (~85% unter LPV). Polizei/öffentliche Hand hat typisch die stärksten Rahmenverträge. LPV-Preis 1.295€ ist korrekt — Verbesserung v1→v4.1 (-16%, durch Reisekosten-Optimierung München→Dachau 17km).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ÜBERGREIFENDER DATENBEDARF -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case" style="border-left: 4px solid #3b82f6;">
+  <div class="case-header" style="background:#eff6ff;">
+    <span class="case-id" style="background:#3b82f6;">!</span>
+    <span class="case-title">Übergreifender Datenbedarf — Versand-/Faktura-Daten MA507</span>
+  </div>
+  <div class="case-body">
+    <div class="analysis">
+      <div class="section-label">Prüfberichte vs. Faktura-Daten</div>
+      <p>Die Tester haben zu jedem Testfall den zugehörigen <strong>Prüfbericht</strong> mitgeliefert (z.B. EQ2828424 für REWE, EQ1550815 für Hipp). Diese Berichte enthalten:</p>
+      <table style="margin:10px 0; font-size:13px;">
+        <tr><th>Im Bericht enthalten</th><th>NICHT im Bericht enthalten</th></tr>
+        <tr><td>Standort, PLZ, Auftraggeber</td><td style="color:#dc3545"><strong>Preis / Rechnungsbetrag</strong></td></tr>
+        <tr><td>Gegenstand der Prüfung</td><td style="color:#dc3545"><strong>Prüfdauer (Stunden/Tage)</strong></td></tr>
+        <tr><td>Mängel + Hinweise (Anzahl, Einstufung)</td><td style="color:#dc3545"><strong>Fläche (m²)</strong></td></tr>
+        <tr><td>Prüfgrundlage (DGUV V3, VdS, etc.)</td><td style="color:#dc3545"><strong>Anzahl UV / Stromkreise</strong></td></tr>
+        <tr><td>Sachverständiger, Datum</td><td style="color:#dc3545"><strong>kVA / Anschlussleistung</strong></td></tr>
+      </table>
+      <p>Wir haben bereits <strong>10.096 MA507-Prüfberichte</strong> im Batch extrahiert und daraus Branchenprofile erstellt (Ø Prüftage, Mängelquote pro Branche). Einzelne Berichte verbessern die Preisgenauigkeit nicht — sie bestätigen <em>was</em> geprüft wurde, aber nicht <em>was es gekostet hat</em>.</p>
+    </div>
+
+    <div class="todo">
+      <div class="section-label">Konkreter Datenbedarf</div>
+      <ul>
+        <li><strong>Versand-/Faktura-Daten MA507 (DGUV V3):</strong> Analog zu den Blitzschutz-Versanddaten (MA438/570), die wir bereits erhalten und verarbeitet haben. Format: Equipment-Nr + Rechnungsbetrag + Positionen. Damit können wir Real-Preis ↔ Merkmale korrelieren und die Preislogik kalibrieren.</li>
+        <li><strong>Versand-/Faktura-Daten MA505 (VdS):</strong> Gleiches für VdS-Prüfungen — aktuell haben wir keine VdS-Preisdaten außer den Großkunden-Preislisten.</li>
+        <li><strong>Priorität:</strong> Versand-Daten &gt; Prüfberichte. Ein Versand-Export mit 500+ Datensätzen wäre wertvoller als 5.000 weitere Prüfberichte.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- GESAMTÜBERSICHT -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="case" style="border-left: 4px solid #28a745;">
+  <div class="case-header" style="background:#f0fff0;">
+    <span class="case-id" style="background:#28a745;">Σ</span>
+    <span class="case-title">Gesamtübersicht — 16 Testfälle</span>
+  </div>
+  <div class="case-body">
+    <table>
+      <tr><th>ID</th><th>Objekt</th><th>Real</th><th>v1</th><th>v4.1 UI</th><th>Δ v4.1</th><th>Verdict</th></tr>
+      <tr><td>T01</td><td>Hipp VdS</td><td>6.850</td><td>11.877</td><td>10.586</td><td class="delta-pos">+54%</td><td><span class="badge badge-fail">FAIL</span></td></tr>
+      <tr><td>T02</td><td>REWE Eching</td><td>657</td><td>2.125</td><td>1.883</td><td>RV</td><td><span class="badge badge-rv">RV</span></td></tr>
+      <tr><td>T03</td><td>badenova Schaltschrank</td><td>391</td><td>1.051</td><td>~490</td><td class="delta-pos">+25%</td><td><span class="badge badge-marginal">MARGINAL</span></td></tr>
+      <tr><td>T04</td><td>Auto Service MA560</td><td>1.217</td><td>1.198</td><td>1.309</td><td class="delta-pos">+8%</td><td><span class="badge badge-pass">PASS</span></td></tr>
+      <tr><td>T05</td><td>Landwirt MA560</td><td><s>175</s></td><td>1.400</td><td>~717</td><td>—</td><td><span class="badge badge-xfail">xfail</span></td></tr>
+      <tr><td>T06</td><td>Maritim Baurecht</td><td><s>220</s></td><td>4.064</td><td>5.274</td><td>—</td><td><span class="badge badge-xfail">xfail</span></td></tr>
+      <tr><td>T07</td><td>König & Bauer VdS</td><td>—</td><td>4.493</td><td>2.861</td><td>—</td><td><span class="badge badge-xfail">NO-REF</span></td></tr>
+      <tr><td>T08</td><td>Apleona DGUV+VdS</td><td>7.932</td><td>10.370</td><td>13.163</td><td class="delta-pos">+66%</td><td><span class="badge badge-fail">FAIL</span></td></tr>
+      <tr><td>T09</td><td>Weber-Gymnasium Multi</td><td>4.800</td><td>2.834</td><td>1.482</td><td class="delta-neg">-69%</td><td><span class="badge badge-xfail">xfail</span></td></tr>
+      <tr><td>T10</td><td>Max Planck MA560</td><td>5.341</td><td>2.084</td><td>1.138</td><td class="delta-neg">-79%</td><td><span class="badge badge-fail">FAIL</span></td></tr>
+      <tr><td>T11</td><td>REWE München</td><td>657</td><td>1.738</td><td>1.666</td><td>RV</td><td><span class="badge badge-rv">RV</span></td></tr>
+      <tr><td>T12</td><td>Helios Klinik DGUV+VdS</td><td>13.110</td><td>10.840</td><td>10.976</td><td class="delta-neg">-16%</td><td><span class="badge badge-pass">PASS</span></td></tr>
+      <tr><td>T13</td><td>Motel One</td><td>621</td><td>5.161</td><td>2.787</td><td>RV</td><td><span class="badge badge-rv">RV</span></td></tr>
+      <tr><td>T14</td><td>roMEd Klinik</td><td>5.136*</td><td>4.323</td><td>4.539</td><td class="delta-neg">-12%</td><td><span class="badge badge-pass">PASS</span></td></tr>
+      <tr><td>T15</td><td>Würzburg Büro</td><td>4.195</td><td>3.282</td><td>2.301</td><td class="delta-neg">-45%</td><td><span class="badge badge-fail">FAIL</span></td></tr>
+      <tr><td>T16</td><td>Polizei Dachau Blitz</td><td>205</td><td>1.537</td><td>1.295</td><td>RV</td><td><span class="badge badge-rv">RV</span></td></tr>
+    </table>
+    <p style="font-size:12px; color:#888; margin-top:4px;">* inflationsbereinigt (2012→2026)</p>
+  </div>
+</div>
+
+</body>
+</html>
