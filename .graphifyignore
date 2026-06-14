@@ -1,0 +1,28 @@
+# --- Artefakte / Junk (nie in den Knowledge Graph) ---
+*.png
+*.html
+.playwright-mcp/
+*.log
+node_modules/
+.next/
+venv/
+.venv/
+__pycache__/
+.pytest_cache/
+.cache/
+graphify-out/
+e2e_report/
+
+# --- Backups: veraltete Snapshots, würden den Graph mit stale Konzepten fluten ---
+backend/backups/
+backend/engine_backup_20260530/
+backend/products/dguv_v3_backup_20260530/
+backend/tests_backup_20260530/
+
+# --- Binäre Input-Files (Pass 1: nur Markdown + Code; Excel/PDF später gezielt) ---
+input-files/**/*.xlsx
+input-files/**/*.xlsm
+input-files/**/*.pdf
+input-files/**/*.docx
+input-files/**/*.msg
+input-files/**/*.zip

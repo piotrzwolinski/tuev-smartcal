@@ -26,3 +26,11 @@ input-files/
 
 # Claude internal
 .claude/
+
+# Graphify — commit queryable core (graph.json, report, manifest);
+# ignore bulky/regenerable artifacts
+graphify-out/obsidian/
+graphify-out/graph.html
+graphify-out/cache/
+graphify-out/cost.json
+graphify-out/.graphify_*
