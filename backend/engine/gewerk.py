@@ -71,6 +71,7 @@ class Angebot:
     warnings: list[str] = field(default_factory=list)
     referenzpreis: dict | None = None
     zusatzleistungen: list[dict] = field(default_factory=list)
+    provenance: list[dict] = field(default_factory=list)  # Trace-Schritte (Synapse §3)
 
     def to_dict(self) -> dict:
         return {
@@ -92,6 +93,7 @@ class Angebot:
             "warnings": self.warnings,
             "referenzpreis": self.referenzpreis,
             "zusatzleistungen": self.zusatzleistungen,
+            "provenance": self.provenance,
         }
 
 

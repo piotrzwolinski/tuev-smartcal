@@ -12,6 +12,7 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 from engine.gewerk import Gewerk, Angebot, Breakdown, ZuschlagApplied
+from common.trace import Trace, emit
 from common.pricing_primitives import (
     grundkosten_pauschal,
     PRUEFMITTEL_PRO_TAG_SV,
@@ -33,7 +34,14 @@ class PricingEngine:
 
     # ─────────────────────────────────────────────────────────
     def calculate(self, gewerk: Gewerk, merkmale: BaseModel) -> Angebot:
-        """Main entry point — returns complete Angebot."""
+        """Main entry point — sammelt den Trace (Synapse §3) und hängt ihn ans Angebot."""
+        with Trace() as t:
+            angebot = self._calculate(gewerk, merkmale)
+            angebot.provenance = t.steps
+            return angebot
+
+    def _calculate(self, gewerk: Gewerk, merkmale: BaseModel) -> Angebot:
+        """Berechnung — emittiert Trace-Schritte an den aktiven Kontext (von calculate gesetzt)."""
 
         # Walidacja schema
         if not isinstance(merkmale, gewerk.merkmale_schema):
@@ -46,18 +54,24 @@ class PricingEngine:
 
         # 1. Grundkosten (Pauschale + Prüfmittel × Prüftage + Tagegeld)
         pruef_tage = gewerk.estimate_pruef_tage(merkmale)
+        emit("prueftage", "Geschätzte Prüftage", f"{pruef_tage} Tage", "PRUEFTAGE", "Heuristik")
         g_override = getattr(gewerk, "grundkosten_override", lambda m: None)(merkmale)
         if g_override is not None:
             breakdown.grund = g_override
+            emit("grundkosten", "Grundkosten (Gewerk-Override)", round(g_override, 2), "GRUND_OVERRIDE", "Gewerk-spezifisch")
         else:
             include_ordnung = getattr(merkmale, "baurechtlich", False)
-            breakdown.grund = (
-                grundkosten_pauschal(include_ordnungspruefung=include_ordnung)
-                + PRUEFMITTEL_PRO_TAG_SV * pruef_tage
-                + tagegeld(pruef_tage * 8)  # 8h per Prüftag jako upraszczenie
-            )
+            pauschale = grundkosten_pauschal(include_ordnungspruefung=include_ordnung)
+            pruefmittel = PRUEFMITTEL_PRO_TAG_SV * pruef_tage
+            tg = tagegeld(pruef_tage * 8)  # 8h per Prüftag jako upraszczenie
+            breakdown.grund = pauschale + pruefmittel + tg
+            emit("grundkosten", "Grundpauschale Auftrag" + (" + Ordnungsprüfung" if include_ordnung else ""),
+                 round(pauschale, 2), "GRUND_PAUSCHALE", "LPV Teil A §4")
+            emit("grundkosten", f"Prüfmittel {PRUEFMITTEL_PRO_TAG_SV}€ × {pruef_tage} Tage",
+                 round(pruefmittel, 2), "GRUND_PRUEFMITTEL", "LPV Teil A §4: je Prüftag")
+            emit("grundkosten", f"Tagegeld (8h/Tag × {pruef_tage} Tage)", round(tg, 2), "TAGEGELD", "LPV Teil A §4.3")
 
-        # 2. Prüfkosten (per-Gewerk logic)
+        # 2. Prüfkosten (per-Gewerk logic — emittiert eigene Schritte via pricing_rules)
         breakdown.pruef = gewerk.pruefkosten(merkmale)
 
         # 3. Reisekosten (if Anlage address available)
@@ -82,10 +96,16 @@ class PricingEngine:
             reisezeit_charged = reisezeit_h
             if pruef_tage < 1.0:
                 reisezeit_charged = reisezeit_h * pruef_tage
-            breakdown.reise = (
-                kilometergeld(km_roundtrip * anzahl_anfahrten, vehicle="pkw")
-                + reisezeit_charged * anzahl_anfahrten * stundensatz(self.default_reisezeit_stundensatz)
-            )
+            km_kosten = kilometergeld(km_roundtrip * anzahl_anfahrten, vehicle="pkw")
+            zeit_kosten = reisezeit_charged * anzahl_anfahrten * stundensatz(self.default_reisezeit_stundensatz)
+            breakdown.reise = km_kosten + zeit_kosten
+            emit("reisekosten", f"Standort {standort['name']} — {km_one_way:.0f} km einfach, {anzahl_anfahrten} Anfahrt(en)",
+                 f"{km_roundtrip * anzahl_anfahrten:.0f} km gesamt", standort.get("crm_nl", "STANDORT"),
+                 "CRM PLZ→NL · " + routing)
+            emit("reisekosten", f"Kilometergeld {km_roundtrip * anzahl_anfahrten:.0f} km × 1,1€/km",
+                 round(km_kosten, 2), "RK_PKW", "LPV Teil A §4.3")
+            emit("reisekosten", f"Reisezeit {reisezeit_charged:.1f}h × {anzahl_anfahrten} Anfahrt(en)",
+                 round(zeit_kosten, 2), "RK_ZEIT", "LPV Teil A §4.3: Stundensatz")
             zuordnung = standort.get("zuordnung", "nearest")
             if km_one_way > 0:
                 label = "Zuständiger TÜV-Standort" if zuordnung == "crm" else "Nächster TÜV-Standort"
@@ -106,9 +126,12 @@ class PricingEngine:
         bericht_typ_str = gewerk.choose_bericht_typ(merkmale)
         if bericht_typ_str == "inklusive":
             breakdown.bericht = 0
+            emit("bericht", "Bericht inklusive (Kleinauftrag / ortsveränderlich)", 0.0, "BER_INKLUSIVE", "LPV")
         else:
             bericht_typ = BerichtTyp(bericht_typ_str)
             breakdown.bericht = berichtskosten(bericht_typ)
+            emit("bericht", f"Berichtstyp {bericht_typ_str}", round(breakdown.bericht, 2),
+                 f"BER_{bericht_typ_str.upper()}", "LPV: Klein 119 / Standard 380 / Komplex 550")
 
         # 5. Zuschläge (per-Gewerk + shared)
         subtotal = breakdown.subtotal
