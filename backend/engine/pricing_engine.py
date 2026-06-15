@@ -133,8 +133,12 @@ class PricingEngine:
             emit("bericht", f"Berichtstyp {bericht_typ_str}", round(breakdown.bericht, 2),
                  f"BER_{bericht_typ_str.upper()}", "LPV: Klein 119 / Standard 380 / Komplex 550")
 
-        # 5. Zuschläge (per-Gewerk + shared)
-        subtotal = breakdown.subtotal
+        # 4b. Zusatzleistungen (PV / Ladesäulen — per-Gewerk Addon-Hook)
+        zusatzleistungen = gewerk.zusatzleistungen(merkmale)
+        addon_total = sum(z["preis"] for z in zusatzleistungen)
+
+        # 5. Zuschläge (per-Gewerk + shared) — auf subtotal inkl. Addons
+        subtotal = breakdown.subtotal + addon_total
         zuschlaege_applied: list[ZuschlagApplied] = []
         total = subtotal
         for (name, percent) in gewerk.zuschlaege(merkmale):
@@ -150,6 +154,7 @@ class PricingEngine:
         return Angebot(
             gewerk=gewerk.name,
             total=total,
+            zusatzleistungen=zusatzleistungen,
             breakdown=breakdown,
             zuschlaege=zuschlaege_applied,
             confidence=confidence,

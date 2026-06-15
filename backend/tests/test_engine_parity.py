@@ -38,9 +38,10 @@ def _graph_loaded():
     yield
 
 
-# Heute divergierende Fälle (Konsolidierungs-Arbeitsliste). xfail(strict): sobald ein
-# Fall durch die Konsolidierung Parität erreicht → XPASS → Test rot → Marker hier entfernen.
-DIVERGING = {"T03", "T04", "T05", "T08", "T09", "T10", "T12", "T15"}
+# Nach Konsolidierung (GraphPricingEngine → Adapter auf PricingEngine) ist die
+# Divergenz beseitigt — alle Fälle erreichen Parität. (Historie: vor Phase 4
+# divergierten T03/04/05/08/09/10/12/15 = MA560/Kleinauftrag/Referenz/Kombi.)
+DIVERGING: set[str] = set()
 
 _PARAMS = [
     pytest.param(

@@ -147,6 +147,10 @@ class Gewerk(ABC):
         """Zuschläge (name, percent). Default: none."""
         return []
 
+    def zusatzleistungen(self, merkmale: BaseModel) -> list[dict]:
+        """Addon-Positionen (PV, Ladesäulen, ...). Default: keine."""
+        return []
+
     def validate_ranges(self, merkmale: BaseModel) -> tuple[float, str]:
         """Confidence [0,1] + reason. Default: always confident."""
         return 1.0, ""
