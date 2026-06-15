@@ -17,6 +17,47 @@ from common.pricing_primitives import (
     ZUSCHLAG_ERSTPRUEFUNG,
 )
 from common.graph_reader import get_reader
+from common.trace import emit
+
+
+def _apply_faktoren(m: "DGUVMerkmale", cost: float) -> float:
+    """Multiplikative Faktoren (Reifegrad · Komplexität · Vollerfassung) anwenden
+    UND je Faktor den Euro-Delta in den Trace emittieren (additiv → Schritte summieren
+    sich zur Endsumme). Arithmetik identisch zur alten Inline-Version."""
+    rg = _g_reifegrad(m.reifegrad)
+    if rg != 1.0:
+        emit("pruefkosten", f"Reifegrad {m.reifegrad.name}: ×{rg}", round(cost * (rg - 1), 2),
+             "REIFEGRAD", "S. Veit Mail 30.05 Punkt 7")
+        cost *= rg
+    komplex = _g_komplexitaet(m.nutzung, _flaeche(m))
+    if komplex != 1.0:
+        emit("pruefkosten", f"Komplexitätsfaktor: ×{komplex} (>10.000m² + komplexe Nutzung)",
+             round(cost * (komplex - 1), 2), "KOMPLEX_FAKTOR", "Kriterien_Preisfindung_EG.docx (S. Pausch)")
+        cost *= komplex
+    if m.vollerfassung:
+        voll = _g_vollerfassung()
+        if voll != 1.0:
+            emit("pruefkosten", f"Vollerfassung 100% Messdaten: ×{voll}", round(cost * (voll - 1), 2),
+                 "VOLLERFASSUNG", "S. Pausch + S. Veit Punkt 6")
+            cost *= voll
+    return cost
+
+
+def _emit_verteilungen_zuschlaege(m: "DGUVMerkmale") -> None:
+    """Trace-Schritte für Verteilungen + Sonderzuschläge (Werte = additive Euro-Beträge)."""
+    if m.anzahl_verteilungen_uv:
+        emit("pruefkosten", f"UV: {m.anzahl_verteilungen_uv} × {PREIS_VERTEILUNG_UV}€",
+             round(m.anzahl_verteilungen_uv * PREIS_VERTEILUNG_UV, 2), "VERT_UV", "Schätzung intern: pro UV")
+    if m.anzahl_verteilungen_hv:
+        emit("pruefkosten", f"HV: {m.anzahl_verteilungen_hv} × {PREIS_VERTEILUNG_HV}€",
+             round(m.anzahl_verteilungen_hv * PREIS_VERTEILUNG_HV, 2), "VERT_HV", "Schätzung intern: pro HV")
+    if m.anzahl_verteilungen_nshv:
+        emit("pruefkosten", f"NSHV: {m.anzahl_verteilungen_nshv} × {PREIS_VERTEILUNG_NSHV}€",
+             round(m.anzahl_verteilungen_nshv * PREIS_VERTEILUNG_NSHV, 2), "VERT_NSHV", "Schätzung intern: pro NSHV")
+    if m.nea_vorhanden:
+        emit("pruefkosten", "Zuschlag NEA (Netzersatzanlage)", ZUSCHLAG_NEA, "ZS_NEA", "Schätzung intern")
+    if m.sv_nshv_vorhanden:
+        emit("pruefkosten", "Zuschlag SV-NSHV", ZUSCHLAG_SV_NSHV, "ZS_SV_NSHV", "Schätzung intern")
 
 
 DGUV_GRUNDPREIS_ANLAGE = 250.00
@@ -372,6 +413,8 @@ def auto_correct_kategorie(nutzung: GebaeudeNutzungDGUV) -> Installationskategor
 def dguv_pruefkosten(m: DGUVMerkmale) -> float:
     """Prüfkosten: Fläche×Kat (ggf. Mix) + Verteilungen + Sonderzuschläge."""
     cost = DGUV_GRUNDPREIS_ANLAGE
+    emit("pruefkosten", "Grundpreis Anlage (DGUV V3)", DGUV_GRUNDPREIS_ANLAGE,
+         "DGUV_V3_ORTSFEST", "LPV B04 Kap. 2: Grundpreis je Anlage")
 
     flaeche = _flaeche(m)
     kurve = _g_degression_kurve("dguv")
@@ -379,26 +422,30 @@ def dguv_pruefkosten(m: DGUVMerkmale) -> float:
         for eintrag in m.nutzungs_mix:
             kat = eintrag.kategorie or resolve_mix_kategorie(eintrag.nutzung)
             rate = _g_kat_preis(kat)
-            cost += flaechenkosten_degressiv(flaeche * eintrag.anteil, rate, kurve)
+            fk = flaechenkosten_degressiv(flaeche * eintrag.anteil, rate, kurve)
+            cost += fk
+            emit("pruefkosten",
+                 f"Fläche {flaeche * eintrag.anteil:.0f}m² ({eintrag.nutzung} {eintrag.anteil*100:.0f}%) × {rate}€/10m² · DGUV-Kurve degressiv",
+                 round(fk, 2), f"KAT_{kat.value}", "Kalkulationshilfen NBG")
     else:
-        rate = _g_kat_preis(m.primary_installationskategorie)
-        cost += flaechenkosten_degressiv(flaeche, rate, kurve)
+        kat = m.primary_installationskategorie
+        rate = _g_kat_preis(kat)
+        fk = flaechenkosten_degressiv(flaeche, rate, kurve)
+        cost += fk
+        emit("pruefkosten",
+             f"Fläche {flaeche:.0f}m² × {rate}€/10m² · DGUV-Kurve degressiv (Kat {kat.value})",
+             round(fk, 2), f"KAT_{kat.value}", "Kalkulationshilfen NBG")
 
     cost += m.anzahl_verteilungen_uv * PREIS_VERTEILUNG_UV
     cost += m.anzahl_verteilungen_hv * PREIS_VERTEILUNG_HV
     cost += m.anzahl_verteilungen_nshv * PREIS_VERTEILUNG_NSHV
-
     if m.nea_vorhanden:
         cost += ZUSCHLAG_NEA
     if m.sv_nshv_vorhanden:
         cost += ZUSCHLAG_SV_NSHV
+    _emit_verteilungen_zuschlaege(m)
 
-    cost *= _g_reifegrad(m.reifegrad)
-    cost *= _g_komplexitaet(m.nutzung, _flaeche(m))
-
-    if m.vollerfassung:
-        cost *= _g_vollerfassung()
-
+    cost = _apply_faktoren(m, cost)
     return round(cost, 2)
 
 
@@ -494,6 +541,8 @@ def dguv_referenzpreis_vergleich(neukalkulation: float, referenz: dict | None) -
 def vds_pruefkosten(m: DGUVMerkmale) -> float:
     """VdS 2871 Prüfkosten: Grundpreis + Fläche×Kat (VdS-Kurve) + Verteilungen + Sonderzuschläge."""
     cost = VDS_GRUNDPREIS_ANLAGE
+    emit("pruefkosten", "Grundpreis Anlage (VdS 2871)", VDS_GRUNDPREIS_ANLAGE,
+         "VDS_2871", "LPV B04 Kap. 2: Grundpreis je Anlage")
     flaeche = _flaeche(m)
     kurve = _g_degression_kurve("vds")
 
@@ -501,25 +550,30 @@ def vds_pruefkosten(m: DGUVMerkmale) -> float:
         for eintrag in m.nutzungs_mix:
             kat = eintrag.kategorie or resolve_mix_kategorie(eintrag.nutzung)
             rate = _g_kat_preis(kat)
-            cost += flaechenkosten_degressiv(flaeche * eintrag.anteil, rate, kurve)
+            fk = flaechenkosten_degressiv(flaeche * eintrag.anteil, rate, kurve)
+            cost += fk
+            emit("pruefkosten",
+                 f"Fläche {flaeche * eintrag.anteil:.0f}m² ({eintrag.nutzung} {eintrag.anteil*100:.0f}%) × {rate}€/10m² · VdS-Kurve degressiv",
+                 round(fk, 2), f"KAT_{kat.value}", "Kalkulationshilfen NBG")
     else:
-        rate = _g_kat_preis(m.primary_installationskategorie)
-        cost += flaechenkosten_degressiv(flaeche, rate, kurve)
+        kat = m.primary_installationskategorie
+        rate = _g_kat_preis(kat)
+        fk = flaechenkosten_degressiv(flaeche, rate, kurve)
+        cost += fk
+        emit("pruefkosten",
+             f"Fläche {flaeche:.0f}m² × {rate}€/10m² · VdS-Kurve degressiv (Kat {kat.value})",
+             round(fk, 2), f"KAT_{kat.value}", "Kalkulationshilfen NBG")
 
     cost += m.anzahl_verteilungen_uv * PREIS_VERTEILUNG_UV
     cost += m.anzahl_verteilungen_hv * PREIS_VERTEILUNG_HV
     cost += m.anzahl_verteilungen_nshv * PREIS_VERTEILUNG_NSHV
-
     if m.nea_vorhanden:
         cost += ZUSCHLAG_NEA
     if m.sv_nshv_vorhanden:
         cost += ZUSCHLAG_SV_NSHV
+    _emit_verteilungen_zuschlaege(m)
 
-    cost *= _g_reifegrad(m.reifegrad)
-    cost *= _g_komplexitaet(m.nutzung, _flaeche(m))
-    if m.vollerfassung:
-        cost *= _g_vollerfassung()
-
+    cost = _apply_faktoren(m, cost)
     return round(cost, 2)
 
 
@@ -533,10 +587,20 @@ def dguv_plus_vds_pruefkosten(m: DGUVMerkmale) -> float:
     ref = lookup_referenzpreis(m.nutzung, _flaeche(m))
     if ref is not None:
         base = ref["pruefkosten"]
-        cost = base * DGUV_VDS_KOMBI_FAKTOR * _g_reifegrad(m.reifegrad)
+        rg = _g_reifegrad(m.reifegrad)
+        cost = base * DGUV_VDS_KOMBI_FAKTOR * rg
+        emit("pruefkosten", "Referenzpreis-Basis (Augsburg/Gersthofen/DEKA)", round(base, 2),
+             "REFERENZ", "S. Pausch 10.06: Referenz vor NBG")
+        emit("pruefkosten", f"DGUV+VdS Kombi: ×{DGUV_VDS_KOMBI_FAKTOR}", round(base * (DGUV_VDS_KOMBI_FAKTOR - 1), 2),
+             "VDS_KOMBI", "6 Großkunden: Kombi = DGUV × 1.20")
+        if rg != 1.0:
+            emit("pruefkosten", f"Reifegrad {m.reifegrad.name}: ×{rg}", round(base * DGUV_VDS_KOMBI_FAKTOR * (rg - 1), 2),
+                 "REIFEGRAD", "S. Veit Mail 30.05 Punkt 7")
     else:
-        base = dguv_pruefkosten(m)
+        base = dguv_pruefkosten(m)  # emittiert DGUV-Schritte (summieren zu base)
         cost = base * DGUV_VDS_KOMBI_FAKTOR
+        emit("pruefkosten", f"DGUV+VdS Kombi: ×{DGUV_VDS_KOMBI_FAKTOR}", round(base * (DGUV_VDS_KOMBI_FAKTOR - 1), 2),
+             "VDS_KOMBI", "6 Großkunden: Kombi = DGUV × 1.20")
     return round(cost, 2)
 
 
@@ -565,6 +629,10 @@ def bm_pruefkosten(m: DGUVMerkmale) -> float:
     if n > staffel_ab and staffel_f != 1.0:
         over = n - staffel_ab
         cost = pauschale + staffel_ab * satz + over * satz * staffel_f
+    emit("pruefkosten", "MA560 Grundpauschale (all-inclusive)", round(pauschale, 2),
+         "BM_PREIS", "Kalibriert aus ZIP-4 / PPT-3 (T04, T10)")
+    emit("pruefkosten", f"{n} Betriebsmittel × {satz}€/Stück", round(cost - pauschale, 2),
+         "BM_PREIS", "Kalibriert aus ZIP-4 / PPT-3 (T04, T10)")
     return round(cost, 2)
 
 
@@ -594,7 +662,11 @@ def kleinauftrag_pruefkosten(m: DGUVMerkmale) -> float:
     total_vert = m.anzahl_verteilungen_uv + m.anzahl_verteilungen_hv + m.anzahl_verteilungen_nshv
     komponenten = max(1, total_vert)
     stunden = p["stunden_pro_k"] * komponenten
-    return round(max(p["min_pauschale"], stunden * p["stundensatz"]), 2)
+    result = round(max(p["min_pauschale"], stunden * p["stundensatz"]), 2)
+    emit("pruefkosten",
+         f"Kleinauftrag: max(Mindestpauschale {p['min_pauschale']}€, {komponenten} Komp. × {p['stunden_pro_k']}h × {p['stundensatz']}€)",
+         result, "KLEINAUFTRAG", "ZIP-3 badenova + EFI-Review")
+    return result
 
 
 def kleinauftrag_grundkosten(m: DGUVMerkmale) -> float:
@@ -652,9 +724,19 @@ def dispatch_pruefkosten(m: DGUVMerkmale) -> float:
     from products.dguv_v3.referenzpreise import lookup_referenzpreis
     ref = lookup_referenzpreis(m.nutzung, _flaeche(m))
     if ref is not None:
-        cost = ref["pruefkosten"] * _g_reifegrad(m.reifegrad)
+        base = ref["pruefkosten"]
+        rg = _g_reifegrad(m.reifegrad)
+        cost = base * rg
+        emit("pruefkosten", "Referenzpreis (Augsburg/Gersthofen/DEKA)", round(base, 2),
+             "REFERENZ", "S. Pausch 10.06: Referenz vor NBG (Prio 1)")
+        if rg != 1.0:
+            emit("pruefkosten", f"Reifegrad {m.reifegrad.name}: ×{rg}", round(base * (rg - 1), 2),
+                 "REIFEGRAD", "S. Veit Mail 30.05 Punkt 7")
         if m.vollerfassung:
-            cost *= _g_vollerfassung()
+            voll = _g_vollerfassung()
+            emit("pruefkosten", f"Vollerfassung: ×{voll}", round(cost * (voll - 1), 2),
+                 "VOLLERFASSUNG", "S. Pausch + S. Veit Punkt 6")
+            cost *= voll
         return round(cost, 2)
 
     return dguv_pruefkosten(m)
