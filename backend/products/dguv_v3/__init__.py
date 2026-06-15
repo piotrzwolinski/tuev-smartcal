@@ -59,6 +59,28 @@ class DGUVV3Gewerk(Gewerk):
     def zuschlaege(self, merkmale):
         return dguv_zuschlaege(merkmale)
 
+    def zusatzleistungen(self, merkmale):
+        """PV-Anlagen + Ladesäulen-Addons (portiert aus GraphPricingEngine._calc_dguv_addons,
+        ohne den fehlerhaften VdS-Kombi-Zweig — Kombi läuft über pruefart-Dispatch)."""
+        from common.trace import emit
+        addons = []
+        pv_kwp = getattr(merkmale, "pv_kwp", None)
+        if pv_kwp and pv_kwp > 0:
+            from products.dguv_v3.zusatzleistungen import pv_preis_vds, pv_preis_din
+            pv_norm = getattr(merkmale, "pv_norm", "din")
+            pv = pv_preis_vds(pv_kwp) if pv_norm == "vds" else pv_preis_din(pv_kwp)
+            addons.append({"name": f"PV-Anlage ({pv_kwp:.0f} kWp, {pv_norm.upper()})",
+                           "positionen": pv["positionen"], "preis": round(pv["preis"], 2), "quelle": pv["_quelle"]})
+            emit("zusatzleistung", f"PV {pv_norm.upper()} {pv_kwp:.0f} kWp", round(pv["preis"], 2), "PV_ADDON", pv["_quelle"])
+        for ls in (getattr(merkmale, "ladesaeulen", None) or []):
+            if isinstance(ls, dict) and ls.get("anzahl", 0) > 0:
+                from products.dguv_v3.zusatzleistungen import ladesaeulen_preis
+                r = ladesaeulen_preis(ls.get("typ", "wallbox"), ls.get("anschluesse", 1), ls["anzahl"])
+                addons.append({"name": f"Ladesäulen ({ls['anzahl']}× {ls.get('typ', 'wallbox').upper()})",
+                               "positionen": r["positionen"], "preis": round(r["preis"], 2), "quelle": r["_quelle"]})
+                emit("zusatzleistung", f"Ladesäulen {ls['anzahl']}× {ls.get('typ', 'wallbox')}", round(r["preis"], 2), "LS_ADDON", r["_quelle"])
+        return addons
+
     def validate_ranges(self, merkmale):
         return dguv_validate_ranges(merkmale)
 

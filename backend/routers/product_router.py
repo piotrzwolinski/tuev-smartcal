@@ -54,19 +54,12 @@ def make_product_router(gewerk: Gewerk) -> APIRouter:
         except ValidationError as e:
             raise HTTPException(status_code=422, detail=e.errors())
 
-        if mode == "graph":
-            from engine.graph_pricing_engine import GraphPricingEngine
-            graph_engine = GraphPricingEngine(gewerk.graph_name)
-            angebot = graph_engine.calculate(gewerk, merkmale)
-            result = angebot.to_dict()
-            result["mode"] = "graph"
-            result["provenance"] = graph_engine.provenance
-        else:
-            angebot = engine.calculate(gewerk, merkmale)
-            result = angebot.to_dict()
-            result["mode"] = "python"
-            result["provenance"] = []
-
+        # Konsolidiert: eine Engine (PricingEngine) — korrekte Zahlen + Trace aus
+        # EINER Logik-Quelle. mode bleibt nur Rückwärtskompat; Ergebnis identisch.
+        angebot = engine.calculate(gewerk, merkmale)
+        result = angebot.to_dict()
+        result["mode"] = mode
+        result["provenance"] = angebot.provenance
         return result
 
     @router.post("/anfrage/parse")
@@ -254,7 +247,7 @@ def make_product_router(gewerk: Gewerk) -> APIRouter:
                     angebot = calc_engine.calculate(gewerk, merkmale)
                     angebot_dict = angebot.to_dict()
                     angebot_dict["mode"] = "python"
-                    angebot_dict["provenance"] = []
+                    angebot_dict["provenance"] = angebot.provenance  # konsolidiert: Trace jetzt auch hier
 
                 yield {"event": "trace", "data": json.dumps({"step": "confidence", "label": f"Confidence Score: {angebot.confidence*100:.0f}%"})}
                 await asyncio.sleep(0.2)

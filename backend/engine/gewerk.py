@@ -71,6 +71,7 @@ class Angebot:
     warnings: list[str] = field(default_factory=list)
     referenzpreis: dict | None = None
     zusatzleistungen: list[dict] = field(default_factory=list)
+    provenance: list[dict] = field(default_factory=list)  # Trace-Schritte (Synapse §3)
 
     def to_dict(self) -> dict:
         return {
@@ -92,6 +93,7 @@ class Angebot:
             "warnings": self.warnings,
             "referenzpreis": self.referenzpreis,
             "zusatzleistungen": self.zusatzleistungen,
+            "provenance": self.provenance,
         }
 
 
@@ -143,6 +145,10 @@ class Gewerk(ABC):
     # Optional overrides
     def zuschlaege(self, merkmale: BaseModel) -> list[tuple[str, float]]:
         """Zuschläge (name, percent). Default: none."""
+        return []
+
+    def zusatzleistungen(self, merkmale: BaseModel) -> list[dict]:
+        """Addon-Positionen (PV, Ladesäulen, ...). Default: keine."""
         return []
 
     def validate_ranges(self, merkmale: BaseModel) -> tuple[float, str]:
