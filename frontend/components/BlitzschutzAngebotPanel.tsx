@@ -37,6 +37,13 @@ export default function BlitzschutzAngebotPanel({ angebot }: Props) {
   const bd = angebot.breakdown;
   const confLevel = angebot.confidence >= 0.9 ? "high" : angebot.confidence >= 0.7 ? "med" : "low";
 
+  // Produktabhängige Zeilen-Beschreibungen (sonst zeigt z.B. DGUV fälschlich Blitzschutz-Formeln)
+  const isBlitz = /blitz/i.test(angebot.gewerk || "");
+  const grundSub = "Pauschale Auftragsverwaltung + Prüfmittel + Tagegeld";
+  const pruefSub = isBlitz
+    ? "LPV B04 §8.1 · 33€/Messstelle + Staffeln"
+    : "LPV B04 Kap. 2 · 250€ + Fläche×Kategorie (degressiv) + Verteilungen";
+
   return (
     <div className="space-y-4 animate-slide-in-right">
       {/* Total */}
@@ -60,8 +67,8 @@ export default function BlitzschutzAngebotPanel({ angebot }: Props) {
             </tr>
           </thead>
           <tbody>
-            <Row label="Grundkosten" sub="Pauschale Auftragsverwaltung 256€ + Prüfmittel + Tagegeld" amount={bd.grund} />
-            <Row label="Prüfkosten" sub="LPV B04 §8.1 · 33€/Messstelle + Staffeln" amount={bd.pruef} highlight />
+            <Row label="Grundkosten" sub={grundSub} amount={bd.grund} />
+            <Row label="Prüfkosten" sub={pruefSub} amount={bd.pruef} highlight />
             <Row label="Reisekosten" sub="1,10€/km PKW + Reisezeit × 180€/h" amount={bd.reise} />
             <Row label="Berichterstellung" sub="klein 119€ / standard 380€ / komplex 550€" amount={bd.bericht} />
 
