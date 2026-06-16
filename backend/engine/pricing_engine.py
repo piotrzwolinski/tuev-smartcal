@@ -76,9 +76,15 @@ class PricingEngine:
 
         # 3. Reisekosten (if Anlage address available)
         # Veit 30.05: >9h = 2 Anfahrten, >18h = 3 Anfahrten
+        reise_inkl = getattr(gewerk, "reise_inklusive", lambda m: False)(merkmale)
         adresse_lat = getattr(merkmale, "adresse_lat", None)
         adresse_lon = getattr(merkmale, "adresse_lon", None)
-        if adresse_lat is not None and adresse_lon is not None:
+        if reise_inkl:
+            # MA560 ortsveränderlich: Grundpauschale + €/Gerät ist all-inclusive (kalibriert
+            # gegen reale Auftragspreise T04/T10 OHNE separate Reise → sonst Doppelzählung).
+            emit("reisekosten", "Reisekosten in Pauschale enthalten (all-inclusive)", 0.0,
+                 "RK_INKLUSIVE", "MA560: Grundpauschale + €/Gerät all-inclusive")
+        elif adresse_lat is not None and adresse_lon is not None:
             adresse_plz = getattr(merkmale, "adresse_plz", None)
             standort = find_nearest_standort(adresse_lat, adresse_lon, plz=adresse_plz)
             km_one_way = standort["distance_km"]

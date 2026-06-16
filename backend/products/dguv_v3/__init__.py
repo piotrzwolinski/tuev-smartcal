@@ -50,6 +50,12 @@ class DGUVV3Gewerk(Gewerk):
             return kleinauftrag_grundkosten(merkmale)
         return None
 
+    def reise_inklusive(self, merkmale):
+        """MA560 ortsveränderlich: Reise ist in der all-inclusive Grundpauschale enthalten
+        (Rate kalibriert gegen reale Auftragspreise T04/T10 ohne separate Reisekosten)."""
+        from products.dguv_v3.merkmale import Pruefart
+        return getattr(merkmale, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH
+
     def estimate_pruef_tage(self, merkmale):
         return dguv_estimate_pruef_tage(merkmale)
 
