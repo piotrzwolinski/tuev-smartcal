@@ -31,8 +31,8 @@ def _apply_faktoren(m: "DGUVMerkmale", cost: float) -> float:
         cost *= rg
     komplex = _g_komplexitaet(m.nutzung, _flaeche(m))
     if komplex != 1.0:
-        emit("pruefkosten", f"Komplexitätsfaktor: ×{komplex} (>10.000m² + komplexe Nutzung)",
-             round(cost * (komplex - 1), 2), "KOMPLEX_FAKTOR", "Kriterien_Preisfindung_EG.docx (S. Pausch)")
+        emit("pruefkosten", f"Komplexitätsfaktor {m.nutzung.value}: ×{komplex} (>{KOMPLEXITAET_SCHWELLE_M2:.0f}m², NetInform Tech. Ausstattungsgrad)",
+             round(cost * (komplex - 1), 2), "KOMPLEX_FAKTOR", "netinformRE / M. Pfeifer Mail 15.06.2026")
         cost *= komplex
     if m.vollerfassung:
         voll = _g_vollerfassung()
@@ -98,11 +98,27 @@ ZUSCHLAG_SV_NSHV = 180.00
 # >10.000 m² + komplex → nur 60% Anlagenmerkmale (rest = Doku + Ortskenntnis)
 # Faktor = 1/0.80 ≈ 1.25 kompensiert den nicht-modellierten Anteil.
 KOMPLEXITAET_SCHWELLE_M2 = 10_000
-KOMPLEXITAET_FAKTOR = 1.25
-KOMPLEXE_NUTZUNGEN = {
-    GebaeudeNutzungDGUV.KRANKENHAUS,
-    GebaeudeNutzungDGUV.VERSAMMLUNGSSTAETTE,
+KOMPLEXITAET_FAKTOR = 1.25  # Legacy-Default (Fallback, falls Nutzung nicht in TYP-Tabelle)
+
+# NetInform "Technischer Ausstattungsgrad" — Mail M. Pfeifer 15.06.2026 (netinformRE)
+# _quelle: 'netinformRE / M. Pfeifer Mail 15.06.2026', _typ: 'fachexperte'
+# HINWEIS: Faktor vorerst weiter an KOMPLEXITAET_SCHWELLE_M2 (>10.000 m²) gekoppelt, sonst
+# Überschätzung kleiner Fälle (z.B. T8 Grundschule, T14 roMEd). Schwellen-Frage (multiplikativ
+# auf m²-Preis ODER Kat-Logik ersetzend, mit/ohne Schwelle) → offen, Termin 20.06.2026.
+KOMPLEXITAET_FAKTOR_TYP = {
+    GebaeudeNutzungDGUV.BUEROGEBAEUDE: 1.0,        # Büro-Immobilie
+    GebaeudeNutzungDGUV.VERKAUFSSTAETTE: 1.5,      # Misch-Immobilie (Einzelhandel)
+    GebaeudeNutzungDGUV.MOEBELHAUS: 1.5,           # Misch/Einzelhandel
+    GebaeudeNutzungDGUV.GARTENMARKT: 1.5,          # Misch/Einzelhandel
+    GebaeudeNutzungDGUV.SCHULE: 2.0,               # Lehranstalten (Schulen/Unis)
+    GebaeudeNutzungDGUV.SENIORENTREFF: 1.5,        # Betreuungseinrichtungen (Lebenshilfe/Altenheim)
+    GebaeudeNutzungDGUV.HOTEL: 1.5,                # Hotel
+    GebaeudeNutzungDGUV.KRANKENHAUS: 2.0,          # Krankenhaus
+    GebaeudeNutzungDGUV.INDUSTRIE: 1.0,            # Logistik
+    GebaeudeNutzungDGUV.VERSAMMLUNGSSTAETTE: 1.25, # nicht in NetInform — Legacy-Wert beibehalten
 }
+# Nutzungen mit Komplexitätszuschlag oberhalb der Schwelle (abgeleitet aus der TYP-Tabelle)
+KOMPLEXE_NUTZUNGEN = {n for n, f in KOMPLEXITAET_FAKTOR_TYP.items() if f > 1.0}
 
 PREIS_VERTEILUNG_UV = 25.00
 PREIS_VERTEILUNG_HV = 85.00
@@ -287,10 +303,10 @@ def _g_komplexitaet(nutzung: GebaeudeNutzungDGUV, flaeche_m2: float) -> float:
         cache_key="komplex_faktor",
     )
     schwelle = float(row[0]) if row else KOMPLEXITAET_SCHWELLE_M2
-    faktor = float(row[1]) if row else KOMPLEXITAET_FAKTOR
-    if flaeche_m2 > schwelle and nutzung in KOMPLEXE_NUTZUNGEN:
-        return faktor
-    return 1.0
+    if flaeche_m2 <= schwelle:
+        return 1.0
+    # Per-Gebäudetyp-Faktor (NetInform); Nutzungen ohne Eintrag → kein Zuschlag
+    return KOMPLEXITAET_FAKTOR_TYP.get(nutzung, 1.0)
 
 
 def inflate_to_current(betrag: float, jahr: int) -> float:

@@ -453,8 +453,9 @@ class TestDGUVGoldenReference:
         # Degression v2: 20000m² KAT_5=5.40€/10m²
         # 0-2k: 200×5.40×0.80=864, 2-4k: 200×5.40×0.80=864, 4-6k: 200×5.40×0.60=648,
         # 6-10k: 400×5.40×0.50=1080, 10-20k: 1000×5.40×0.40=2160 → Σ=5616
-        # 250 + 5616 + 30×25 + 5×85 + 2×145 + 320 + 180 = 7831
-        assert angebot.breakdown.pruef == 7831.00
+        # 250 + 5616 + 30×25 + 5×85 + 2×145 + 320 + 180 = 7831 (Basis vor Faktoren)
+        # Komplexitätsfaktor Krankenhaus ×2.0 (NetInform, >10.000m²): 7831 × 2.0 = 15662
+        assert angebot.breakdown.pruef == 15662.00
         assert angebot.breakdown.bericht == BERICHT_KOMPLEX
 
 
