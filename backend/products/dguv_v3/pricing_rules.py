@@ -159,6 +159,12 @@ PREISSTEIGERUNG = {
 REFERENZPREIS_WARN_SCHWELLE = 0.20
 
 # Kalkulationshilfen NBG / Hilfstabellen — Nutzung→Kategorie
+# 0800 Nahrungs-/Genussmittel = PRODUKTION (S. Pausch 17.06.2026 bestätigt:
+# "0800 bezieht sich auf Produktion, 0904 auf Verkaufsstätten"). Ob Produktion
+# Kat 2 oder Kat 3 ist, entscheidet Pausch bis Fr 20.06 (To-Do #1, T01 Hipp).
+# → EINE Stelle: bei Entscheidung nur diese Konstante flippen (KAT_3 → KAT_2).
+KAT_PRODUKTION_0800 = Installationskategorie.KAT_3  # PENDING Pausch 20.06 (#1)
+
 NUTZUNG_ZU_KATEGORIE = {
     "wohnung": Installationskategorie.KAT_1,
     "freiflaeche": Installationskategorie.KAT_1,
@@ -206,7 +212,11 @@ NUTZUNG_ZU_KATEGORIE = {
     "sanatorium": Installationskategorie.KAT_2,            # 0905
     "pflegeheim": Installationskategorie.KAT_2,
     "kinderheim": Installationskategorie.KAT_2,
+    # Kita/Kindergarten — S. Pausch 17.06: "separat betrachten, untereinander
+    # vergleichbar, keine weitere Differenzierung" → eine konsistente Klasse (Kat 2).
+    "kita": Installationskategorie.KAT_2,                  # 0905 (Pausch: separat)
     "kindertagesstaette": Installationskategorie.KAT_2,
+    "kindertagesstätte": Installationskategorie.KAT_2,
     "kindergarten": Installationskategorie.KAT_2,
     "landwirtschaft": Installationskategorie.KAT_2,        # 0908 (T05 Landwirt)
     "forstwirtschaft": Installationskategorie.KAT_2,
@@ -235,18 +245,20 @@ NUTZUNG_ZU_KATEGORIE = {
     "versammlungsstätte": Installationskategorie.KAT_3,
     "bar": Installationskategorie.KAT_3,                   # 0903
     "diskothek": Installationskategorie.KAT_3,
+    # 0904 Kauf-/Warenhäuser = VERKAUFSSTÄTTEN (S. Pausch 17.06 bestätigt) →
+    # routen über A3 REWE-Einzelhandels-Staffel (vgl. _EINZELHANDEL_CHAT).
     "kaufhaus": Installationskategorie.KAT_3,              # 0904 (REWE/T02/T11)
     "warenhaus": Installationskategorie.KAT_3,
     "einkaufszentrum": Installationskategorie.KAT_3,
     "entsorgung": Installationskategorie.KAT_3,            # 0909
     "parkhaus": Installationskategorie.KAT_1,              # 0906
     "garage": Installationskategorie.KAT_1,
-    # ⚠️ 0800 Nahrungs-/Genussmittel — Kat 2 ODER 3 offen (T01 Hipp), S. Pausch 20.06.
-    #    Default Kat 3 (produktionskonsistent); ändert T01 NICHT (dort expliziter Kat).
-    "nahrungsmittel": Installationskategorie.KAT_3,        # 0800 — PENDING Pausch
-    "genussmittel": Installationskategorie.KAT_3,
-    "lebensmittel": Installationskategorie.KAT_3,
-    "kuehlhaus": Installationskategorie.KAT_3,
+    # 0800 Nahrungs-/Genussmittel = PRODUKTION (Pausch 17.06) → eine Konstante
+    # KAT_PRODUKTION_0800 (Kat 2/3 entscheidet Pausch Fr 20.06, #1).
+    "nahrungsmittel": KAT_PRODUKTION_0800,                 # 0800 = Produktion
+    "genussmittel": KAT_PRODUKTION_0800,
+    "lebensmittel": KAT_PRODUKTION_0800,
+    "kuehlhaus": KAT_PRODUKTION_0800,
 }
 
 TYPICAL_KAT = {
