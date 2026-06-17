@@ -193,6 +193,60 @@ NUTZUNG_ZU_KATEGORIE = {
     "nshv": Installationskategorie.KAT_6,
     "trafo": Installationskategorie.KAT_6,
     "batterieladestation": Installationskategorie.KAT_6,
+    # ── Offizielle VdS-2871-Branchen-Code-Begriffe (To-Do #4, Pflichtangabe Prüfbericht).
+    #    _quelle: 'VdS-Nutzungsartenliste (S. Pausch)', _typ: 'fachexperte'.
+    #    Additiv — Kat-Werte konsistent mit PREIS_PER_10M2 (Kat 3 = Produktion/Handel,
+    #    Kat 2 = Büro/Pflege/Hotel-Niveau, Kat 1 = geringe Dichte). Siehe
+    #    sources/data/vds_nutzungsarten_branchen.md.
+    "dienstleistung": Installationskategorie.KAT_2,        # 0008
+    "immobilienverwaltung": Installationskategorie.KAT_2,  # 0001
+    "siloanlage": Installationskategorie.KAT_2,            # 0002
+    "gaststaette": Installationskategorie.KAT_2,           # 0902
+    "gaststätte": Installationskategorie.KAT_2,
+    "sanatorium": Installationskategorie.KAT_2,            # 0905
+    "pflegeheim": Installationskategorie.KAT_2,
+    "kinderheim": Installationskategorie.KAT_2,
+    "kindertagesstaette": Installationskategorie.KAT_2,
+    "kindergarten": Installationskategorie.KAT_2,
+    "landwirtschaft": Installationskategorie.KAT_2,        # 0908 (T05 Landwirt)
+    "forstwirtschaft": Installationskategorie.KAT_2,
+    "gartenbau": Installationskategorie.KAT_2,
+    "intensivtierhaltung": Installationskategorie.KAT_2,   # 0907
+    "metallverarbeitung": Installationskategorie.KAT_3,    # 0300 (ZF, Test 7)
+    "elektrotechnik": Installationskategorie.KAT_3,        # 0306
+    "chemie": Installationskategorie.KAT_3,                # 0400
+    "kunststoff": Installationskategorie.KAT_3,            # 0400/0401
+    "textil": Installationskategorie.KAT_3,                # 0500
+    "waescherei": Installationskategorie.KAT_3,
+    "wäscherei": Installationskategorie.KAT_3,
+    "leder": Installationskategorie.KAT_3,                 # 0600
+    "papier": Installationskategorie.KAT_3,
+    "holz": Installationskategorie.KAT_3,                  # 0700
+    "grundstoffindustrie": Installationskategorie.KAT_3,   # 0100
+    "steinbruch": Installationskategorie.KAT_3,            # 0201
+    "zement": Installationskategorie.KAT_3,                # 0202
+    "keramik": Installationskategorie.KAT_3,               # 0203
+    "glas": Installationskategorie.KAT_3,
+    "ziegel": Installationskategorie.KAT_3,
+    "bauindustrie": Installationskategorie.KAT_3,          # 0204
+    "bitumen": Installationskategorie.KAT_3,               # 0205
+    "rechenzentrum": Installationskategorie.KAT_3,         # 0005 (T10 Max Planck)
+    "versammlungsstaette": Installationskategorie.KAT_3,   # 0901
+    "versammlungsstätte": Installationskategorie.KAT_3,
+    "bar": Installationskategorie.KAT_3,                   # 0903
+    "diskothek": Installationskategorie.KAT_3,
+    "kaufhaus": Installationskategorie.KAT_3,              # 0904 (REWE/T02/T11)
+    "warenhaus": Installationskategorie.KAT_3,
+    "einkaufszentrum": Installationskategorie.KAT_3,
+    "entsorgung": Installationskategorie.KAT_3,            # 0909
+    "parkhaus": Installationskategorie.KAT_1,              # 0906
+    "garage": Installationskategorie.KAT_1,
+    # ⚠️ 0800 Nahrungs-/Genussmittel — Kat 2 ODER 3 offen (T01 Hipp), S. Pausch 20.06.
+    #    Default Kat 3 (produktionskonsistent); ändert T01 NICHT (dort expliziter Kat).
+    "nahrungsmittel": Installationskategorie.KAT_3,        # 0800 — PENDING Pausch
+    "genussmittel": Installationskategorie.KAT_3,
+    "lebensmittel": Installationskategorie.KAT_3,
+    "kuehlhaus": Installationskategorie.KAT_3,
 }
 
 TYPICAL_KAT = {
