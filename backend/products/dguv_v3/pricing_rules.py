@@ -74,7 +74,7 @@ PREIS_PER_10M2 = {
     Installationskategorie.KAT_4: 5.40,   # Technikräume, Reinraum
     Installationskategorie.KAT_5: 5.40,   # Sonder (OP, Labor)
     Installationskategorie.KAT_6: 6.00,   # NSHV, Trafo — S. Veit Mail
-    Installationskategorie.KAT_7: 8.00,   # Krankenhaus AG2 (OP, Intensiv) — SRB: 5.42, NBG-skaliert: ~8.00
+    Installationskategorie.KAT_7: 8.00,   # Krankenhaus AG2 (OP/Intensiv) — NBG-skaliert; muss ≥ Kat-6; Graph == 8.00 (D-K7 aufgelöst, Pausch 17.06 Q3)
 }
 
 DEGRESSION_DGUV = [(0, 0.80), (2000, 0.80), (4000, 0.60), (6000, 0.50), (10000, 0.40), (25000, 0.30)]

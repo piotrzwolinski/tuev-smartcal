@@ -39,7 +39,7 @@ def load_dguv_graph() -> dict:
         ('KAT_4', 'Technikräume / Reinraum', 5.40, 'Technikräume, Reinraum', 'Kalkulationshilfen NBG / Hilfstabellen / 2026', 'regel'),
         ('KAT_5', 'Sonderfläche (OP, Labor)', 5.40, 'OP-Saal, Reinraum, Ex-Bereich', 'Kalkulationshilfen NBG / Hilfstabellen / 2026', 'regel'),
         ('KAT_6', 'NSHV / Trafo / Batterieladestation', 6.00, 'Technikräume, NSHV, Traforäume, Batterieladestationen', 'S. Veit Mail 30.05 Punkt 4', 'fachexperte'),
-        ('KAT_7', 'Krankenhaus/Klinik Funktionsbereiche', 5.42, 'Medizinische Funktionsbereiche (AG1/AG2), Klinik-Technik — EFI-Review: NBG-Bezeichnung bestätigen', 'Kalkulationshilfen NBG / Plan v2 Phase 0.5', 'regel'),
+        ('KAT_7', 'Krankenhaus/Klinik Funktionsbereiche', 8.00, 'Medizinische Funktionsbereiche (OP/Intensiv, AG2) — NBG-skaliert auf 8,00 (Roh-SRB 5,42 bricht Monotonie: Kat-7 muss ≥ Kat-6=6,00 sein). S. Pausch 17.06 Q3: OP/Intensiv = Faktor 2, stützt höheren Wert.', 'Kalkulationshilfen NBG / Plan v2 Phase 0.5', 'regel'),
         ('KAT_8', 'OP / Intensiv / Sonderbereiche', 7.68, 'OP-Säle, Intensivstationen, Ex-/Sonderbereiche — EFI-Review: NBG-Bezeichnung bestätigen', 'Kalkulationshilfen NBG / Plan v2 Phase 0.5', 'regel'),
     ]:
         statements.append(f"""
