@@ -22,6 +22,7 @@ from products.dguv_v3.pricing_rules import (
     dguv_referenzpreis,
     dguv_referenzpreis_vergleich,
     is_kleinauftrag,
+    is_einzelhandel_rv_flat,
     kleinauftrag_pruefkosten,
     kleinauftrag_grundkosten,
 )
@@ -46,15 +47,20 @@ class DGUVV3Gewerk(Gewerk):
         from products.dguv_v3.merkmale import Pruefart
         if getattr(merkmale, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH:
             return 0.0
+        if is_einzelhandel_rv_flat(merkmale):
+            return 0.0  # RV-Flat: Grundkosten im REWE-Listenpreis enthalten
         if is_kleinauftrag(merkmale):
             return kleinauftrag_grundkosten(merkmale)
         return None
 
     def reise_inklusive(self, merkmale):
-        """MA560 ortsveränderlich: Reise ist in der all-inclusive Grundpauschale enthalten
-        (Rate kalibriert gegen reale Auftragspreise T04/T10 ohne separate Reisekosten)."""
+        """All-inclusive Grundpauschale (Reise enthalten) bei:
+        - MA560 ortsveränderlich (Rate kalibriert gegen T04/T10 ohne separate Reise)
+        - Einzelhandel-RV-Flat (REWE-Liste = Filialnetz-Pauschale all-in, Pausch 17.06)."""
         from products.dguv_v3.merkmale import Pruefart
-        return getattr(merkmale, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH
+        if getattr(merkmale, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH:
+            return True
+        return is_einzelhandel_rv_flat(merkmale)
 
     def estimate_pruef_tage(self, merkmale):
         return dguv_estimate_pruef_tage(merkmale)

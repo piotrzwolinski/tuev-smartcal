@@ -126,13 +126,14 @@ def main(mock_standort):
         adresse_plz="85276",
     ), real_price=6850, v1_price=11877, note="MA505 VdS"))
 
-    # T02 — ZIP-2: REWE Eching, 800m²
+    # T02 — ZIP-2: REWE Eching. Pausch 17.06: Fläche-Schätzung 800m² zu niedrig,
+    # REWE-Filiale liegt im Band 2001–5000m² → REWE-Liste = 848€ (belastbare Referenz).
     cases.append(run_case("T02", "REWE Eching (RV)", DGUVMerkmale(
         nutzung=GebaeudeNutzungDGUV.VERKAUFSSTAETTE,
-        gesamtflaeche_m2=800,
+        gesamtflaeche_m2=2500,
         adresse_lat=48.30, adresse_lon=11.62,
         adresse_plz="85386",
-    ), real_price=657.26, v1_price=2125.28, note="RV-Filialnetz flat"))
+    ), real_price=848.0, v1_price=2125.28, note="REWE-Liste 2001-5000m² (Pausch 17.06)"))
 
     # T03 — ZIP-3: badenova, 1 Schaltschrank, PLZ 77933
     cases.append(run_case("T03", "badenova Schaltschrank", DGUVMerkmale(
@@ -212,13 +213,13 @@ def main(mock_standort):
         adresse_plz="85540",
     ), real_price=5341, v1_price=2084, note="v1 nach Rückfragen"))
 
-    # T11 — PPT-4: REWE München, ~1600m²
+    # T11 — PPT-4: REWE München. Wie T02: REWE-Liste-Band 2001–5000m² → 848€ (Pausch 17.06).
     cases.append(run_case("T11", "REWE München (RV)", DGUVMerkmale(
         nutzung=GebaeudeNutzungDGUV.VERKAUFSSTAETTE,
-        gesamtflaeche_m2=1600,
+        gesamtflaeche_m2=2500,
         adresse_lat=48.14, adresse_lon=11.51,
         adresse_plz="85540",
-    ), real_price=657.26, v1_price=1738.54, note="RV flat wie T02"))
+    ), real_price=848.0, v1_price=1738.54, note="REWE-Liste 2001-5000m² (Pausch 17.06)"))
 
     # T12 — PPT-5: Helios Klinik Pasing, DGUV+VdS
     cases.append(run_case("T12", "Helios Klinik (DGUV+VdS)", DGUVMerkmale(

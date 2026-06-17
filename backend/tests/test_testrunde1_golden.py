@@ -68,19 +68,21 @@ class TestT01HippVdS:
 
 
 # ═══════════════════════════════════════════════════════════
-# T02 — ZIP-2: REWE Eching, 800m², RV case
-# Real: 657.26€ (flat Filialnetz-RV). LPV should be ABOVE real.
+# T02 — ZIP-2: REWE Eching. Pausch 17.06: REWE-Liste = Referenz für alle
+# Einzelhandel; Fläche-Schätzung 800m² zu niedrig → Band 2001-5000m² = 848€ all-in.
+# RV-Flat: Grund/Reise/Bericht im Listenpreis enthalten → Total ≈ 848€.
 # ═══════════════════════════════════════════════════════════
 class TestT02REWEEchingRV:
     @patch("common.pricing_primitives.find_nearest_standort", side_effect=_mock_find_nearest)
-    def test_lpv_above_rv_real(self, mock_standort):
+    def test_rv_flat_matches_liste(self, mock_standort):
         m = DGUVMerkmale(
             nutzung=GebaeudeNutzungDGUV.VERKAUFSSTAETTE,
-            gesamtflaeche_m2=800,
+            gesamtflaeche_m2=2500,
             adresse_lat=48.30, adresse_lon=11.62,
         )
         angebot = _calc(m)
-        assert angebot.total > 657.26, f"T02 RV: LPV {angebot.total:.0f}€ should be > RV real 657€"
+        assert abs(angebot.total - 848.0) / 848.0 < 0.15, (
+            f"T02 RV-Flat: {angebot.total:.0f}€ vs REWE-Liste 848€ (>15% delta)")
 
 
 # ═══════════════════════════════════════════════════════════
@@ -228,19 +230,20 @@ class TestT10MaxPlanckRZ:
 
 
 # ═══════════════════════════════════════════════════════════
-# T11 — PPT-4: REWE München, ~1600m², RV case
-# Real: 657.26€ (flat Filialnetz-RV). LPV should be ABOVE.
+# T11 — PPT-4: REWE München. Wie T02: REWE-Liste-Band 2001-5000m² = 848€ all-in
+# (Pausch 17.06). RV-Flat: Grund/Reise/Bericht im Listenpreis enthalten.
 # ═══════════════════════════════════════════════════════════
 class TestT11REWEMuenchenRV:
     @patch("common.pricing_primitives.find_nearest_standort", side_effect=_mock_find_nearest)
-    def test_lpv_above_rv_real(self, mock_standort):
+    def test_rv_flat_matches_liste(self, mock_standort):
         m = DGUVMerkmale(
             nutzung=GebaeudeNutzungDGUV.VERKAUFSSTAETTE,
-            gesamtflaeche_m2=1600,
+            gesamtflaeche_m2=2500,
             adresse_lat=48.14, adresse_lon=11.51,
         )
         angebot = _calc(m)
-        assert angebot.total > 657.26, f"T11 RV: LPV {angebot.total:.0f}€ should be > RV real 657€"
+        assert abs(angebot.total - 848.0) / 848.0 < 0.15, (
+            f"T11 RV-Flat: {angebot.total:.0f}€ vs REWE-Liste 848€ (>15% delta)")
 
 
 # ═══════════════════════════════════════════════════════════

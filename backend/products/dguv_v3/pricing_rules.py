@@ -542,6 +542,8 @@ def dguv_choose_bericht_typ(m: DGUVMerkmale) -> str:
         return "inklusive"
     if is_kleinauftrag(m):
         return "inklusive"
+    if is_einzelhandel_rv_flat(m):
+        return "inklusive"  # RV-Flat: Bericht im Listenpreis enthalten
     flaeche = _flaeche(m)
     total_verteilungen = (
         m.anzahl_verteilungen_uv + m.anzahl_verteilungen_hv + m.anzahl_verteilungen_nshv
@@ -772,6 +774,22 @@ def referenz_blend(neukalkulation: float, m: DGUVMerkmale) -> dict | None:
         "anpassung": round(anpassung, 2),
         "neues_total": round(neukalkulation + anpassung, 2),
     }
+
+
+def is_einzelhandel_rv_flat(m: DGUVMerkmale) -> bool:
+    """RV-Flat-Einzelhandel: die REWE-Liste ist ein All-in-Filialnetz-Preis
+    (S. Pausch 17.06.2026: 'Abrechnung und Liste passen zusammen' = der Listenwert
+    ist die Abrechnungssumme). Grund/Reise/Bericht sind im Listenpreis enthalten —
+    der Engine-Aufbau darf sie nicht zusätzlich stapeln. Greift nur bei
+    Standard-DGUV-ortsfest + Verkaufsstätte, solange die Staffel anwendbar ist
+    (≤5.000 m²); >5.000 m² → NBG-Aufbau, kein Flat."""
+    from products.dguv_v3.merkmale import Pruefart
+    if getattr(m, "pruefart", Pruefart.DGUV_ORTSFEST) != Pruefart.DGUV_ORTSFEST:
+        return False
+    if m.nutzung != GebaeudeNutzungDGUV.VERKAUFSSTAETTE:
+        return False
+    from products.dguv_v3.referenzpreise import _einzelhandel_staffel
+    return _einzelhandel_staffel(_flaeche(m)) is not None
 
 
 def dispatch_pruefkosten(m: DGUVMerkmale) -> float:

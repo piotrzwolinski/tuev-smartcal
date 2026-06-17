@@ -36,6 +36,42 @@ AUGSBURG_REGRESSION: dict[str, dict] = {
 }
 
 
+# ── Einzelhandel/Verkaufsstätten: REWE-Rahmenvertrag-Staffel (flat pro m²-Band) ──
+# S. Pausch 17.06.2026: "Wir nehmen die REWE-Liste als Referenz für ALLE
+# Einzelhandelsprojekte." Quelle: REWE-Liste 2022 (Wiederholungsprüfung).
+# Niveau-Caveat: Rahmenvertrag-Preise (RV) liegen unter LPV-Listenpreis;
+# > 5.000 m² hat keinen Listenwert → NBG-Fallback.
+EINZELHANDEL_STAFFEL_M2: list[tuple[float, float]] = [
+    (2000.0, 562.0),    # ≤ 2.000 m²
+    (5000.0, 848.0),    # 2.001 – 5.000 m²
+]
+
+# Chat-Nutzungsbegriffe, die auf die Einzelhandels-Staffel routen (VdS 0904)
+_EINZELHANDEL_CHAT: set[str] = {
+    "verkaufsstaette", "verkaufsstätte", "einzelhandel", "supermarkt",
+    "discounter", "rewe", "edeka", "aldi", "lidl", "penny", "netto",
+    "kaufhaus", "warenhaus", "laden", "markt", "drogerie", "lebensmittelmarkt",
+}
+
+
+def _einzelhandel_staffel(flaeche_m2: float) -> dict | None:
+    """REWE-Liste-Staffel (Pausch 17.06): flat pro m²-Band für alle Einzelhandel.
+    > 5.000 m² → None (kein Listenwert, Caller nutzt NBG-Fallback)."""
+    if flaeche_m2 <= 0:
+        return None
+    for grenze, preis in EINZELHANDEL_STAFFEL_M2:
+        if flaeche_m2 <= grenze:
+            return {
+                "pruefkosten": preis,
+                "quelle": "REWE-Liste (RV)",
+                "referenz_typ": "einzelhandel_staffel",
+                "eur_per_m2": round(preis / flaeche_m2, 4),
+                "n_referenzen": 1,  # Listenpreis (Rahmenvertrag), keine Stichprobe
+                "confidence_boost": 1.03,
+            }
+    return None
+
+
 _NUTZUNG_TO_REFERENZ: dict[GebaeudeNutzungDGUV, str] = {
     GebaeudeNutzungDGUV.BUEROGEBAEUDE: "buerogebaeude",
     GebaeudeNutzungDGUV.SCHULE: "schule",
@@ -114,6 +150,17 @@ def lookup_referenzpreis(
     price = a × m²^b  (per Nutzungstyp, fitted from 367 buildings).
     Returns None if no regression available → caller uses NBG fallback.
     """
+    # Prio 0: Einzelhandel/Verkaufsstätten → REWE-Staffel (Pausch 17.06)
+    is_retail = nutzung == GebaeudeNutzungDGUV.VERKAUFSSTAETTE
+    if not is_retail and nutzung_str:
+        is_retail = nutzung_str.lower().strip() in _EINZELHANDEL_CHAT
+    if is_retail:
+        staffel = _einzelhandel_staffel(flaeche_m2)
+        if staffel is not None:
+            return staffel
+        # > 5.000 m² Einzelhandel → kein Listenwert, weiter zu NBG-Fallback (None)
+        return None
+
     ref_key = None
 
     if nutzung_str:
