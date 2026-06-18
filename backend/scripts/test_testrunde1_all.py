@@ -236,13 +236,15 @@ def main(mock_standort):
 
     # ═══ DOC CASES (Burgey DOCX) ═══
 
-    # T13 — DOC-1: Motel One München, MA501
+    # T13 — DOC-1: Motel One München, MA501. A5: Hotel→Motel-One-Zimmer-Staffel
+    # (200 Zimmer → ≤260-Band = 3.160€ ortsfest) statt NBG-m². Ref 621€ DEFEKT/
+    # unbestätigt (Pausch prüft; vs Motel-One-Liste viel zu niedrig, Teilposition).
     cases.append(run_case("T13", "Motel One München (RV)", DGUVMerkmale(
         nutzung=GebaeudeNutzungDGUV.HOTEL,
         gesamtflaeche_m2=6000,  # ~200 Zimmer × 30
         adresse_lat=48.14, adresse_lon=11.57,
         adresse_plz="80331",
-    ), real_price=621, v1_price=5161.31, note="RV 2023"))
+    ), real_price=621, v1_price=5161.31, note="Ref DEFEKT (Pausch prüft, Motel-One-Liste)"))
 
     # T14 — DOC-2: roMEd Klinik Prien, MA501
     cases.append(run_case("T14", "roMEd Klinik Prien", DGUVMerkmale(

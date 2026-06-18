@@ -72,6 +72,45 @@ def _einzelhandel_staffel(flaeche_m2: float) -> dict | None:
     return None
 
 
+# ── Hotels: Motel-One-Zimmer-Staffel (Rahmenvertrag, Pfeifer 17.06.2026) ──
+# Quelle: EG-Preisliste Motel One 2025, Anlage 4 (Tabelle 2.3b: DGUV V3 ortsfeste
+# Anlagen bei Kombi mit VdS 3602, Wiederholungsprüfung, pro Zimmer-Band).
+# Pausch 10.06: "Hotel → Maritim/Motel One" — schließt die Hotel→NBG-m²-Lücke.
+# Der ortsfeste-DGUV-Anteil dient als bester verfügbarer Anhalt auch für
+# standalone DGUV-ortsfest (eigene standalone-Liste steht aus; 2026er-Liste/Pausch).
+# Zimmer aus Fläche abgeleitet (UR_ZIMMER: 30 m²/Zimmer) bis ein explizites
+# Zimmer-Feld existiert. > 560 Zimmer → NBG/größere-Liste-Fallback (None).
+HOTEL_ZIMMER_STAFFEL_DGUV_ORTSFEST: list[tuple[int, float]] = [
+    (90, 2069.0), (160, 2566.0), (260, 3160.0),
+    (360, 3539.0), (460, 4370.0), (560, 4815.0),
+]
+M2_PRO_ZIMMER = 30.0  # UR_ZIMMER Umrechnungsfaktor (Graph: 30 m²/Zimmer)
+
+_HOTEL_CHAT: set[str] = {
+    "hotel", "motel", "pension", "gasthof", "gasthaus", "herberge", "hostel",
+}
+
+
+def _hotel_zimmer_staffel(flaeche_m2: float) -> dict | None:
+    """Hotel-Referenz nach Zimmerzahl (Motel-One-Liste 2025, Tab. 2.3b).
+    Zimmer = Fläche ÷ 30 m². > 560 Zimmer → None (NBG-Fallback)."""
+    if flaeche_m2 <= 0:
+        return None
+    zimmer = round(flaeche_m2 / M2_PRO_ZIMMER)
+    for grenze, preis in HOTEL_ZIMMER_STAFFEL_DGUV_ORTSFEST:
+        if zimmer <= grenze:
+            return {
+                "pruefkosten": preis,
+                "quelle": "Motel-One-Liste 2025 (RV)",
+                "referenz_typ": "hotel_zimmer_staffel",
+                "zimmer": zimmer,
+                "eur_per_m2": round(preis / flaeche_m2, 4),
+                "n_referenzen": 1,
+                "confidence_boost": 1.03,
+            }
+    return None
+
+
 _NUTZUNG_TO_REFERENZ: dict[GebaeudeNutzungDGUV, str] = {
     GebaeudeNutzungDGUV.BUEROGEBAEUDE: "buerogebaeude",
     GebaeudeNutzungDGUV.SCHULE: "schule",
@@ -159,6 +198,17 @@ def lookup_referenzpreis(
         if staffel is not None:
             return staffel
         # > 5.000 m² Einzelhandel → kein Listenwert, weiter zu NBG-Fallback (None)
+        return None
+
+    # Prio 0: Hotels → Motel-One-Zimmer-Staffel (Pfeifer/Pausch) statt NBG-m²
+    is_hotel = nutzung == GebaeudeNutzungDGUV.HOTEL
+    if not is_hotel and nutzung_str:
+        is_hotel = nutzung_str.lower().strip() in _HOTEL_CHAT
+    if is_hotel:
+        hotel = _hotel_zimmer_staffel(flaeche_m2)
+        if hotel is not None:
+            return hotel
+        # > 560 Zimmer → keine Listenstaffel, NBG-Fallback
         return None
 
     ref_key = None
