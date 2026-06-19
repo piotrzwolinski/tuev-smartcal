@@ -265,7 +265,9 @@ def load_dguv_graph() -> dict:
     """)
 
     # ── 20. PREISSTEIGERUNG ──────────────────────────────────
-    for jahr, steigerung in [(2010, 0.560), (2011, 0.520), (2012, 0.480), (2013, 0.446), (2014, 0.412), (2015, 0.378), (2016, 0.344), (2017, 0.310), (2018, 0.282), (2019, 0.282), (2020, 0.282), (2021, 0.244), (2022, 0.208), (2023, 0.148), (2024, 0.083), (2025, 0.055)]:
+    # 2024/2025 empirisch aus MA505-Realdaten (Burgey 18.06): 641,23€→657,26€ = +2,5%,
+    # danach ~flat. Ersetzt Veit-Schätzung (0.083/0.055), die jüngste Drift überschätzte.
+    for jahr, steigerung in [(2010, 0.560), (2011, 0.520), (2012, 0.480), (2013, 0.446), (2014, 0.412), (2015, 0.378), (2016, 0.344), (2017, 0.310), (2018, 0.282), (2019, 0.282), (2020, 0.282), (2021, 0.244), (2022, 0.208), (2023, 0.148), (2024, 0.025), (2025, 0.010)]:
         statements.append(f"""
         CREATE (:Preissteigerung {{id: 'PS_{jahr}', jahr: {jahr}, steigerung_vs_2026: {steigerung}, _quelle: 'S. Veit Mail 30.05 Punkt 9', _typ: 'fachexperte', _stand: '{STAND}'}})
         """)

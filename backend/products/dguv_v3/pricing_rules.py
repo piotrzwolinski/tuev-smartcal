@@ -152,8 +152,11 @@ PREISSTEIGERUNG = {
     2021: 0.244,
     2022: 0.208,
     2023: 0.148,
-    2024: 0.083,
-    2025: 0.055,
+    # 2024/2025: empirisch aus MA505-Realdaten (Burgey 18.06) statt Veit-Schätzung.
+    # Standard-VdS-Listenpreis 641,23€ (2024) → 657,26€ (2025/26) = +2,5%, danach
+    # ~flat. Veits 8,3%/5,5% überschätzten die jüngste Drift.
+    2024: 0.025,
+    2025: 0.010,
     2026: 0.000,
 }
 REFERENZPREIS_WARN_SCHWELLE = 0.20
