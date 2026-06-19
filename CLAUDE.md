@@ -39,10 +39,15 @@ unbemerkt T08/T12 zerschießen.
 - **Kein „fertig" ohne grünen vollen Lauf.** Vor jeder „erledigt"-Aussage:
   ```bash
   cd backend && ./venv/bin/python -m pytest tests/ -q \
-    --ignore=tests/test_e2e_llm_judge.py        # hängt (Live-LLM, kein Timeout)
-  ./venv/bin/python scripts/test_testrunde1_all.py   # die 16 Testrunde-Fälle
+    --ignore=tests/test_e2e_llm_judge.py        # Engine-Interna (Kat-7-Monotonie etc.)
+  # Die 16 Testrunde-Fälle über das LIVE-UI (kanonisch, echter Pfad: LLM+Geocode+Engine):
+  ./venv/bin/python scripts/test_ui_cases.py            # alle (~11 min, braucht Deploy+Login)
+  # ./venv/bin/python scripts/test_ui_cases.py T02 T11  # gewählt
   ```
   Ergebnis (Zahlen) in die Antwort einfügen. Nicht „sollte passen" — den Lauf zeigen.
+  **UI ist kanonisch** (sieht LLM-Extraktion + Geocoding); `test_testrunde1_all.py`
+  (strukturierte Merkmale, hardcoded Koords) nur noch als schneller Offline-Smoke-Test.
+  Siehe Memory `feedback-test-via-ui-not-script.md`.
 - **Bug-Workflow:** zuerst ein Test der den Bug fängt, dann der Fix, dann ein Eintrag
   unter „Bekannte Bugs / Bug-Ledger" hier.
 - **FalkorDB-Graph nach Schema-Änderung neu laden** (sonst Prüfkosten=0):

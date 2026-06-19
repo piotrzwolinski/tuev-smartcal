@@ -40,3 +40,5 @@ graphify-out/
 
 # TÜV-Surówka: rohe Anhänge (PDF/XLSX/XLSM) — zu groß für Git, Markdown-Extrakte in sources/ versioniert
 sources/data/files/
+
+backend/scripts/ui_results.json
