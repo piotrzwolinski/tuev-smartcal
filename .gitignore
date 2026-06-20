@@ -42,3 +42,5 @@ graphify-out/
 sources/data/files/
 
 backend/scripts/ui_results.json
+backend/viz/out/
+backend/.cache/
