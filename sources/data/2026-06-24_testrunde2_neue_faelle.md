@@ -21,6 +21,24 @@
 3. **EQ-Join jetzt machbar:** die 7 PDFs enthalten die Anlagenmerkmale (m²/Verteilungen/Prüfdauer) zu genau diesen EQ → Preis ↔ Merkmale verknüpfbar (wie beim ZF/MA505-Wunsch). 2 PDF-EQ (2848913, 3180914) sind **nicht** in der Übersicht-Liste — separat prüfen (Zusatz-Berichte?).
 4. **Übersicht enthält auch fiktive/offene Zeilen** (#9–11 Aalen/Autowerkstatt „all incl", #17 Fürstenzell ohne Werte) + Tabs „Tests 15./22./23.06." (leer) — laufende Erweiterung.
 
+## S. Pauschs 7 neue Fälle = #11–17 (alle getestet)
+| # | Fall | UI | Δ vs Real | Befund |
+|---|---|---|---|---|
+| 11 | Autowerkstatt (MA560, 150 m²) | **Rückfrage** | — (Real fiktiv) | Bot fragt nach Geräteanzahl (gut, fabriziert nicht) |
+| 12 | Landgericht Amberg (MA560, 850 BM) | 8.275 | +113 % FAIL | MA560-Bulk ohne Degression |
+| 13 | Uni Erlangen (MA507, 4 UV, kein m²) | 2.577 | +104 % FAIL | **Phantom-m² (~5.000 m²)** |
+| 14 | Aschaffenburg (MA507, 41 UV, kein m²) | 7.812 | +61 % FAIL | Phantom-m² + Reise |
+| 15 | Stuttgart Schule (MA507, 17 UV, kein m²) | 4.850 | +70 % FAIL | Phantom-m² |
+| 16 | Immenstaad (MA507, 1 UV) | 549 | −19 % PASS | Kleinauftrag-Floor knapp |
+| 17 | Fürstenzell (MA505 VdS, Kat b, 200 kVA, kein m²) | **Rückfrage** | — (kein Real) | Bot fragt nach m²/Kat |
+
+→ **7/7 getestet:** 1 PASS · 4 FAIL · **2 Rückfragen** (#11/#17 rechnen nicht one-shot, kein Real).
+
+## ⭐ Kern-Asymmetrie (Chat-Coordinator)
+- **MA560 (Geräte) ohne Geräteanzahl → Bot FRAGT** („Wie viele Betriebsmittel? Oder Schätzung aus 150 m²?"). **Korrektes Verhalten.**
+- **MA507 ortsfest ohne m² → Bot FABRIZIERT eine Fläche** (Phantom-m², z.B. ~5.000 m² für Uni) statt zu fragen → ~2× zu hoch.
+- → Fix-Richtung: MA507 soll bei fehlendem m² **genauso fragen** ODER **per UV/Merkmale rechnen** (nicht m² erfinden). Das ist „weg von m²".
+
 ## To-Do
 - [ ] #12–16 im aktuellen UI testen (läuft) → Δ vs Real, Ursachen der Abweichung.
 - [ ] EQ-Join: m²/UV/Prüfdauer aus den 7 PDFs extrahieren → gegen Real plotten.

@@ -51,12 +51,14 @@ CASES = [
  ("T14","DGUV V3 Prüfung, Krankenhaus roMEd Klinik Prien am Chiemsee, ca. 8000 m², PLZ 83209", 5136, "dguv","", "inflationsbereinigt (2012→2026)"),
  ("T15","DGUV V3 Prüfung, Bürogebäude in Würzburg, ca. 5000 m², PLZ 97080", 4195, "dguv","", "Büro"),
  ("T16","Blitzschutzprüfung, Polizeiinspektion Dachau, PLZ 85221, 12 Ableitungen", 205, "blitz","rv", "RV, Blitz-Produkt"),
- # ── Testrunde 24.06 (neue Fälle, EQ-Prüfberichte vorhanden, reale Abrechnung) ──
+ # ── Testrunde 24.06 (S. Pausch, 7 neue Fälle #11-17) ──
+ ("A11","DGUV V3 ortsveränderliche Prüfung, Autowerkstatt, ca. 150 m², PLZ 73433", None, "dguv","noref", "MA560 · Real fiktiv · vgl. Autoservice T04"),
  ("A12","DGUV V3 ortsveränderliche Prüfung, Landgericht Amberg, 850 Betriebsmittel, PLZ 92224", 3877.80, "dguv","", "MA560 · EQ2229803 · alt 8275 (+113%)"),
  ("A13","DGUV V3 Prüfung, Universitätsgebäude Erlangen, ein Gebäude, ca. 4 Unterverteilungen, PLZ 91058", 1261.41, "dguv","", "MA507 · EQ2065503 · alt 2577 (+104%) · keine m²"),
  ("A14","DGUV V3 Prüfung, Schule in Aschaffenburg, 41 Unterverteilungen, mit Küche und Turnhalle, PLZ 63739", 4842.24, "dguv","", "MA507 · EQ1484135 · alt 7812 (+61%) · keine m²"),
  ("A15","DGUV V3 Prüfung, Grund- und Hauptschule Stuttgart, 2 Gebäude, 17 Unterverteilungen, PLZ 70178", 2848.09, "dguv","", "MA507 · EQ2427833 · alt 4850 (+70%) · keine m²"),
  ("A16","DGUV V3 Prüfung, Produktionshalle mit Labor in Immenstaad, 1 Unterverteilung, PLZ 88090", 677.26, "dguv","", "MA507 · EQ2490109 · alt 549 (-19%) · gut verkauft"),
+ ("A17","VdS 2871 Prüfung, Kunststoffverarbeitung in Fürstenzell, Gefährdungskategorie b, 200 kVA, PLZ 94081", None, "dguv","noref", "MA505 VdS · kein Real · kein m² (kVA)"),
 ]
 
 PROD_LABEL = {"dguv": "DGUV V3", "blitz": "Blitzschutz"}
