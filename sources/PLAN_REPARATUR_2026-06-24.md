@@ -10,6 +10,7 @@
 | **P1** | **Phantom-m²** | #13/14/15 (+104/+61/+70 %) | MA507 ohne m² → System schätzt `m² = UV×400` (`UV_TO_M2_FACTOR`, chat.py) → Fläche×Kat überschätzt ~2×. Im UI sichtbar: „Geschätzte Größe 16.400 m²" = 41 UV × 400. |
 | **P2** | **MA560-Bulk** | #12 Landgericht (+113 %) | flat 9,50 €/BM, keine Degression. 850 BM × 9,50 = 8.275; real 4,56 €/BM (RV/Volumen?). |
 | **P3** | **Kleinauftrag-Floor** | #16 Immenstaad (−19 %) | 270 € flat zu niedrig für Produktion+Labor (real 677 €). |
+| **P4** | **Reifegrad-Halluzination + Anzeige-Mismatch** | #9 Supermarkt (S. Pausch 22.06 „negativ") | Haiku extrahiert `reifegrad=1` (×1,25) obwohl Kunde nichts zum Zustand sagt; **kein Strip-Guard** (Fläche hat einen, Reifegrad nicht) → 562 → 702,50 €. Zusätzlich: Chat-Summary (562) ≠ Tabelle (702,50). |
 
 ## 2 · Schlüssel-Evidenz (was den Fix-Weg bestimmt)
 **(a) Per-UV-Fit trifft Realität auf ±11 %** (Schule/Uni, all-in):
@@ -38,6 +39,7 @@ Konstanz EQ1268813 (2.151 €): **Prüfdauer 4,0 Std · Gefährdungskat (c) · 8
 ### Nebenfixes
 - **P2 MA560:** Staffel/Degression für hohe BM-Zahl. **Zuerst S. Pausch fragen: Landgericht = Rahmenvertrag-flat?** („all incl?").
 - **P3 Kleinauftrag:** Floor Merkmale-abhängig (Produktion/Labor → höher).
+- **P4 Reifegrad (QUICK-WIN):** `_strip_hallucinated_reifegrad` analog zu `_strip_hallucinated_flaeche` — Reifegrad entfernen wenn Kunde nichts zum Zustand sagt → Default RG_3. Bug-Catcher-Test (Supermarkt-Prompt → kein ×1,25). + Anzeige: Summary-Nachricht soll Engine-Total nutzen, nicht eigene Zahl. **~1 h, kein Strukturthema.**
 
 ## 4 · Empfohlene Reihenfolge
 1. **EQ-Join vertiefen** (Daten liegen jetzt vor, S. Pausch 19.06): Prüfdauer/kVA/Gef.-Kat/UV aus den Befundscheinen extrahieren → €/UV bzw. €/Std per Typ kalibrieren (statt 3 Punkte).
