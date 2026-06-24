@@ -51,6 +51,12 @@ CASES = [
  ("T14","DGUV V3 Prüfung, Krankenhaus roMEd Klinik Prien am Chiemsee, ca. 8000 m², PLZ 83209", 5136, "dguv","", "inflationsbereinigt (2012→2026)"),
  ("T15","DGUV V3 Prüfung, Bürogebäude in Würzburg, ca. 5000 m², PLZ 97080", 4195, "dguv","", "Büro"),
  ("T16","Blitzschutzprüfung, Polizeiinspektion Dachau, PLZ 85221, 12 Ableitungen", 205, "blitz","rv", "RV, Blitz-Produkt"),
+ # ── Testrunde 24.06 (neue Fälle, EQ-Prüfberichte vorhanden, reale Abrechnung) ──
+ ("A12","DGUV V3 ortsveränderliche Prüfung, Landgericht Amberg, 850 Betriebsmittel, PLZ 92224", 3877.80, "dguv","", "MA560 · EQ2229803 · alt 8275 (+113%)"),
+ ("A13","DGUV V3 Prüfung, Universitätsgebäude Erlangen, ein Gebäude, ca. 4 Unterverteilungen, PLZ 91058", 1261.41, "dguv","", "MA507 · EQ2065503 · alt 2577 (+104%) · keine m²"),
+ ("A14","DGUV V3 Prüfung, Schule in Aschaffenburg, 41 Unterverteilungen, mit Küche und Turnhalle, PLZ 63739", 4842.24, "dguv","", "MA507 · EQ1484135 · alt 7812 (+61%) · keine m²"),
+ ("A15","DGUV V3 Prüfung, Grund- und Hauptschule Stuttgart, 2 Gebäude, 17 Unterverteilungen, PLZ 70178", 2848.09, "dguv","", "MA507 · EQ2427833 · alt 4850 (+70%) · keine m²"),
+ ("A16","DGUV V3 Prüfung, Produktionshalle mit Labor in Immenstaad, 1 Unterverteilung, PLZ 88090", 677.26, "dguv","", "MA507 · EQ2490109 · alt 549 (-19%) · gut verkauft"),
 ]
 
 PROD_LABEL = {"dguv": "DGUV V3", "blitz": "Blitzschutz"}
