@@ -54,6 +54,15 @@ M. Burgey lieferte die realen Faktura-Exporte (`data/files/versand_export_24_06/
 - Verteilung 507-Median **587 €**, 560-Median **389 €** (klein) → m²-Modell überschätzt Normalfall systematisch.
 - **Umsetzung Kalibrierung:** (1) EQ → Merkmale aus Prüfberichten ziehen (7 neue PDFs + Schmieder + Batch der 10k MA507-PDFs), (2) Regression **Preis ↔ UV/Prüfdauer/Gef.-Kat** je Gebäudetyp, (3) per-UV/Aufwand-Pfad damit kalibrieren (statt 3-Punkte-Fit). → ersetzt Option-B-Heuristik durch datengetriebene Stützstellen.
 
+## 7 · Kalibrier-Pipeline gebaut (`scripts/calibrate_pricing.py`)
+Verbindet Faktura-Export (507/560) × Merkmale (`calibration_merkmale.csv`, wächst per EQ) → Segment-Fits, vs aktuelles Modell. Lauf: `./venv/bin/python scripts/calibrate_pricing.py`.
+**Erste Stützstellen (Faktura-hart):**
+- **DGUV-507 Schule/Hochschule: `Preis ≈ 1.032 € + 94,8 €/UV` (R²=0,99, n=4)** — alle ±12 % (aktuelles m²-Modell +61…+104 %). → direkt als per-UV-Pfad (Option B) einbaubar.
+- **MA560-Degression bestätigt:** 114 BM → 10,68 €/BM · 850 BM → 4,56 €/BM → Staffel statt flat 9,50.
+- **VdS-505 Krankenhaus: kVA allein verrauscht** (Allensbach 2.260 kVA = Heidelberg 967 kVA = 5.880 €) → eher #Gebäude/Prüfdauer; mehr Stützstellen nötig.
+- **Produktion ≠ Schul-Gerade** (Immenstaad 1 UV / 677 €) → eigener €/UV-Satz je Typ.
+**Skalierung:** EQ→Merkmale aus mehr Prüfberichten (Batch 10k MA507) → CSV füllen → Re-Fit → €/UV bzw. €/Std je Gebäudetyp datengetrieben.
+
 ## 5 · Offene Fragen an S. Pausch
 - Landgericht Amberg (850 BM, „all incl?") — Rahmenvertrag-Volumenpreis oder Standard?
 - Bei m²-losen Anlagen (Uni/Schule): soll Bot **schätzen** (transparent) oder **fragen**, wenn Kunde kein m² hat?

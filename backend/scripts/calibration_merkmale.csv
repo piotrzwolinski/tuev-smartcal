@@ -1,0 +1,13 @@
+eq,material,gebaeudetyp,uv,bm,pruefdauer_std,kva,quelle
+3295815,507,schule,10,,,,#8 Grundschule Würzburg (25 Klassen)
+2065503,507,hochschule,4,,,,#13 Uni Erlangen (ein Gebäude)
+1484135,507,schule,41,,,,#14 Aschaffenburg Gymnasium (+Küche/Turnhalle)
+2427833,507,schule,17,,,,#15 Stuttgart Grund-/Hauptschule (2 Gebäude)
+2490109,507,produktion,1,,,,#16 Immenstaad Produktion+Labor
+2229803,560,buero,,850,,,#12 Landgericht Amberg
+2597657,560,werkstatt,,114,,,#4 Auto Service Calw
+3578607,560,landwirt,,23,,,#5 Landwirt (Abrechnung defekt)
+1268813,505,krankenhaus,,,4.0,800,Schmieder Konstanz
+1268824,505,krankenhaus,,,,2260,Schmieder Allensbach
+1879930,505,krankenhaus,,,,967,Schmieder Heidelberg
+2122743,505,krankenhaus,,,,150,Schmieder Stuttgart

@@ -8,3 +8,4 @@ python-dotenv>=1.0.0
 
 # UI-Testrunde-Harness (scripts/test_ui_cases.py)
 playwright==1.60.0
+numpy
