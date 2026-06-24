@@ -62,6 +62,8 @@ Verbindet Faktura-Export (507/560) × Merkmale (`calibration_merkmale.csv`, wäc
 - **VdS-505 Krankenhaus: kVA allein verrauscht** (Allensbach 2.260 kVA = Heidelberg 967 kVA = 5.880 €) → eher #Gebäude/Prüfdauer; mehr Stützstellen nötig.
 - **Produktion ≠ Schul-Gerade** (Immenstaad 1 UV / 677 €) → eigener €/UV-Satz je Typ.
 **Skalierung:** EQ→Merkmale aus mehr Prüfberichten (Batch 10k MA507) → CSV füllen → Re-Fit → €/UV bzw. €/Std je Gebäudetyp datengetrieben.
+**Projektkontext (C. Theilen 12.06):** GLFD EG = „Automatische Preisgestaltung per KI, RV-Preise zum Trainieren/Verifizieren" → **diese Pipeline IST der Projektkern.**
+**Krankenhaus-RV (23.06, J. Wagler/S. Pausch):** Schmieder (bekannt, 6 EQ bestätigt) + Schwarzwald-Baar (1 Elektro-EQ, kein Preis) + ZÜS/Diakonie (kein Elektro). → **keine neuen Elektro-Stützstellen** (S. Pausch bestätigt). Krankenhaus-Elektro-RV ist rar → Kalibrierung primär über **507/560-Faktura (8k/3,6k) + Merkmale**, nicht über Klinik-RV-Listen.
 
 ## 5 · Offene Fragen an S. Pausch
 - Landgericht Amberg (850 BM, „all incl?") — Rahmenvertrag-Volumenpreis oder Standard?
