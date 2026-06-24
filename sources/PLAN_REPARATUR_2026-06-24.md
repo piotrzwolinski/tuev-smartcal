@@ -47,6 +47,13 @@ Konstanz EQ1268813 (2.151 €): **Prüfdauer 4,0 Std · Gefährdungskat (c) · 8
 3. **P2/P3** Nebenfixes (nach Pausch-Klärung Landgericht).
 4. **C-Aufwand-Modell** (Stunden×Satz + Komplexität) = strukturelles Ziel nach AL-Tagung — durch Helios + Schmieder + ZF dreifach belegt.
 
+## 6 · Kalibrier-Daten jetzt VOLLSTÄNDIG (Versand-Export 24.06)
+M. Burgey lieferte die realen Faktura-Exporte (`data/files/versand_export_24_06/`):
+**507-WP (8.094 Zeilen, DGUV)**, **560-WP (3.658, ortsv.)**, 505 (Dup 18.06) — je `EQ + Isterlös`.
+- **EQ-Join bestätigt alle 5 Testfälle** als harte Faktura (#13=1.261 · #14=4.842 · #15=2.848 · #16=677 · #12=3.878). Kein Schätz-Risiko mehr.
+- Verteilung 507-Median **587 €**, 560-Median **389 €** (klein) → m²-Modell überschätzt Normalfall systematisch.
+- **Umsetzung Kalibrierung:** (1) EQ → Merkmale aus Prüfberichten ziehen (7 neue PDFs + Schmieder + Batch der 10k MA507-PDFs), (2) Regression **Preis ↔ UV/Prüfdauer/Gef.-Kat** je Gebäudetyp, (3) per-UV/Aufwand-Pfad damit kalibrieren (statt 3-Punkte-Fit). → ersetzt Option-B-Heuristik durch datengetriebene Stützstellen.
+
 ## 5 · Offene Fragen an S. Pausch
 - Landgericht Amberg (850 BM, „all incl?") — Rahmenvertrag-Volumenpreis oder Standard?
 - Bei m²-losen Anlagen (Uni/Schule): soll Bot **schätzen** (transparent) oder **fragen**, wenn Kunde kein m² hat?
