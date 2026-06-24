@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>SmartCal@EG — Stand & Demo (24.06)</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;background:#f5f6f8;color:#1a1a2e;line-height:1.5;padding:32px;max-width:1080px;margin:0 auto}
+  h1{font-size:23px;margin-bottom:4px}
+  h2{font-size:17px;margin:30px 0 12px;padding-bottom:6px;border-bottom:2px solid #e3e6ea}
+  .sub{color:#666;font-size:14px;margin-bottom:22px}
+  .hero{background:linear-gradient(135deg,#1e3a5f,#3b5998);color:#fff;border-radius:12px;padding:20px 24px;margin-bottom:24px}
+  .hero .big{font-size:26px;font-weight:800}
+  .hero p{font-size:14px;opacity:.93;margin-top:6px}
+  .card{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:14px 18px;margin-bottom:12px}
+  .card h3{font-size:14px;margin-bottom:5px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .box{background:#fff;border-left:3px solid #6366f1;border-radius:0 8px 8px 0;padding:11px 15px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .box h4{font-size:13.5px;margin-bottom:3px}.box p{font-size:12.5px;color:#555}
+  .good{border-left-color:#22c55e}.bad{border-left-color:#dc3545}.warn{border-left-color:#f59e0b}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  th{text-align:left;font-weight:600;padding:8px 10px;background:#f0f2f5;font-size:11.5px;color:#555}
+  td{padding:7px 10px;border-bottom:1px solid #eee;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:11px;white-space:nowrap}
+  .b-pass{background:#d4edda;color:#155724}.b-fail{background:#f8d7da;color:#721c24}
+  .b-marg{background:#fff3cd;color:#856404}.b-rv{background:#d1ecf1;color:#0c5460}
+  .b-xf{background:#e2e3e5;color:#383d41}
+  .row-demo{background:#f3fbf5}
+  .note{font-size:12.5px;color:#777}
+  .open{background:#fffaf0;border-left:3px solid #f59e0b;padding:12px 16px;border-radius:0 8px 8px 0}
+  .open ul{margin-left:18px;font-size:13.5px}.open li{margin-bottom:5px}
+  .quote{font-style:italic;color:#444;border-left:3px solid #3b5998;padding:8px 14px;background:#f7f9fc;border-radius:0 8px 8px 0;font-size:13.5px}
+</style>
+</head>
+<body>
+
+<h1>SmartCal@EG — Stand & Demo</h1>
+<p class="sub">24.06.2026 · vor AL-Tagung · live auf Fly v26 · alle Testzahlen über das echte Chat-UI</p>
+
+<div class="hero">
+  <div class="big">8 validierte Fälle live · die Grenze ist jetzt belegt (nicht vermutet)</div>
+  <p>Das Kernkonzept läuft und ist demo-fähig. S. Pauschs 7 neue Fälle waren der richtige Stresstest — sie zeigen exakt, <strong>wo Merkmale den Preis bestimmen (Demo) und wo der Vertrag/Rabatt entscheidet</strong> (Phase 2). Bewiesen auf 6.000 realen Fakturen.</p>
+</div>
+
+<h2>1 · Was wir demonstrieren</h2>
+<div class="card"><h3>Kernanspruch (PoC):</h3><p><strong>Durch einfache Chat-Fragen → nachvollziehbare Kalkulation mit vollem Quellennachweis.</strong> Jede Zahl ist auf ihre Quelle rückführbar (Regel / Experte / Heuristik) — das ist der Unterschied zum „Preis aus einer Blackbox / aus jemandes Excel".</p></div>
+<div class="grid2">
+  <div class="box good"><h4>REWE 848 € (+0 %)</h4><p>Einzelhandel-Rahmenvertrag (RV-Flat). Zeigt: RV-Preise sind erkannt &amp; geroutet.</p></div>
+  <div class="box good"><h4>Apleona Kombi +1 %</h4><p>DGUV+VdS, Referenzpreis-basiert, 26.000 m².</p></div>
+  <div class="box good"><h4>Max Planck MA560 +1 %</h4><p>Ortsveränderlich, per-Gerät, 545 Geräte.</p></div>
+  <div class="box good"><h4>Helios Krankenhaus +3 %</h4><p>Kombi mit OP/Intensiv, Kat-7.</p></div>
+  <div class="box good"><h4>Würzburg Büro +12 % · roMEd Klinik</h4><p>Standard-DGUV mit Fläche.</p></div>
+  <div class="box good"><h4>Multi-Produkt + Trace</h4><p>DGUV / VdS / MA560 / Hotel — Breite + Transparenz live.</p></div>
+</div>
+
+<h2>2 · Warum manche neuen Fälle (noch) nicht stimmen</h2>
+<p class="note" style="margin-bottom:10px">Zwei verschiedene Ursachen — beide sind <strong>keine Bugs in diesen Fällen</strong>, sondern Modellgrenzen, die neue Gebäudetypen freilegen:</p>
+<div class="grid2">
+  <div class="box bad"><h4>A) Fehlende m² (#13–16, Schulen/Uni)</h4><p>Alle bisher funktionierenden DGUV-Fälle <strong>hatten m²</strong>. Die neuen sind über <strong>Unterverteilungen/Merkmale ohne m²</strong> beschrieben. Unser Preis ist m²-zentriert → das System <strong>schätzt eine Fläche (UV×400)</strong> → ~2× zu hoch. (m² steht nicht mal in den Prüfberichten — der echte Treiber ist Aufwand/UV.)</p></div>
+  <div class="box bad"><h4>B) Gleicher Input, anderer Preis-Regime (#12, MA560)</h4><p>114 Geräte (T04) zahlte real 10,7 €/Gerät → unser 9,50 passt. 850 Geräte (Landgericht) zahlte 4,56 €/Gerät (Bulk/öffentlich) → 9,50 überschätzt +113 %. <strong>Die Differenz steckt im Kunden/Vertrag, nicht in den Merkmalen.</strong></p></div>
+</div>
+<div class="card" style="margin-top:12px"><h3>Der Datenbefund (auf 6.000 realen Fakturen + 390 MA560):</h3>
+<p>Identische technische Merkmale (UV, Prüftage) → Preise streuen <strong>im Schnitt 29×</strong>. In-sample R²=0,33. Grund: die reale Faktura ist <strong>−46 … −85 % unter Listenpreis</strong> (RV-Rabatt), und der Rabatt ist <strong>per Kunde/Vertrag — nicht in den Daten</strong>. → <strong>Das ist eine fehlende Variable, kein Mangel an Datenmenge.</strong> Mehr Prüfberichte ändern das nicht.</p></div>
+
+<h2>3 · Was wir fixen — und was Phase 2 ist</h2>
+<div class="grid2">
+  <div class="box good"><h4>Diese Woche · F1 Reifegrad-Bug</h4><p>Halluzinierter Reifegrad (×1,25) wird gestrippt → #9 „negativ" von 702,50 € auf <strong>562 € (+0 %)</strong>. Generalisiert für alle Fälle.</p></div>
+  <div class="box good"><h4>Diese Woche · F2 Graceful-Uncertainty</h4><p>Bei fehlendem m² → <strong>niedrige Confidence / Rückfrage</strong> statt selbstbewusst-falsch. Fälle scheitern ehrlich.</p></div>
+  <div class="box warn"><h4>Phase 2 · MA560-Degression</h4><p>Datenbeleg: Gerätezahl ist echter Treiber (<strong>R²=0,78</strong>, 390 Fälle). Aber Tradeoff (bricht T04/T10) → sauber in Phase 2.</p></div>
+  <div class="box warn"><h4>Phase 2 · Kunden-/Vertragsdimension</h4><p>Würde die Rabatt-Varianz auflösen — braucht SAP-Kunden/RV-Daten (eigener Datenrequest).</p></div>
+</div>
+
+<h2>4 · Die strategische Linie (für AL-Tagung)</h2>
+<div class="quote">„Die KI liefert die <strong>objektive Listenkalkulation + volle Nachvollziehbarkeit</strong> — validiert. Die reale Preis-Varianz (Rabatte −46…−85 %) ist die <strong>Vertragsebene</strong>, die wir <strong>explizit und sichtbar</strong> machen, statt sie zu raten. Wo ein echter Merkmals-Treiber existiert (MA560, R²=0,78), lernt das Modell — belegt auf 390 realen Aufträgen."</div>
+<p class="note" style="margin-top:10px">= stärkeres Produkt als „KI rät jeden Preis": objektive Basis + bewusste, transparente Rabattschicht.</p>
+
+<h2>5 · Alle Testfälle (live über UI)</h2>
+<table>
+  <tr><th>#</th><th>Fall</th><th>Real</th><th>UI</th><th>Δ</th><th>Status</th><th>Einordnung</th></tr>
+  <tr class="row-demo"><td>T02</td><td>REWE Eching</td><td>848</td><td>848</td><td>+0%</td><td><span class="badge b-pass">PASS</span></td><td>Demo · RV-Flat</td></tr>
+  <tr class="row-demo"><td>T04</td><td>Auto Service (MA560)</td><td>1.217</td><td>1.283</td><td>+5%</td><td><span class="badge b-pass">PASS</span></td><td>Demo</td></tr>
+  <tr class="row-demo"><td>T08</td><td>Apleona Kombi</td><td>7.932</td><td>8.038</td><td>+1%</td><td><span class="badge b-pass">PASS</span></td><td>Demo</td></tr>
+  <tr class="row-demo"><td>T10</td><td>Max Planck (MA560)</td><td>5.341</td><td>5.378</td><td>+1%</td><td><span class="badge b-pass">PASS</span></td><td>Demo</td></tr>
+  <tr class="row-demo"><td>T11</td><td>REWE München</td><td>848</td><td>848</td><td>+0%</td><td><span class="badge b-pass">PASS</span></td><td>Demo</td></tr>
+  <tr class="row-demo"><td>T12</td><td>Helios Krankenhaus</td><td>13.110</td><td>13.563</td><td>+3%</td><td><span class="badge b-pass">PASS</span></td><td>Demo</td></tr>
+  <tr class="row-demo"><td>T14</td><td>roMEd Klinik</td><td>5.136*</td><td>4.494</td><td>−12%</td><td><span class="badge b-pass">PASS</span></td><td>Demo</td></tr>
+  <tr class="row-demo"><td>T15</td><td>DGUV Würzburg</td><td>4.195</td><td>4.707</td><td>+12%</td><td><span class="badge b-pass">PASS</span></td><td>Demo</td></tr>
+  <tr><td>T01</td><td>Hipp VdS</td><td>6.850</td><td>10.416</td><td>+52%</td><td><span class="badge b-fail">FAIL</span></td><td>Industrie-VdS (Aufwand)</td></tr>
+  <tr><td>T03</td><td>badenova Schaltschrank</td><td>391</td><td>590</td><td>+51%</td><td><span class="badge b-fail">FAIL</span></td><td>Kleinstauftrag-Reise</td></tr>
+  <tr><td>T05/06/13</td><td>Landwirt / Maritim / Motel One</td><td>defekt</td><td>—</td><td>—</td><td><span class="badge b-xf">xfail</span></td><td>Referenz defekt (S. Pausch)</td></tr>
+  <tr><td>T07/09/16</td><td>König&amp;Bauer / Multi / Blitz</td><td>—</td><td>—</td><td>—</td><td><span class="badge b-xf">OOS</span></td><td>kein Real / Multi / RV</td></tr>
+  <tr><td colspan="7" style="background:#fafbfc;font-weight:600;font-size:11.5px;color:#777">— S. Pauschs neue Fälle (24.06) — Phase-2-Material —</td></tr>
+  <tr><td>#12</td><td>Landgericht 850 BM (MA560)</td><td>3.878</td><td>8.275</td><td>+113%</td><td><span class="badge b-fail">FAIL</span></td><td>Preis-Regime (Bulk, Rabatt)</td></tr>
+  <tr><td>#13</td><td>Uni Erlangen, 4 UV, kein m²</td><td>1.261</td><td>2.577</td><td>+104%</td><td><span class="badge b-fail">FAIL</span></td><td>fehlende m² → Phantom</td></tr>
+  <tr><td>#14</td><td>Aschaffenburg, 41 UV, kein m²</td><td>4.842</td><td>7.812</td><td>+61%</td><td><span class="badge b-fail">FAIL</span></td><td>fehlende m²</td></tr>
+  <tr><td>#15</td><td>Stuttgart Schule, 17 UV, kein m²</td><td>2.848</td><td>4.850</td><td>+70%</td><td><span class="badge b-fail">FAIL</span></td><td>fehlende m²</td></tr>
+  <tr><td>#16</td><td>Immenstaad Produktion, 1 UV</td><td>677</td><td>549</td><td>−19%</td><td><span class="badge b-marg">±</span></td><td>Kleinauftrag-Floor</td></tr>
+  <tr><td>#11/#17</td><td>Autowerkstatt / Fürstenzell</td><td>—</td><td>Rückfrage</td><td>—</td><td><span class="badge b-xf">—</span></td><td>Bot fragt korrekt nach (OK)</td></tr>
+</table>
+<p class="note">Grün hinterlegt = Demo-Set (validiert, live). * inflationsbereinigt. „kein m²" = neuer Gebäude-Beschreibungstyp (per UV statt Fläche). Stand der Zahlen: live über Chat-UI, Fly v26.</p>
+
+</body>
+</html>
