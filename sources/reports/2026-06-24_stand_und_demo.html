@@ -54,14 +54,13 @@
   <div class="box good"><h4>Multi-Produkt + Trace</h4><p>DGUV / VdS / MA560 / Hotel — Breite + Transparenz live.</p></div>
 </div>
 
-<h2>2 · Warum manche neuen Fälle (noch) nicht stimmen</h2>
-<p class="note" style="margin-bottom:10px">Zwei verschiedene Ursachen — beide sind <strong>keine Bugs in diesen Fällen</strong>, sondern Modellgrenzen, die neue Gebäudetypen freilegen:</p>
-<div class="grid2">
-  <div class="box bad"><h4>A) Fehlende m² (#13–16, Schulen/Uni)</h4><p>Alle bisher funktionierenden DGUV-Fälle <strong>hatten m²</strong>. Die neuen sind über <strong>Unterverteilungen/Merkmale ohne m²</strong> beschrieben. Unser Preis ist m²-zentriert → das System <strong>schätzt eine Fläche (UV×400)</strong> → ~2× zu hoch. (m² steht nicht mal in den Prüfberichten — der echte Treiber ist Aufwand/UV.)</p></div>
-  <div class="box bad"><h4>B) Gleicher Input, anderer Preis-Regime (#12, MA560)</h4><p>114 Geräte (T04) zahlte real 10,7 €/Gerät → unser 9,50 passt. 850 Geräte (Landgericht) zahlte 4,56 €/Gerät (Bulk/öffentlich) → 9,50 überschätzt +113 %. <strong>Die Differenz steckt im Kunden/Vertrag, nicht in den Merkmalen.</strong></p></div>
-</div>
-<div class="card" style="margin-top:12px"><h3>Der Datenbefund (auf 6.000 realen Fakturen + 390 MA560):</h3>
-<p>Identische technische Merkmale (UV, Prüftage) → Preise streuen <strong>im Schnitt 29×</strong>. In-sample R²=0,33. Grund: die reale Faktura ist <strong>−46 … −85 % unter Listenpreis</strong> (RV-Rabatt), und der Rabatt ist <strong>per Kunde/Vertrag — nicht in den Daten</strong>. → <strong>Das ist eine fehlende Variable, kein Mangel an Datenmenge.</strong> Mehr Prüfberichte ändern das nicht.</p></div>
+<h2>2 · Warum manche neuen Fälle nicht stimmen — EINE Ursache (nicht „fehlende m²")</h2>
+<p class="note" style="margin-bottom:10px">Es ist <strong>kein Bug in diesen Fällen</strong> und <strong>nicht die fehlende Fläche</strong> — das System schätzt m² zuverlässig (auch ohne Eingabe). Die eine Ursache: <strong>gleiche Gebäude, sehr unterschiedliche Realpreise</strong> (Vertrag/Rabatt).</p>
+<div class="card"><h3>Beleg — fehlende m² ist NICHT das Problem:</h3>
+<p><strong>#8 Grundschule Würzburg</strong> (ohne m² eingegeben, „25 Klassenräume" → System schätzt 1.900 m²): Modell 2.494 €, real 2.380 € → <strong>+5 % ✓</strong>. Gleicher Mechanismus wie #13 Uni Erlangen (ohne m², ~1.700 m² geschätzt): Modell 2.577 €, real <strong>1.261 €</strong> → <strong>+104 % ✗</strong>. Das Modell rechnet für beide ~2.500 € — der Unterschied ist <strong>allein der Realpreis</strong> (2.380 vs 1.261 € für ähnliche Gebäude).</p></div>
+<div class="card" style="margin-top:10px"><h3>Der Datenbefund (auf 6.000 realen Fakturen + 390 MA560):</h3>
+<p>Identische technische Merkmale → Preise streuen <strong>im Schnitt 29×</strong>. In-sample R²=0,33. Grund: die reale Faktura ist <strong>−46 … −85 % unter Listenpreis</strong> (RV-Rabatt), und der Rabatt ist <strong>per Kunde/Vertrag — nicht in den Daten</strong>. #8 zahlte viel (Modell passt), #13 wenig (passt nicht). → <strong>Eine fehlende Variable (Vertrag/Rabatt), kein Mangel an Datenmenge.</strong> Mehr Prüfberichte ändern das nicht.</p>
+<p class="note" style="margin-top:6px">Ausnahme MA560 (#12 Landgericht): hier <em>existiert</em> ein echter Treiber (Gerätezahl, R²=0,78) — Bulk zahlt 4,56 €/Gerät statt 9,50 → Degression in Phase 2.</p></div>
 
 <h2>3 · Was wir fixen — und was Phase 2 ist</h2>
 <div class="grid2">

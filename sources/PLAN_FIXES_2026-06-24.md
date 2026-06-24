@@ -17,11 +17,13 @@
 - **Aufwand:** ~1–2 h. **Bug-Catcher-Test:** Supermarkt-Prompt → kein ×1,25.
 - **graphify affected** `_g_reifegrad` vor Edit.
 
-### F2 · Graceful-Uncertainty bei fehlendem m² (P1) — ✅ DIESE WOCHE
-- **Was:** Wenn DGUV-ortsfest **ohne m²** (nur UV/Merkmale): keine fabrizierte Fläche als belastbaren Preis verkaufen. Stattdessen **niedrige Confidence + sichtbarer Hinweis** „Schätzung aus UV — für belastbare Kalkulation bitte m²/Aufwand angeben". (Variante je nach S. Pausch-Antwort: Rückfrage statt Rechnung.)
-- **Generalisiert:** ✅ als Verhalten (Ehrlichkeit für alle no-m²-Fälle). Korrigiert NICHT die Zahl (geht nicht — fehlende Variable).
-- **Effekt:** #13/#14/#15 failen **ehrlich** (niedrige Conf.) statt selbstbewusst +60–104 %.
-- **Aufwand:** ~halber Tag. Hängt an S. Pausch-Frage „fragen vs. schätzen".
+### F2 · Listenpreis-Transparenz / RV-Hinweis (P1) — ✅ DIESE WOCHE (umgedeutet)
+- **WICHTIGE KORREKTUR (verifiziert 24.06):** „fehlende m²" ist NICHT die Ursache. Beleg: #8 Grundschule (ohne m², „25 Klassenräume" → System schätzt 1.900 m²) trifft real **+5 %**. Gleicher Mechanismus #13 Uni → +104 % — der Unterschied ist **allein der Realpreis** (2.380 vs 1.261 € für ähnliche Gebäude = Vertrag/Rabatt). Die m²-Schätzung funktioniert.
+- **Was wirklich richtig ist:** Output klar als **LISTENPREIS** ausweisen + sichtbarer Hinweis „realer RV-Preis kann −46…−85 % darunter liegen — RV/Rabatt bitte separat". KEIN „niedrige Confidence weil kein m²" (wäre falsche Begründung).
+- **Generalisiert:** ✅ als Ehrlichkeit/Framing für ALLE Fälle.
+- **Effekt:** #13/#14/#15 erscheinen als **Listenpreis mit RV-Caveat** statt als „falscher Endpreis". Macht die Differenz erklärbar, nicht peinlich.
+- **NICHT-Effekt:** bringt #13-15 NICHT auf +0 % — der Realpreis ist Vertrag/Rabatt, nicht modellierbar (Phase 2: Kunden-/RV-Dimension).
+- **Aufwand:** ~halber Tag (UI-Label + Hinweistext).
 
 ### F3 · MA560-Degression (P2) — 🟡 PHASE 2 (nicht vor Tagung)
 - **Was:** flat 9,50 €/BM → Degression `≈21·BM^0,76` (R²=0,78, 390 reale Punkte).
