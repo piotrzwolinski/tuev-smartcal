@@ -223,6 +223,31 @@ def _strip_hallucinated_flaeche(params: dict, user_message: str, session_message
     del params["gesamtflaeche_m2"]
 
 
+# Wörter, die signalisieren dass der Kunde etwas zum Zustand/Reifegrad gesagt hat.
+_REIFEGRAD_MARKERS = re.compile(
+    r'zustand|reifegrad|ungeordnet|nachholbedarf|ordentlich|sehr\s*gut'
+    r'|gepflegt|vernachlässigt|saniert|instandgehalten|wartungsstau|reaktiv',
+    re.IGNORECASE,
+)
+
+
+def _strip_hallucinated_reifegrad(params: dict, user_message: str, session_messages: list[dict] | None = None) -> None:
+    """Remove reifegrad if the user never mentioned Zustand/Reifegrad → Default RG_3 (×1,0).
+
+    Bug (S. Pausch 22.06 'negativ'): Haiku extrahierte reifegrad=1 (×1,25) für 'Supermarkt
+    840 m²' obwohl nichts zum Zustand gesagt → 562 € wurde 702,50 €. Zwilling zu
+    _strip_hallucinated_flaeche."""
+    if "reifegrad" not in params:
+        return
+    if _REIFEGRAD_MARKERS.search(user_message):
+        return
+    if session_messages:
+        for msg in session_messages:
+            if msg.get("role") == "user" and _REIFEGRAD_MARKERS.search(msg.get("content", "")):
+                return
+    del params["reifegrad"]
+
+
 def _parse_llm_json(text: str) -> dict:
     """Parse LLM response that should be JSON but may have extra text."""
     text = text.strip()
@@ -284,6 +309,7 @@ async def coordinator_respond(session: DGUVSession, user_message: str) -> dict:
     new_params = result.get("params", {})
     if new_params:
         _strip_hallucinated_flaeche(new_params, user_message, session.messages)
+        _strip_hallucinated_reifegrad(new_params, user_message, session.messages)
         nutzung = new_params.get("nutzung")
         if nutzung and "primary_installationskategorie" not in new_params:
             try:
