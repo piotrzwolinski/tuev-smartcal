@@ -1,6 +1,6 @@
 "use client";
 
-import { Calculator, AlertTriangle, CheckCircle, Lightbulb, Shield, Database, Code } from "lucide-react";
+import { Calculator, AlertTriangle, CheckCircle, Lightbulb, Shield, Database, Code, Tag } from "lucide-react";
 
 export interface ProvenanceStep {
   step: string;
@@ -110,6 +110,21 @@ export default function BlitzschutzAngebotPanel({ angebot }: Props) {
             </tr>
           </tfoot>
         </table>
+      </div>
+
+      {/* Listenpreis-Hinweis (RV-Caveat) — immer sichtbar, deterministisch */}
+      <div className="bg-indigo-50/70 rounded-2xl border border-indigo-200/60 p-3.5 animate-fade-in">
+        <div className="flex items-start gap-2">
+          <div className="w-5 h-5 rounded-md bg-indigo-100 flex items-center justify-center shrink-0 mt-0.5">
+            <Tag className="w-3 h-3 text-indigo-600" />
+          </div>
+          <div className="text-[12.5px] text-indigo-900/90 leading-relaxed">
+            <span className="font-semibold">Listenpreis (LPV)</span> — objektive Kalkulationsbasis mit
+            vollem Quellennachweis. Bei bestehendem <span className="font-semibold">Rahmenvertrag</span> liegt
+            der reale Preis erfahrungsgemäß <span className="font-semibold">−46 bis −85&nbsp;%</span> darunter;
+            RV-/Rabatt-Konditionen werden als eigene Schicht angewendet.
+          </div>
+        </div>
       </div>
 
       {/* Confidence / Warning */}
