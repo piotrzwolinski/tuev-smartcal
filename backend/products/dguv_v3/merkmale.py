@@ -122,6 +122,10 @@ class DGUVMerkmale(BaseModel):
     referenz_vergleichbar: bool = False
 
     baurechtlich: bool = False
+    # Berichterstellung-Trigger für komplexen Bericht (550€) — S. Pausch 17.06 10:34.
+    # Default False → DGUV/VdS bekommt immer den kleinen Bericht (119€).
+    elektrothermographie: bool = False
+    bericht_sonderanforderung: bool = False   # eigene Form / Sonderform Übermittlung (abzufragen)
     vereinsmitglied: bool = True
     eilzuschlag: bool = False
     erstpruefung: bool = False

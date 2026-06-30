@@ -552,6 +552,14 @@ def dguv_estimate_pruef_tage(m: DGUVMerkmale) -> float:
 
 
 def dguv_choose_bericht_typ(m: DGUVMerkmale) -> str:
+    """Berichtstyp nach S. Pausch 17.06 10:34.
+
+    Für Materialien DGUV/VdS/Blitz wird IMMER der kleine Bericht (119€) angesetzt
+    — keine Fläche/Verteilungen-Staffel. Der komplexe Bericht (550€) gilt nur bei
+    echtem Mehraufwand: Prüfung nach Baurecht, Elektrothermographie oder einer
+    Kunden-Sonderanforderung (eigene Form / Sonderform der Übermittlung).
+    RV-Flat / Kleinauftrag / ortsveränderlich → Bericht in der Pauschale enthalten.
+    """
     from products.dguv_v3.merkmale import Pruefart
     if getattr(m, "pruefart", None) == Pruefart.DGUV_ORTSVERAENDERLICH:
         return "inklusive"
@@ -559,15 +567,11 @@ def dguv_choose_bericht_typ(m: DGUVMerkmale) -> str:
         return "inklusive"
     if is_einzelhandel_rv_flat(m):
         return "inklusive"  # RV-Flat: Bericht im Listenpreis enthalten
-    flaeche = _flaeche(m)
-    total_verteilungen = (
-        m.anzahl_verteilungen_uv + m.anzahl_verteilungen_hv + m.anzahl_verteilungen_nshv
-    )
-    if flaeche <= 500 and total_verteilungen <= 3:
-        return "klein"
-    if flaeche <= 5000 and total_verteilungen <= 15:
-        return "standard"
-    return "komplex"
+    if (m.baurechtlich
+            or getattr(m, "elektrothermographie", False)
+            or getattr(m, "bericht_sonderanforderung", False)):
+        return "komplex"   # 550€ — Baurecht / Elektrothermographie / Sonderanforderung
+    return "klein"         # 119€ — Standard DGUV/VdS (generell)
 
 
 def dguv_zuschlaege(m: DGUVMerkmale) -> list[tuple[str, float]]:

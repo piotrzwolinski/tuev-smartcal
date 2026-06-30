@@ -209,29 +209,44 @@ class TestDGUVPruefTage:
 # ──────────────────────────────────────────────────────────────
 
 class TestDGUVBerichtstyp:
+    """S. Pausch 17.06 10:34: DGUV/VdS → immer kleiner Bericht (119€);
+    komplex (550€) nur bei Baurecht / Elektrothermographie / Sonderanforderung."""
+
     def test_kleinauftrag_inklusive(self):
         m = _make(300, anzahl_verteilungen_uv=2)
         assert dguv_choose_bericht_typ(m) == "inklusive"
 
-    def test_standard(self):
+    def test_standard_groesse_ist_klein(self):
+        # Mittlere Anlage ohne Sondermerkmal → kleiner Bericht (kein Staffel mehr)
         m = _make(3000, anzahl_verteilungen_uv=10)
-        assert dguv_choose_bericht_typ(m) == "standard"
+        assert dguv_choose_bericht_typ(m) == "klein"
 
-    def test_komplex_large_flaeche(self):
+    def test_grosse_flaeche_bleibt_klein(self):
         m = _make(6000, anzahl_verteilungen_uv=5)
+        assert dguv_choose_bericht_typ(m) == "klein"
+
+    def test_viele_verteilungen_bleibt_klein(self):
+        m = _make(3000, anzahl_verteilungen_uv=16)
+        assert dguv_choose_bericht_typ(m) == "klein"
+
+    def test_baurecht_ist_komplex(self):
+        m = _make(3000, anzahl_verteilungen_uv=10)
+        m.baurechtlich = True
         assert dguv_choose_bericht_typ(m) == "komplex"
 
-    def test_komplex_many_verteilungen(self):
-        m = _make(3000, anzahl_verteilungen_uv=16)
+    def test_elektrothermographie_ist_komplex(self):
+        m = _make(3000, anzahl_verteilungen_uv=10)
+        m.elektrothermographie = True
+        assert dguv_choose_bericht_typ(m) == "komplex"
+
+    def test_sonderanforderung_ist_komplex(self):
+        m = _make(3000, anzahl_verteilungen_uv=10)
+        m.bericht_sonderanforderung = True
         assert dguv_choose_bericht_typ(m) == "komplex"
 
     def test_boundary_klein_flaeche(self):
         m = _make(500, anzahl_verteilungen_uv=3)
         assert dguv_choose_bericht_typ(m) == "klein"
-
-    def test_boundary_standard_flaeche(self):
-        m = _make(5000, anzahl_verteilungen_uv=15)
-        assert dguv_choose_bericht_typ(m) == "standard"
 
 
 # ──────────────────────────────────────────────────────────────
@@ -427,8 +442,8 @@ class TestDGUVGoldenReference:
 
         # v3: INDUSTRIE→werkstatt referenz 0.50€/m² × 5000 = 2500
         assert angebot.breakdown.pruef == dispatch_pruefkosten(m)
-        # 5000m² + 19 total verteilungen (>15) → komplex
-        assert angebot.breakdown.bericht == BERICHT_KOMPLEX
+        # S. Pausch 17.06: DGUV ohne Baurecht/Thermographie → immer kleiner Bericht (119€)
+        assert angebot.breakdown.bericht == BERICHT_KLEIN
 
     @patch("common.pricing_primitives.find_nearest_standort", side_effect=_mock_find_nearest)
     def test_krankenhaus_large(self, mock_standort):
@@ -456,7 +471,8 @@ class TestDGUVGoldenReference:
         # 250 + 5616 + 30×25 + 5×85 + 2×145 + 320 + 180 = 7831 (Basis vor Faktoren)
         # Komplexitätsfaktor Krankenhaus ×2.0 (NetInform, >10.000m²): 7831 × 2.0 = 15662
         assert angebot.breakdown.pruef == 15662.00
-        assert angebot.breakdown.bericht == BERICHT_KOMPLEX
+        # S. Pausch 17.06: DGUV ohne Baurecht/Thermographie → immer kleiner Bericht (119€)
+        assert angebot.breakdown.bericht == BERICHT_KLEIN
 
 
 # ──────────────────────────────────────────────────────────────
