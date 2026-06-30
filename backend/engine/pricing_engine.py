@@ -137,7 +137,8 @@ class PricingEngine:
             bericht_typ = BerichtTyp(bericht_typ_str)
             breakdown.bericht = berichtskosten(bericht_typ)
             emit("bericht", f"Berichtstyp {bericht_typ_str}", round(breakdown.bericht, 2),
-                 f"BER_{bericht_typ_str.upper()}", "LPV: Klein 119 / Standard 380 / Komplex 550")
+                 f"BER_{bericht_typ_str.upper()}",
+                 "LPV: kleiner Bericht 119€ · komplex 550€ (Baurecht / Elektrothermographie / Sonderanforderung)")
 
         # 4b. Zusatzleistungen (PV / Ladesäulen — per-Gewerk Addon-Hook)
         zusatzleistungen = gewerk.zusatzleistungen(merkmale)
