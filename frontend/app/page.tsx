@@ -251,7 +251,7 @@ export default function Home() {
         <main className="flex-1 min-w-0 flex flex-col overflow-hidden">
           <header className="h-16 border-b border-slate-200/60 bg-white backdrop-blur-xl sticky top-0 z-10 flex items-center justify-between px-6">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">{activeProduct.name}-Kalkulator</h2>
+              <h2 className="text-lg font-semibold text-slate-900">{activeProduct.headerTitle ?? `${activeProduct.name}-Kalkulator`}</h2>
               <p className="text-xs text-slate-500">{activeProduct.subtitle}</p>
             </div>
             <button

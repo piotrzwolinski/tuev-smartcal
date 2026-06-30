@@ -2,6 +2,7 @@ export interface ProductConfig {
   id: string;
   name: string;
   subtitle: string;
+  headerTitle?: string;
   shortLabel: string;
   apiPrefix: string;
   lpvRef: string;
@@ -43,11 +44,12 @@ export const PRODUCTS: ProductConfig[] = [
   },
   {
     id: "dguv_v3",
-    name: "DGUV V3",
-    subtitle: "Ortsfeste elektrische Anlage · LPV B04 Kap. 2 · 250€ + m²×Kat",
-    shortLabel: "V3",
+    name: "Elektrische Anlage",
+    subtitle: "Material: 501 · 505 · 507 · 510 · 560 · LPV B04 Kap. 2",
+    headerTitle: "Kalkulation Elektrische Anlage",
+    shortLabel: "🔌",
     apiPrefix: "/api/dguv-v3",
-    lpvRef: "MA507",
+    lpvRef: "MA501–560",
     placeholder: "Beschreiben Sie Ihre elektrische Anlage...",
     suggestions: [
       {
